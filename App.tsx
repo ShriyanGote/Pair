@@ -8,7 +8,7 @@ export default function App() {
     fetch('http://192.168.87.48:8000/') // replace with your machine's IP
       .then((res) => res.json())
       .then((data) => setMsg(data.message))
-      .catch((err) => console.log('API error:', err));
+      .catch((err) => console.log('API error: here', err));
   }, []);
 
   return (
