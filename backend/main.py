@@ -36,9 +36,8 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     if existing:
         return {"error": "User already exists"}
     new_user = create_user(db, name=user.name, email=user.email, password=user.password)
+    print(f"User {new_user.name} registered!")
     return {"message": f"User {new_user.name} registered!"}
-
-
 
 @app.post("/login")
 def login(user: UserLogin, db: Session = Depends(get_db)):
@@ -55,25 +54,38 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
 def get_current_user(authorization: str = Header(...)):
     if not authorization.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Invalid auth header")
-    
+
     token = authorization.split(" ")[1]
     payload = decode_access_token(token)
     if payload is None:
         raise HTTPException(status_code=401, detail="Invalid token")
-    
+
     return payload
 
 @app.get("/me")
-def read_current_user(current_user: dict = Depends(get_current_user)):
-    return {"user": current_user}
+def read_current_user(current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == current_user["sub"]).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {
+        "id": user.id,
+        "name": user.name,
+        "email": user.email
+        # Do NOT return hashed_password here
+    }
+
+
 
 @app.get("/users")
 def get_users():
     return [{"id": 1, "name": "Sanjana"}, {"id": 2, "name": "Shriyan"}]
 
 @app.get("/users/{user_id}")
-def get_user(user_id: int):
-    return {"id": user_id, "name": "User Placeholder"}
+def get_user(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
 
 @app.get("/matches/{user_id}")
 def get_matches(user_id: int):
@@ -81,10 +93,31 @@ def get_matches(user_id: int):
 
 @app.put("/users/{user_id}")
 def update_user_profile(user_id: int, updated_data: UserUpdate, db: Session = Depends(get_db)):
-    return {"message": f"temorary response for updating user {user_id}"}
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
 
+    user.name = updated_data.name
+    user.email = updated_data.email
+    user.hashed_password = verify_password(updated_data.password, user.hashed_password) and user.hashed_password or updated_data.password
+    user.bio = updated_data.bio
+    user.interests = updated_data.interests
+    user.age = updated_data.age
+    user.gender = updated_data.gender
+    user.location = updated_data.location
+    user.profile_photo = updated_data.profile_photo
 
+    db.commit()
+    db.refresh(user)
+    return user
+
+@app.get("/very-email")
+def very_email():
+    return {"message": "This is a very email!"}
+
+@app.get("/get-code")
+def get_code():
+    return {"code": "123456"}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
