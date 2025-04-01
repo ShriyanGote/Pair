@@ -1,56 +1,42 @@
 // screens/LoginScreen.js
 
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { login } from '../utils/api';
+import React, { useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Linking, Alert } from 'react-native';
 
 const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  useEffect(() => {
+    navigation.setOptions({ headerLeft: () => null });
+  }, [navigation]);
 
-  const handleLogin = async () => {
+  const handleGoogleLogin = async () => {
     try {
-      const response = await login({ email, password });
-
-      if (response.data.access_token) {
-        await AsyncStorage.setItem('token', response.data.access_token);
-        Alert.alert('Login Successful', 'You are now logged in!');
-        navigation.navigate('Home'); // update this if you have a different screen
+      const url = 'http://localhost:8000/auth/google/login';
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
       } else {
-        Alert.alert('Login Failed', response.data.error || 'Invalid credentials');
+        Alert.alert('Error', 'Cannot open login URL');
       }
     } catch (error) {
-      console.error(error);
-      Alert.alert('Login Error', 'Something went wrong.');
+      console.error('Google login error:', error);
+      Alert.alert('Error', 'Failed to open Google login');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Login</Text>
+      <Text style={styles.header}>Login with Google</Text>
 
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        style={styles.input}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
+      <TouchableOpacity style={styles.button} onPress={handleGoogleLogin}>
+        <Text style={styles.buttonText}>Continue with Google</Text>
+      </TouchableOpacity>
 
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        style={styles.input}
-        secureTextEntry
-      />
+      <TouchableOpacity onPress={() => navigation.navigate('EmailLogin')}>
+        <Text style={styles.link}>Verify Email Instead</Text>
+      </TouchableOpacity>
 
-      <Button title="Login" onPress={handleLogin} />
-
-      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-        <Text style={styles.link}>Don't have an account? Register</Text>
+      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        <Text style={styles.link}>Go Home</Text>
       </TouchableOpacity>
     </View>
   );
@@ -66,23 +52,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
   },
   header: {
-    fontSize: 28,
-    marginBottom: 30,
-    textAlign: 'center',
+    fontSize: 26,
     fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 32,
   },
-  input: {
-    backgroundColor: '#fff',
-    padding: 12,
+  button: {
+    backgroundColor: '#DB4437', // Google Red
+    paddingVertical: 14,
+    paddingHorizontal: 20,
     borderRadius: 8,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#ccc',
+    marginBottom: 25,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
   },
   link: {
     color: 'gray',
     fontSize: 14,
     textAlign: 'center',
-    marginTop: 20,
   },
 });
