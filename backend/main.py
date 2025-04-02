@@ -14,7 +14,7 @@ load_dotenv()
 
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from model import User, UserCreate, UserLogin, UserUpdate, EmailRequest
+from model import User, UserCreate, UserLogin, UserUpdate, EmailRequest, Swipe
 from crud import create_user, get_user_by_email, verify_password
 from auth import create_access_token, decode_access_token
 from datetime import timedelta
@@ -30,6 +30,7 @@ from email_util import send_verification_email
 # 1) CREATE APP
 # ------------------------------------------------
 app = FastAPI()
+
 
 # ------------------------------------------------
 # 2) ADD SESSION MIDDLEWARE ONCE
@@ -140,6 +141,9 @@ def update_user_profile(user_id: int, updated_data: UserUpdate, db: Session = De
     db.refresh(user)
     return {"message": "User profile updated", "user": user}
 
+
+
+
 email_router = APIRouter()
 
 
@@ -149,24 +153,13 @@ def send_code(payload: EmailRequest, db: Session = Depends(get_db)):
     code = str(random.randint(100000, 999999))
     user = get_user_by_email(db, email)
 
-    if user:
-        user.verification_code = code
-        db.commit()
-        send_verification_email(email, code)
-        return {"message": "Code sent"}
-    else:
-        new_user = User(
-            name="New User",  # ✅ required default name
-            email=email,
-            hashed_password="",
-            is_verified=False,
-            verification_code=code
-        )
+    if not user:
+        raise HTTPException(status_code=404, detail="No account found. Please register with Google.")
 
-        db.add(new_user)
-        db.commit()
-        send_verification_email(email, code)
-        return {"message": "User created and code sent"}
+    user.verification_code = code
+    db.commit()
+    send_verification_email(email, code)
+    return {"message": "Verification code sent"}
 
 @email_router.post("/verify-code")
 def verify_code(email: str = Body(...), code: str = Body(...), db: Session = Depends(get_db)):
@@ -187,11 +180,6 @@ app.include_router(swipe_router)
 app.include_router(auth_router)
 app.include_router(email_router)
 
-# (If you keep Authlib, import your google router from the same file or a separate file,
-# then do app.include_router(google_router) here.)
 
-# ------------------------------------------------
-# 7) RUN
-# ------------------------------------------------
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)

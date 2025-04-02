@@ -53,13 +53,61 @@ def swipe(swipee_id: int, direction: str, db: Session = Depends(get_db), current
     return {"message": "Swipe recorded"}
 
 @router.get("/recommendations")
-def get_recommendations(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    # Get IDs of users the current user has swiped on
-    swiped_ids = db.query(Swipe.swipee_id).filter(Swipe.swiper_id == current_user.id)
-    # Recommend users that are not the current user and haven't been swiped on
-    users = db.query(User).filter(
-        User.id != current_user.id,
-        ~User.id.in_(swiped_ids)
-    ).limit(10).all()
-    return users
+def get_recommendations(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    # Subquery: who the current user has right-swiped (matches)
+    right_swipes = db.query(Swipe.swipee_id).filter(
+        Swipe.swiper_id == current_user.id,
+        Swipe.direction == 'right'
+    )
 
+    # Exclude: self and right-swiped users
+    recommendations = db.query(User).filter(
+        User.id != current_user.id,
+        ~User.id.in_(right_swipes)
+    ).all()
+
+    return [
+        {
+            "id": u.id,
+            "name": u.name,
+            "age": u.age,
+            "location": u.location,
+            "bio": u.bio,
+            "height": u.height,
+            "gender": u.gender,
+            "profile_photo": None,  # Add if you have
+        }
+        for u in recommendations
+    ]
+
+
+
+
+
+@router.get("/matches")
+def get_matches(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    users_who_liked_me = db.query(Swipe.swiper_id).filter(
+        Swipe.swipee_id == current_user.id,
+        Swipe.direction == 'right'
+    ).subquery()
+
+    matches = db.query(User).join(Swipe, Swipe.swipee_id == User.id).filter(
+        Swipe.swiper_id == current_user.id,
+        Swipe.direction == 'right',
+        Swipe.swipee_id.in_(users_who_liked_me)
+    ).all()
+
+    return [
+        {
+            "id": u.id,
+            "name": u.name,
+            "email": u.email,
+            "age": u.age,
+            "location": u.location,
+            "bio": u.bio,
+            "height": u.height,
+            "gender": u.gender,
+            "profile_photo": None,  # Replace with actual URL if you have one
+        }
+        for u in matches
+    ]

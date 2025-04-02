@@ -47,7 +47,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(unique=True, index=True, nullable=False)
     hashed_password: Mapped[str] = mapped_column(nullable=False)
 
-    # ✅ NEW FIELDS
+    # NEW FIELDS
     bio: Mapped[Optional[str]] = mapped_column(nullable=True)
     interests: Mapped[Optional[str]] = mapped_column(nullable=True)
     age: Mapped[Optional[int]] = mapped_column(nullable=True)
@@ -55,6 +55,8 @@ class User(Base):
     location: Mapped[Optional[str]] = mapped_column(nullable=True)
     profile_photo: Mapped[Optional[str]] = mapped_column(nullable=True)
     height: Mapped[Optional[float]] = mapped_column(nullable=True)
+    
+    #code verification
     is_verified: Mapped[bool] = mapped_column(default=False)
     verification_code: Mapped[Optional[str]] = mapped_column(nullable=True)
 
