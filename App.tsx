@@ -5,22 +5,38 @@ import AuthStack from './navigation/AuthStack';
 import 'react-native-url-polyfill/auto'; // <-- ensures `URL` works on React Native
 import { navigationRef } from './navigation/navigationRef';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getCurrentUser } from './utils/api'; // at the top of App.tsx
 
 
+
+
+const linking = {
+  prefixes: ['pairs://'],
+  config: {
+    screens: {
+      MainTabs: 'auth/success',
+    },
+  },
+};
 
 export default function App() {
 useEffect(() => {
-  const handleDeepLink = ({ url }: { url: string }) => {
+  const handleDeepLink = async ({ url }: { url: string }) => {
     const parsedUrl = new URL(url);
     const token = parsedUrl.searchParams.get('token');
-
+  
     if (parsedUrl.hostname === 'auth' && parsedUrl.pathname === '/success' && token) {
-      AsyncStorage.setItem('token', token).then(() => {
+      await AsyncStorage.setItem('token', token);
+      
+      try {
+        const response = await getCurrentUser(token);
         navigationRef.current?.reset({
           index: 0,
-          routes: [{ name: 'Profile' }],
+          routes: [{ name: 'MainTabs', params: { user: response.data } }],
         });
-      });
+      } catch (err) {
+        console.error('Failed to fetch user after login', err);
+      }
     }
   };
 
@@ -36,7 +52,7 @@ useEffect(() => {
 }, []);
 
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer linking={linking} ref={navigationRef}>
       <AuthStack />
     </NavigationContainer>
   );

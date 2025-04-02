@@ -32,7 +32,11 @@ const EmailVerificationScreen = () => {
         Alert.alert('Code Sent', data.message);
         setStep('code');
       } else {
+        if (response.status === 404) {
+          Alert.alert('Email Not Registered', 'Please register first using Google.');
+        }else{
         Alert.alert('Error', data.error || 'Failed to send code');
+        }
       }
     } catch (error) {
       Alert.alert('Error', 'Network issue or server not available');
@@ -58,9 +62,13 @@ const EmailVerificationScreen = () => {
       const data = await response.json();
       if (response.ok && data.access_token) {
         await AsyncStorage.setItem('token', data.access_token);
-        navigationRef.current?.reset({ index: 0, routes: [{ name: 'Profile' }] });
+        navigationRef.current?.reset({ index: 0, routes: [{ name: 'MainTabs' }] });
       } else {
-        Alert.alert('Verification Failed', data.error || 'Invalid code');
+        if (response.status === 404) {
+          Alert.alert('Email Not Registered', 'Please register first using Google.');
+        } else{
+          Alert.alert('Verification Failed', data.error || 'Invalid code');
+        }
       }
     } catch (error) {
       Alert.alert('Error', 'Something went wrong verifying the code');

@@ -1,142 +1,84 @@
-// // screens/RegisterScreen.js
+// screens/LoginScreen.js
 
-// import React, { useState } from 'react';
-// import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
-// import { register } from '../utils/api';
+import React, { useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Linking, Alert } from 'react-native';
 
-// const RegisterScreen = ({ navigation }) => {
-//   const [name, setName] = useState('');
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [bio, setBio] = useState('');
-//   const [interests, setInterests] = useState('');
-//   const [age, setAge] = useState('');
-//   const [gender, setGender] = useState('');
-//   const [location, setLocation] = useState('');
-//   const [profilePhoto, setProfilePhoto] = useState('');
+const RegisterScreen = ({ navigation }) => {
+  useEffect(() => {
+    navigation.setOptions({ headerLeft: () => null });
+  }, [navigation]);
 
+  const handleGoogleLogin = async () => {
+    try {
+      const url = 'http://localhost:8000/auth/google/login';
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert('Error', 'Cannot open login URL');
+      }
+    } catch (error) {
+      console.error('Google login error:', error);
+      Alert.alert('Error', 'Failed to open Google login');
+    }
+  };
 
-// /*
-//   const handleRegister = async () => {
-//     if (!email.includes('@') || !email.includes('.')){
-//       Alert.alert('Invalid Email', 'Please enter a valid email address.');
-//       return;
-//     }
-//     if (password.length() < 6 || password.includes(name)){
-//       Alert.alert('Invalid Password', 'Please enter a valid password (Longer than 6 char, does not include name).');
-//       return;
-//     }
-//     try {
-//       const response = await register({
-//         name,
-//         email,
-//         password, 
-//       });
-  
-//       if (response.data.error) {
-//         Alert.alert('Error', response.data.error);
-//       } else {
-//         Alert.alert('Success', 'Registered successfully!');
-//         navigation.navigate('Login');
-//       }
-//     } catch (err) {
-//       console.error(err);
-//       Alert.alert('Error', 'Something went wrong. Please try again.');
-//     }
-//   };
-//   */
-//   const handleRegister = async () => {
-//     if (!email.includes('@') || !email.includes('.')){
-//       Alert.alert('Invalid Email', 'Please enter a valid email address.');
-//       return;
-//     }
-//     if (password.length < 6){
-//       Alert.alert('Invalid Password', 'Please enter a valid password (Longer than 6 char, does not include name).');
-//       return;
-//     }
-//     try {
-//       const response = await register({
-//         name,
-//         email,
-//         password,
-//       });
-  
-//       if (response.data.error) {
-//         Alert.alert('Error', response.data.error);
-//       } else {
-//         Alert.alert('Success', 'Registered successfully!');
-//         navigation.navigate('Login');
-//       }
-//     } catch (err) {
-//       console.error('Register error:', err.response?.data || err.message);
-//       Alert.alert('Error', 'Something went wrong. Please try again.');
-//     }
-//   };
-  
+  const handleGoHome = async () => {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Home' }],
+      });
+  };
 
-//   return (
-//     <View style={styles.container}>
-//       <Text style={styles.header}>Register</Text>
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Register with Google</Text>
 
-//       <TextInput
-//         style={styles.input}
-//         placeholder="Full Name"
-//         value={name}
-//         onChangeText={setName}
-//       />
+      <TouchableOpacity style={styles.button} onPress={handleGoogleLogin}>
+        <Text style={styles.buttonText}>Continue with Google</Text>
+      </TouchableOpacity>
 
-//       <TextInput
-//         style={styles.input}
-//         placeholder="Email"
-//         value={email}
-//         onChangeText={setEmail}
-//         autoCapitalize="none"
-//         keyboardType="email-address"
-//       />
+      <TouchableOpacity onPress={() => navigation.navigate('EmailLogin')}>
+        <Text style={styles.link}>Verify Email Instead</Text>
+      </TouchableOpacity>
 
-//       <TextInput
-//         style={styles.input}
-//         placeholder="Password"
-//         value={password}
-//         onChangeText={setPassword}
-//         secureTextEntry
-//       />
+      <TouchableOpacity onPress={handleGoHome}>
+        <Text style={styles.link}>Go Home</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
-//       <Button title="Register" onPress={handleRegister} />
-//       <Button title="Back to Login" onPress={() => navigation.navigate('Login')} />
-//       <Button title="Back to Home" onPress={() => navigation.navigate('Home')} />
+export default RegisterScreen;
 
-
-//     </View>
-//   );
-// };
-
-// export default RegisterScreen;
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     padding: 30,
-//     justifyContent: 'center',
-//     backgroundColor: '#f9f9f9',
-//   },
-//   header: {
-//     fontSize: 28,
-//     fontWeight: 'bold',
-//     marginBottom: 32,
-//     textAlign: 'center',
-//   },
-//   input: {
-//     borderWidth: 1,
-//     borderColor: '#ccc',
-//     padding: 12,
-//     borderRadius: 6,
-//     marginBottom: 16,
-//     backgroundColor: '#fff',
-//   },
-//   link: {
-//     color: 'gray',
-//     textAlign: 'center',
-//     marginTop: 20,
-//   },
-// });
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 30,
+    backgroundColor: '#f9f9f9',
+  },
+  header: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 32,
+  },
+  button: {
+    backgroundColor: '#DB4437', // Google Red
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginBottom: 25,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  link: {
+    color: 'gray',
+    fontSize: 14,
+    textAlign: 'center',
+  },
+});

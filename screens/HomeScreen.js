@@ -13,7 +13,7 @@ const HomeScreen = ({ navigation }) => {
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('EmailLogin')}>
-        <Text style={styles.buttonText}>Verify Email</Text>
+        <Text style={styles.buttonText}>Email Login</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('MoreInfo')}>

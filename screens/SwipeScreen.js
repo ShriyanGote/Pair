@@ -5,45 +5,65 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getPotentialMatches, sendSwipe } from '../utils/api';
 
 const SwipeScreen = () => {
-  const [userCards, setUserCards] = useState([]);
+  const [discoverList, setDiscoverList] = useState([]);
+  const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState([]);
 
-  const loadData = async () => {
+
+  
+  // Load recommendations
+  const loadRecommendations = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
       const res = await getPotentialMatches(token);
-      setUserCards(res.data);
-    } catch (error) {
-      console.error('Error loading users:', error);
-      Alert.alert('Error', 'Could not load potential matches');
+      setDiscoverList(res.data);
+      setIndex(0);
+    } catch (err) {
+      console.error('Failed to load matches:', err);
+      Alert.alert('Error', 'Could not load matches.');
     } finally {
-      setLoading(false);
+      setLoading(false); // ✅ This was missing
     }
   };
-
-  const handleSwipe = async (index, direction) => {
+  
+  
+  // Handle swipe
+  const handleSwipe = async (swipedIndex, direction) => {
+    const user = discoverList[swipedIndex];
     const token = await AsyncStorage.getItem('token');
-    const swipee = userCards[index];
-
-    try {
-      const res = await sendSwipe(swipee.id, direction, token);
-      if (res.data.matched) {
-        Alert.alert("💘 It's a Match!", `You and ${swipee.name} like each other!`);
-      }
-    } catch (error) {
-      console.error('Swipe error:', error.response?.data || error.message);
+  
+    if (direction === 'right') {
+      await sendSwipe(user.id, 'right', token);
+    } else {
+      await sendSwipe(user.id, 'left', token);
+    }
+  
+    const nextIndex = swipedIndex + 1;
+    if (nextIndex >= discoverList.length) {
+      setLoading(true);
+      await loadRecommendations(); // loop again
+    } else {
+      setIndex(nextIndex);
     }
   };
-
+  
+  
   useEffect(() => {
-    loadData();
+    loadRecommendations();
   }, []);
+  
 
   if (loading) {
-    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" />
+        <Text>Loading potential matches...</Text>
+      </View>
+    );
   }
 
-  if (userCards.length === 0) {
+  if (discoverList.length === 0) {
     return (
       <View style={styles.center}>
         <Text style={styles.noMoreText}>No more users to swipe on 😢</Text>
@@ -54,7 +74,7 @@ const SwipeScreen = () => {
   return (
     <View style={styles.container}>
       <Swiper
-        cards={userCards}
+        cards={discoverList}
         renderCard={(user) => (
           <View style={styles.card}>
             <Image
