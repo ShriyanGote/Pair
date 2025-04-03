@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, Text, Alert, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { navigationRef } from '../navigation/navigationRef';
+import { API_BASE_URL } from '@env';
 
 const EmailVerificationScreen = () => {
   const [email, setEmail] = useState('');
@@ -21,7 +22,7 @@ const EmailVerificationScreen = () => {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/send-code', {
+      const response = await fetch(`${API_BASE_URL}/send-code`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -53,7 +54,7 @@ const EmailVerificationScreen = () => {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/verify-code', {
+      const response = await fetch(`${API_BASE_URL}/verify-code`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, code }),
@@ -80,7 +81,7 @@ const EmailVerificationScreen = () => {
   const handleGoogleLogin = () => {
     // fallback option
     Alert.alert('Redirecting', 'Opening Google login...');
-    Linking.openURL('http://localhost:8000/auth/google/login');
+    Linking.openURL(`${API_BASE_URL}/auth/google/login`);
   };
 
   return (

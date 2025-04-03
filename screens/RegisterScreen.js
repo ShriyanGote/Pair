@@ -1,16 +1,26 @@
 // screens/LoginScreen.js
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Linking, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_BASE_URL } from '@env';
 
-const RegisterScreen = ({ navigation }) => {
+
+const RegisterScreen = ({ navigation, route }) => {
+  const [profileType, setProfileType] = useState('uno');
+
   useEffect(() => {
     navigation.setOptions({ headerLeft: () => null });
-  }, [navigation]);
+    if (route.params?.profileType) {
+      setProfileType(route.params.profileType); // upadated
+    }
+  }, [navigation, route.params?.profileType]);
+
+
 
   const handleGoogleLogin = async () => {
     try {
-      const url = 'http://localhost:8000/auth/google/login';
+      const url = `${API_BASE_URL}/auth/google/login?profile_type=${profileType}`;
       const supported = await Linking.canOpenURL(url);
       if (supported) {
         await Linking.openURL(url);
@@ -29,6 +39,10 @@ const RegisterScreen = ({ navigation }) => {
         routes: [{ name: 'Home' }],
       });
   };
+
+
+
+
 
   return (
     <View style={styles.container}>

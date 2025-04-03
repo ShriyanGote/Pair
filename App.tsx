@@ -6,6 +6,8 @@ import 'react-native-url-polyfill/auto'; // <-- ensures `URL` works on React Nat
 import { navigationRef } from './navigation/navigationRef';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getCurrentUser } from './utils/api'; // at the top of App.tsx
+import 'react-native-get-random-values';
+
 
 
 

@@ -6,7 +6,7 @@ import HomeScreen from '../screens/HomeScreen';
 import EmailLoginScreen from '../screens/EmailVerificationScreen';
 import MainTabNavigator from './MainTabNavigator';
 import ProfileScreen from '../screens/ProfileScreen';
-
+import ProfileTypeScreen from '../screens/ProfileTypeScreen';
 
 
 
@@ -17,7 +17,8 @@ const AuthStack = () => {
   return (
     <Stack.Navigator initialRouteName="Home">
       <Stack.Screen name="Home" component={HomeScreen} /> 
-      <Stack.Screen name="Login" component={RegisterScreen} />
+      <Stack.Screen name="ProfileType" component={ProfileTypeScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="EmailLogin" component={EmailLoginScreen} /> 
       {/* <Stack.Screen name="Profile" component={ProfileScreen} /> 
       <Stack.Screen name="Swipe" component={SwipeScreen} /> */}

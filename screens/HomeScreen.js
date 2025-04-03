@@ -8,7 +8,7 @@ const HomeScreen = ({ navigation }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to Pairs</Text>
 
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ProfileType')}>
         <Text style={styles.buttonText}>Register with Google</Text>
       </TouchableOpacity>
 

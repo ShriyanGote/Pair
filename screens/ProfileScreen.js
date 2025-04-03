@@ -17,6 +17,11 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import * as ImagePicker from 'expo-image-picker';
 import { getCurrentUser, updateUser, uploadProfilePhoto } from '../utils/api';
 import { useNavigation } from '@react-navigation/native'; // ✅ Add this at the top
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { GOOGLE_API_KEY } from '@env';
+
+
 
 
 const ProfileScreen = () => {
@@ -36,6 +41,15 @@ const ProfileScreen = () => {
   // Height dropdown
   const [heightOpen, setHeightOpen] = useState(false);
   const [heightItems, setHeightItems] = useState([]);
+
+  // Type profile
+  const [profileTypeOpen, setProfileTypeOpen] = useState(false);
+  const [profileTypeItems, setProfileTypeItems] = useState([
+    { label: '🧍 Uno', value: 'uno' },
+    { label: '🧑‍🤝‍🧑 Duo', value: 'duo' },
+    { label: '👯 Group', value: 'group' },
+  ]);
+
 
   const fetchUser = async () => {
     try {
@@ -118,105 +132,142 @@ const ProfileScreen = () => {
   if (!userInfo) return <ActivityIndicator style={{ flex: 1 }} size="large" />;
 
   return (
-    <KeyboardAvoidingView
+      <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
-    >
-      <ScrollView contentContainerStyle={styles.container}>
+      style={{ flex: 1 }}>
+    <KeyboardAwareScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.profileType}>
+        {userInfo.profile_type === 'uno' && '🧍 Uno'}
+        {userInfo.profile_type === 'duo' && '🧑‍🤝‍🧑 Duo'}
+        {userInfo.profile_type === 'group' && '👯 Group'}
+      </Text>
+
+      {userInfo.profile_photo ? (
         <Image
-          source={{
-            uri: userInfo.profile_photo || 'https://placekitten.com/300/300',
-          }}
+          source={{ uri: userInfo.profile_photo }}
           style={styles.avatar}
         />
-        <TouchableOpacity onPress={handleImagePick}>
-          <Text style={styles.link}>
-            {editing ? 'Change Profile Picture' : 'Upload Profile Picture'}
-          </Text>
-        </TouchableOpacity>
-
-        <TextInput
-          style={styles.input}
-          placeholder="Name"
-          value={userInfo.name || ''}
-          onChangeText={(value) => handleChange('name', value)}
-          editable={editing}
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Age"
-          value={userInfo.age?.toString() || ''}
-          onChangeText={(value) => handleChange('age', value)}
-          editable={editing}
-          keyboardType="numeric"
-        />
-
+      ) : (
+        <View style={styles.placeholderAvatar}>
+          <Text style={{ fontSize: 40 }}>👤</Text>
+        </View>
+      )}
+      {editing && (
         <DropDownPicker
-          open={genderOpen}
-          setOpen={setGenderOpen}
-          items={genderItems}
-          setItems={setGenderItems}
-          value={userInfo.gender}
-          setValue={(cb) => handleChange('gender', cb())}
-          disabled={!editing}
-          placeholder="Select Gender"
+          open={profileTypeOpen}
+          setOpen={setProfileTypeOpen}
+          items={profileTypeItems}
+          setItems={setProfileTypeItems}
+          value={userInfo.profile_type}
+          setValue={(cb) => handleChange('profile_type', cb())}
+          placeholder="Select Profile Type"
           style={styles.dropdown}
           dropDownContainerStyle={styles.dropdownContainer}
-        />
+          />
+      )}
 
+      <TouchableOpacity onPress={handleImagePick}>
+        <Text style={styles.link}>
+          {editing ? 'Change Profile Picture' : 'Upload Profile Picture'}
+        </Text>
+      </TouchableOpacity>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Name"
+        value={userInfo.name || ''}
+        onChangeText={(value) => handleChange('name', value)}
+        editable={editing}
+      />
+
+      <TextInput
+        style={styles.input}
+        placeholder="Age"
+        value={userInfo.age?.toString() || ''}
+        onChangeText={(value) => handleChange('age', value)}
+        editable={editing}
+        keyboardType="numeric"
+      />
+
+      <DropDownPicker
+        open={genderOpen}
+        setOpen={setGenderOpen}
+        items={genderItems}
+        setItems={setGenderItems}
+        value={userInfo.gender}
+        setValue={(cb) => handleChange('gender', cb())}
+        disabled={!editing}
+        placeholder="Select Gender"
+        style={styles.dropdown}
+        dropDownContainerStyle={styles.dropdownContainer}
+      />
+
+      {editing ? (
+        <GooglePlacesAutocomplete
+          placeholder="Search for location"
+          minLength={2}
+          fetchDetails={true}
+          onPress={(data) => {
+            handleChange('location', data.description);
+          }}
+          query={{
+            key: GOOGLE_API_KEY,
+            language: 'en',
+          }}
+          styles={{
+            textInput: styles.input,
+          }}
+        />
+      ) : (
         <TextInput
           style={styles.input}
           placeholder="Location"
           value={userInfo.location || ''}
-          onChangeText={(value) => handleChange('location', value)}
-          editable={editing}
+          editable={false}
         />
+      )}
 
-        <DropDownPicker
-          zIndex={3000}
-          zIndexInverse={1000}
-          open={heightOpen}
-          setOpen={setHeightOpen}
-          items={heightItems}
-          setItems={setHeightItems}
-          value={userInfo.height}
-          setValue={(cb) => handleChange('height', cb())}
-          disabled={!editing}
-          placeholder="Select Height"
-          style={styles.dropdown}
-          dropDownContainerStyle={styles.dropdownContainer}
-        />
+      <DropDownPicker
+        zIndex={3000}
+        zIndexInverse={1000}
+        open={heightOpen}
+        setOpen={setHeightOpen}
+        items={heightItems}
+        setItems={setHeightItems}
+        value={userInfo.height}
+        setValue={(cb) => handleChange('height', cb())}
+        disabled={!editing}
+        placeholder="Select Height"
+        style={styles.dropdown}
+        dropDownContainerStyle={styles.dropdownContainer}
+      />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Bio"
-          value={userInfo.bio || ''}
-          onChangeText={(value) => handleChange('bio', value)}
-          editable={editing}
-          multiline
-        />
+      <TextInput
+        style={styles.input}
+        placeholder="Bio"
+        value={userInfo.bio || ''}
+        onChangeText={(value) => handleChange('bio', value)}
+        editable={editing}
+        multiline
+      />
 
-        {editing ? (
-          <TouchableOpacity onPress={handleSave}>
-            <Text style={styles.link}>Save</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity onPress={() => setEditing(true)}>
-            <Text style={styles.link}>Edit</Text>
-          </TouchableOpacity>
-        )}
-
-        <TouchableOpacity onPress={handleLogout}>
-          <Text style={styles.logout}>Logout</Text>
+      {editing ? (
+        <TouchableOpacity onPress={handleSave}>
+          <Text style={styles.link}>Save</Text>
         </TouchableOpacity>
+      ) : (
+        <TouchableOpacity onPress={() => setEditing(true)}>
+          <Text style={styles.link}>Edit</Text>
+        </TouchableOpacity>
+      )}
 
-        {/* <TouchableOpacity onPress={() => navigation.navigate('Swipe')}>
-          <Text style={styles.logout}>Start Swiping</Text>
-        </TouchableOpacity> */}
-      </ScrollView>
-    </KeyboardAvoidingView>
-  );
+      <TouchableOpacity onPress={handleLogout}>
+        <Text style={styles.logout}>Logout</Text>
+      </TouchableOpacity>
+    </KeyboardAwareScrollView>
+  </KeyboardAvoidingView>
+
+  );  
 };
 
 export default ProfileScreen;
@@ -266,4 +317,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
   },
+  profileType: {
+    fontSize: 18,
+    textAlign: 'center',
+    marginBottom: 10,
+    fontWeight: '600',
+  },
+  
+  placeholderAvatar: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: '#ddd',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },  
 });

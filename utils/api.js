@@ -1,7 +1,8 @@
 // utils/api.js
 import axios from 'axios';
+import { API_BASE_URL } from '@env';
 
-export const API_URL = 'http://localhost:8000';
+export const API_URL = API_BASE_URL;
 
 
 export const register = (data) => axios.post(`${API_URL}/register`, data);
