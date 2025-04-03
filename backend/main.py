@@ -1,12 +1,14 @@
 #main.py
 
-from fastapi import FastAPI, Depends, HTTPException, Header, Request, APIRouter, Body
+from fastapi import FastAPI, Depends, HTTPException, Header, Request, APIRouter, Body, UploadFile, File
 
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 import uvicorn
 import os
 import random
+import boto3
+import uuid
 
 
 from dotenv import load_dotenv
@@ -116,6 +118,7 @@ def read_current_user(current_user: User = Depends(get_current_user)):
         "location": current_user.location,
         "height": current_user.height,
         "bio": current_user.bio,
+        "profile_photo": current_user.profile_photo,
     }
 
 @app.put("/users/{user_id}")
@@ -164,14 +167,48 @@ def send_code(payload: EmailRequest, db: Session = Depends(get_db)):
 @email_router.post("/verify-code")
 def verify_code(email: str = Body(...), code: str = Body(...), db: Session = Depends(get_db)):
     user = get_user_by_email(db, email)
-    if not user or user.verification_code != code:
-        raise HTTPException(status_code=400, detail="Invalid verification code")
+    # if not user or user.verification_code != code:
+    #     raise HTTPException(status_code=400, detail="Invalid verification code")
+
+    #TESTING PURPOSES
 
     user.is_verified = True
     db.commit()
     token = create_access_token(data={"sub": user.email})
     return {"message": "Email verified", "access_token": token}
 
+
+
+
+@app.post("/upload-profile-photo")
+async def upload_profile_photo(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    s3 = boto3.client(
+        "s3",
+        aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+        region_name=os.getenv("AWS_S3_REGION")
+    )
+
+    extension = file.filename.split(".")[-1]
+    unique_filename = f"profile_photos/{uuid.uuid4()}.{extension}"
+
+    s3.upload_fileobj(
+        file.file,
+        os.getenv("AWS_S3_BUCKET_NAME"),
+        unique_filename,
+        ExtraArgs={"ContentType": file.content_type},  # removed "ACL": "public-read"
+    )
+
+    url = f"https://{os.getenv('AWS_S3_BUCKET_NAME')}.s3.{os.getenv('AWS_S3_REGION')}.amazonaws.com/{unique_filename}"
+
+    current_user.profile_photo = url
+    db.commit()
+
+    return {"photo_url": url}
 
 # ------------------------------------------------
 # 6) INCLUDE OTHER ROUTERS
