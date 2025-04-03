@@ -3,11 +3,9 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import RegisterScreen from '../screens/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen'; 
-import ProfileScreen from '../screens/ProfileScreen';
-import SwipeScreen from '../screens/SwipeScreen';
 import EmailLoginScreen from '../screens/EmailVerificationScreen';
 import MainTabNavigator from './MainTabNavigator';
-import EditProfileScreen from '../screens/EditProfileScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
 
 
@@ -24,7 +22,7 @@ const AuthStack = () => {
       {/* <Stack.Screen name="Profile" component={ProfileScreen} /> 
       <Stack.Screen name="Swipe" component={SwipeScreen} /> */}
       <Stack.Screen name="MainTabs" component={MainTabNavigator} options={{ headerShown: false }} />
-      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+      <Stack.Screen name="EditProfile" component={ProfileScreen} />
       
 
     </Stack.Navigator>

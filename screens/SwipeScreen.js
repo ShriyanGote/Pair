@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Alert, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import Swiper from 'react-native-deck-swiper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getPotentialMatches, sendSwipe } from '../utils/api';
+import { getPotentialMatches, sendSwipe, getMatches } from '../utils/api';
 
 const SwipeScreen = () => {
   const [discoverList, setDiscoverList] = useState([]);
@@ -29,24 +29,43 @@ const SwipeScreen = () => {
   
   
   // Handle swipe
-  const handleSwipe = async (swipedIndex, direction) => {
-    const user = discoverList[swipedIndex];
+  const handleSwipe = async (index, direction) => {
     const token = await AsyncStorage.getItem('token');
+    const user = discoverList[index];
   
-    if (direction === 'right') {
-      await sendSwipe(user.id, 'right', token);
-    } else {
-      await sendSwipe(user.id, 'left', token);
-    }
+    console.log(`[SWIPE] User: ${user?.name}, ID: ${user?.id}, Direction: ${direction}`);
   
-    const nextIndex = swipedIndex + 1;
-    if (nextIndex >= discoverList.length) {
-      setLoading(true);
-      await loadRecommendations(); // loop again
-    } else {
-      setIndex(nextIndex);
+    try {
+      await sendSwipe(user.id, direction, token);
+  
+      if (direction === 'right') {
+        // Check for match
+        const res = await getMatches(token);
+        const match = res.data.find((m) => m.id === user.id);
+        if (match) {
+          Alert.alert('✨ It’s a Match!', `You and ${user.name} have matched!`);
+        }
+  
+        const newList = discoverList.filter((u) => u.id !== user.id);
+        setDiscoverList(newList);
+        setIndex(0);
+      } else {
+        const nextIndex = index + 1;
+        if (nextIndex >= discoverList.length) {
+          setIndex(0);
+        } else {
+          setIndex(nextIndex);
+        }
+      }
+    } catch (err) {
+      console.error('[SWIPE ERROR]', err);
+      Alert.alert('Swipe failed', 'Something went wrong');
     }
   };
+  
+  
+  
+  
   
   
   useEffect(() => {
