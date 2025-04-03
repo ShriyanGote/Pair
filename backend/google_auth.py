@@ -10,7 +10,7 @@ from crud import get_user_by_email, create_user
 from auth import create_access_token
 from google.oauth2 import id_token
 from google.auth.transport import requests
-
+from urllib.parse import urlencode
 router = APIRouter()
 
 def get_db():
@@ -34,7 +34,9 @@ SCOPES = [
 ]
 
 @router.get("/auth/google/login")
-def login_with_google():
+def login_with_google(request: Request):
+    profile_type = request.query_params.get("profile_type", "uno")  # default to uno
+
     flow = Flow.from_client_config(
         {
             "web": {
@@ -48,12 +50,20 @@ def login_with_google():
         scopes=SCOPES,
     )
     flow.redirect_uri = REDIRECT_URI
-    authorization_url, _ = flow.authorization_url(prompt="consent", include_granted_scopes="true")
+
+    # 👇 pass profile_type in state
+    authorization_url, state = flow.authorization_url(
+        prompt="consent",
+        include_granted_scopes="true",
+        state=profile_type
+    )
     return RedirectResponse(url=authorization_url)
 
 @router.get("/auth/google/callback")
 def google_auth_callback(request: Request, db: Session = Depends(get_db)):
     code = request.query_params.get("code")
+    profile_type = request.query_params.get("state", "uno")  # recover it from state param
+
     if not code:
         return JSONResponse({"error": "No code provided"}, status_code=400)
 
@@ -83,13 +93,9 @@ def google_auth_callback(request: Request, db: Session = Depends(get_db)):
 
     user = get_user_by_email(db, email)
     if not user:
-        user = create_user(db, name=name, email=email, password="")
+        user = create_user(db, name=name, email=email, password="", profile_type=profile_type)
 
     token = create_access_token(data={"sub": user.email})
-    print(f"Redirecting to deep link: pairs://auth/success?token={token}")
-    # return RedirectResponse(url=f"pairs://auth/success?token={token}")
+
+    # for dev/testing, redirect back to your app or mobile deep link
     return RedirectResponse(url=f"http://localhost:8000/?token={token}")
-
-
-
-

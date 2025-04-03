@@ -16,10 +16,11 @@ load_dotenv()
 
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from model import User, UserCreate, UserLogin, UserUpdate, EmailRequest, Swipe
+from model import User, UserCreate, UserLogin, UserUpdate, EmailRequest, Swipe, GroupMember
 from crud import create_user, get_user_by_email, verify_password
 from auth import create_access_token, decode_access_token
 from datetime import timedelta
+from typing import Optional
 
 from swipe_routes import router as swipe_router
 from google_auth import router as auth_router
@@ -94,8 +95,9 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     existing = get_user_by_email(db, user.email)
     if existing:
         return {"error": "User already exists"}
-    new_user = create_user(db, name=user.name, email=user.email, password=user.password)
+    new_user = create_user(db, name=user.name, email=user.email, password=user.password, profile_type=user.profile_type)
     return {"message": f"User {new_user.name} registered!"}
+
 
 @app.post("/login")
 def login(user: UserLogin, db: Session = Depends(get_db)):
@@ -121,6 +123,7 @@ def read_current_user(current_user: User = Depends(get_current_user)):
         "profile_photo": current_user.profile_photo,
     }
 
+# Update profile editing
 @app.put("/users/{user_id}")
 def update_user_profile(user_id: int, updated_data: UserUpdate, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
@@ -129,16 +132,15 @@ def update_user_profile(user_id: int, updated_data: UserUpdate, db: Session = De
 
     user.name = updated_data.name
     user.email = updated_data.email
-    # if updated_data.password is set, we store hashed...
     if updated_data.password:
-        # adapt your logic for hashing password
         user.hashed_password = updated_data.password
 
     user.bio = updated_data.bio
     user.age = updated_data.age
-    user.gender = updated_data.gender 
+    user.gender = updated_data.gender
     user.location = updated_data.location
     user.height = updated_data.height
+    user.profile_type = updated_data.profile_type
 
     db.commit()
     db.refresh(user)
@@ -209,6 +211,43 @@ async def upload_profile_photo(
     db.commit()
 
     return {"photo_url": url}
+
+@app.post("/group-members")
+def add_group_member(
+    name: str = Body(...),
+    age: int = Body(...),
+    profile_photo: Optional[str] = Body(None),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if current_user.profile_type == "uno":
+        raise HTTPException(status_code=400, detail="User type is 'uno', cannot add group members")
+
+    new_member = GroupMember(
+        group_id=current_user.id,
+        name=name,
+        age=age,
+        profile_photo=profile_photo,
+    )
+    db.add(new_member)
+    db.commit()
+    db.refresh(new_member)
+    return {"message": "Group member added", "member": new_member}
+
+@app.get("/group-members")
+def get_group_members(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    if current_user.profile_type == "uno":
+        return []
+    return current_user.members
+
+@app.delete("/group-members/{member_id}")
+def delete_group_member(member_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    member = db.query(GroupMember).filter_by(id=member_id, group_id=current_user.id).first()
+    if not member:
+        raise HTTPException(status_code=404, detail="Group member not found")
+    db.delete(member)
+    db.commit()
+    return {"message": "Member deleted"}
 
 # ------------------------------------------------
 # 6) INCLUDE OTHER ROUTERS
