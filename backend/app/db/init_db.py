@@ -1,7 +1,7 @@
 # init_db.py
 
-from database import Base, engine
-from model import User, Swipe, Match
+from app.db.database import Base, engine
+from app.models.model import User, Swipe, Match
 
 print("Creating tables...")
 Base.metadata.drop_all(bind=engine)  #  Drop existing

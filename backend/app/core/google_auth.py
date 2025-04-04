@@ -4,10 +4,10 @@ from fastapi import APIRouter, Request, Depends
 from starlette.responses import RedirectResponse, JSONResponse
 from google_auth_oauthlib.flow import Flow
 from sqlalchemy.orm import Session
-from database import SessionLocal
-from model import User
-from crud import get_user_by_email, create_user
-from auth import create_access_token
+from app.db.database import SessionLocal
+from app.models.model import User
+from app.db.crud import get_user_by_email, create_user
+from app.core.auth import create_access_token
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from urllib.parse import urlencode

@@ -5,8 +5,8 @@ from sqlalchemy import Column, Integer, String, DateTime, func, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from pydantic import BaseModel, EmailStr, validator
-from database import Base
-from typing import Optional
+from app.db.database import Base
+from typing import Optional, List
 import re 
 
 
@@ -41,7 +41,7 @@ class Match(Base):
     __table_args__ = (UniqueConstraint("user1_id", "user2_id", name="unique_match"),)
 
 
-# base user (uno)
+# base user
 class User(Base):
     __tablename__ = "users"
 
@@ -53,16 +53,17 @@ class User(Base):
     # NEW FIELDS
     bio: Mapped[Optional[str]] = mapped_column(nullable=True)
     interests: Mapped[Optional[str]] = mapped_column(nullable=True)
+    looking_for: Mapped[Optional[str]] = mapped_column(nullable=True)  # ← Add this line!
     age: Mapped[Optional[int]] = mapped_column(nullable=True)
     gender: Mapped[Optional[str]] = mapped_column(nullable=True)
     location: Mapped[Optional[str]] = mapped_column(nullable=True)
     profile_photo: Mapped[Optional[str]] = mapped_column(nullable=True)
     height: Mapped[Optional[float]] = mapped_column(nullable=True)
-    profile_type: Mapped[str] = mapped_column(default="uno")  # uno, duo, group
+    profile_type: Mapped[str] = mapped_column(default="uno")
     
-    #code verification
     is_verified: Mapped[bool] = mapped_column(default=False)
     verification_code: Mapped[Optional[str]] = mapped_column(nullable=True)
+
 
 # base user (group / duo)
 class GroupMember(Base):
@@ -73,8 +74,23 @@ class GroupMember(Base):
     name = Column(String)
     age = Column(Integer)
     profile_photo = Column(String, nullable=True)
+    height = Column(Integer, nullable=True)  # 
 
     group = relationship("User", backref="members")
+
+
+
+class GroupMemberInput(BaseModel):
+    name: str
+    age: int
+    height: Optional[float] = None
+    profile_photo: Optional[str] = None
+
+class DuoProfileInput(BaseModel):
+    location: str
+    interests: str
+    looking_for: str
+    members: List[GroupMemberInput]
 
 
 

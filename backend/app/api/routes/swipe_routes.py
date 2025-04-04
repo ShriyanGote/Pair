@@ -1,9 +1,9 @@
 # swipe_routes.py
 from fastapi import APIRouter, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
-from model import Swipe, Match, User
-from database import SessionLocal
-from auth import decode_access_token
+from app.models.model import Swipe, Match, User
+from app.db.database import SessionLocal
+from app.core.auth import decode_access_token
 from sqlalchemy import and_, or_
 from sqlalchemy import select
 
