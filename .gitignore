@@ -73,3 +73,37 @@ yarn-error.log
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+# React Native
+node_modules/
+npm-debug.log
+yarn-error.log
+ios/build/
+android/app/build/
+*.keystore
+
+# macOS
+.DS_Store
+
+# Watchman
+.watchmanconfig
+
+# VSCode
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+*.env
+.env
+*.sqlite3
+*.log
+
+# pipenv / poetry / venv
+Pipfile.lock
+poetry.lock
+venv/
+.env/
+
+# Others
+*.swp
+.env
