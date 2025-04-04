@@ -19,7 +19,6 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, 
 
 # Include all routers
 app.include_router(user_router)
-# app.include_router(auth_router)
 app.include_router(swipe_router)
 app.include_router(duo_router)
 app.include_router(group_router)

@@ -1,9 +1,13 @@
+#group_routes.py
+
 from fastapi import APIRouter, Depends, HTTPException, Body, Header
 from sqlalchemy.orm import Session
 from app.db.database import SessionLocal
 from app.models.model import User, GroupMember
 from app.core.auth import decode_access_token
 from typing import Optional
+from app.models.model import DuoProfileInput
+
 
 router = APIRouter()
 
@@ -56,3 +60,56 @@ def delete_group_member(member_id: int, current_user: User = Depends(get_current
     db.delete(member)
     db.commit()
     return {"message": "Member deleted"}
+
+
+
+
+@router.post("/group-profile")
+def create_group_profile(
+    profile_data: DuoProfileInput,  # same as used for duo
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if len(profile_data.members) < 3 or len(profile_data.members) > 6:
+        raise HTTPException(status_code=400, detail="Group must have 3 to 6 members.")
+
+    current_user.profile_type = "group"
+    current_user.location = profile_data.location
+    current_user.interests = profile_data.interests
+    current_user.looking_for = profile_data.looking_for
+    db.add(current_user)
+
+    for member in profile_data.members:
+        new_member = GroupMember(
+            group_id=current_user.id,
+            name=member.name,
+            age=member.age,
+            height=member.height,
+            profile_photo=member.profile_photo
+        )
+        db.add(new_member)
+
+    db.commit()
+    return {"message": "Group profile created successfully"}
+
+@router.put("/group-profile")
+def update_group_profile(
+    data: dict = Body(...),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.profile_type != "group":
+        raise HTTPException(status_code=400, detail="Only group profiles can be edited here.")
+
+    current_user.location = data.get("location", current_user.location)
+    current_user.interests = data.get("interests", current_user.interests)
+    current_user.looking_for = data.get("looking_for", current_user.looking_for)
+
+    db.commit()
+    db.refresh(current_user)
+
+    return {"message": "Group profile updated", "user": {
+        "location": current_user.location,
+        "interests": current_user.interests,
+        "looking_for": current_user.looking_for
+    }}
