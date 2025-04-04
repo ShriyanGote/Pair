@@ -2,14 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ProfileScreen from '../screens/Profile/ProfileScreen';
 import MatchesScreen from '../screens/Matches/MatchesScreen';
+import SwipeScreen from '../screens/Swipe/SwipeScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getCurrentUser } from '../utils/api';
-import DuoProfileScreen from '../screens/Duo/DuoProfileScreen';
-import DuoStack from './DuoStack'; // <-- ADD THIS
-
-
+import DuoStack from './DuoStack';
+import GroupStack from './GroupStack';
 import { useFocusEffect } from '@react-navigation/native';
-import SwipeScreen from '../screens/Swipe/SwipeScreen';
+
 const Tab = createBottomTabNavigator();
 
 const MainTabNavigator = () => {
@@ -36,16 +35,22 @@ const MainTabNavigator = () => {
     }, [])
   );
 
+  const renderProfileTab = () => {
+    if (user?.profile_type === 'duo') {
+      return <DuoStack />;
+    } else if (user?.profile_type === 'group') {
+      return <GroupStack />;
+    } else {
+      return <ProfileScreen user={user} />;
+    }
+  };
+
   return (
     <Tab.Navigator>
-      <Tab.Screen name="Discover" component={SwipeScreen} options={{ headerShown: true }}/>
+      <Tab.Screen name="Discover" component={SwipeScreen} options={{ headerShown: true }} />
       <Tab.Screen name="Matches" component={MatchesScreen} />
       <Tab.Screen name="Profile" options={{ headerShown: true }}>
-        {() =>
-          user?.profile_type === 'duo'
-            ? <DuoStack />               // <-- use DuoStack here
-            : <ProfileScreen user={user} />
-        }
+        {renderProfileTab}
       </Tab.Screen>
     </Tab.Navigator>
   );
