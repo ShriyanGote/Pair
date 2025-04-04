@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Alert, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import Swiper from 'react-native-deck-swiper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getPotentialMatches, sendSwipe, getMatches } from '../utils/api';
+import { getPotentialMatches, sendSwipe, getMatches } from '../../utils/api';
 
 const SwipeScreen = () => {
   const [discoverList, setDiscoverList] = useState([]);

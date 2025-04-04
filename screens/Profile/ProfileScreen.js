@@ -15,7 +15,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DropDownPicker from 'react-native-dropdown-picker';
 import * as ImagePicker from 'expo-image-picker';
-import { getCurrentUser, updateUser, uploadProfilePhoto } from '../utils/api';
+import { getCurrentUser, updateUser, uploadProfilePhoto } from '../../utils/api';
 import { useNavigation } from '@react-navigation/native'; // ✅ Add this at the top
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -152,7 +152,7 @@ const ProfileScreen = () => {
           <Text style={{ fontSize: 40 }}>👤</Text>
         </View>
       )}
-      {editing && (
+      {/* {editing && (
         <DropDownPicker
           open={profileTypeOpen}
           setOpen={setProfileTypeOpen}
@@ -164,7 +164,7 @@ const ProfileScreen = () => {
           style={styles.dropdown}
           dropDownContainerStyle={styles.dropdownContainer}
           />
-      )}
+      )} */}
 
       <TouchableOpacity onPress={handleImagePick}>
         <Text style={styles.link}>
@@ -261,9 +261,23 @@ const ProfileScreen = () => {
         </TouchableOpacity>
       )}
 
-      <TouchableOpacity onPress={handleLogout}>
-        <Text style={styles.logout}>Logout</Text>
+      {/* change profile type */}
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('EditProfileType', {
+            currentType: userInfo.profile_type,
+          })
+        }>
+        <Text style={styles.link}>Change Profile Type</Text>
       </TouchableOpacity>
+
+      <>
+        <TouchableOpacity onPress={handleLogout}>
+          <Text style={styles.logout}>Logout</Text>
+        </TouchableOpacity>
+      </>
+
+
     </KeyboardAwareScrollView>
   </KeyboardAvoidingView>
 

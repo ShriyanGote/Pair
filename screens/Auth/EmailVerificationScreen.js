@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, Alert, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { navigationRef } from '../navigation/navigationRef';
+import { navigationRef } from '../../navigation/navigationRef';
 import { API_BASE_URL } from '@env';
 
 const EmailVerificationScreen = () => {

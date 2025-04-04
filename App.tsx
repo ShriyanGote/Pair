@@ -57,7 +57,6 @@ useEffect(() => {
     
     <NavigationContainer linking={linking} ref={navigationRef}>
       <AuthStack />
-      
     </NavigationContainer>
   );
 }
