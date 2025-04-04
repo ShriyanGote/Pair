@@ -24,7 +24,7 @@ const EditProfileType = ({ route, navigation }) => {
 
     Alert.alert(
       'Confirm Change',
-      `Switching to '${selected}' will remove any existing duo or group members. Are you sure?`,
+      `Switching to '${selected}' will remove any existing members/account information. Are you sure?`,
       [
         { text: 'Cancel', style: 'cancel' },
         {
