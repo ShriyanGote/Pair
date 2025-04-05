@@ -23,13 +23,9 @@
 #include <folly/Portability.h>
 #include <folly/synchronization/SmallLocks.h>
 
-#if FOLLY_X64 || FOLLY_PPC64 || FOLLY_AARCH64
-#define FOLLY_HAS_PACKED_SYNC_PTR 1
-#else
-#define FOLLY_HAS_PACKED_SYNC_PTR 0
+#if !FOLLY_X64 && !FOLLY_PPC64 && !FOLLY_AARCH64
+#error "PackedSyncPtr is x64, ppc64 or aarch64 specific code."
 #endif
-
-#if FOLLY_HAS_PACKED_SYNC_PTR
 
 /*
  * An 8-byte pointer with an integrated spin lock and 15-bit integer
@@ -56,6 +52,9 @@
  * TODO(jdelong): should we use the low order bit for the lock, so we
  * get a whole 16-bits for our integer?  (There's also 2 more bits
  * down there if the pointer comes from malloc.)
+ *
+ * @author Spencer Ahrens <sahrens@fb.com>
+ * @author Jordan DeLong <delong.j@fb.com>
  */
 
 namespace folly {
@@ -132,7 +131,7 @@ class PackedSyncPtr {
 
  private:
   PicoSpinLock<uintptr_t, 15> data_;
-};
+} FOLLY_PACK_ATTR;
 
 static_assert(
     std::is_standard_layout<PackedSyncPtr<void>>::value &&
@@ -148,7 +147,4 @@ std::ostream& operator<<(std::ostream& os, const PackedSyncPtr<T>& ptr) {
   os << "PackedSyncPtr(" << ptr.get() << ", " << ptr.extra() << ")";
   return os;
 }
-
 } // namespace folly
-
-#endif

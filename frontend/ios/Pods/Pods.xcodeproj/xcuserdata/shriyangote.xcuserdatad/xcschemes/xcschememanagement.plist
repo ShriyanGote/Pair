@@ -9,12 +9,87 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>EXConstants-EXConstants.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>EXConstants-ExpoConstants_privacy.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>EXConstants.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>EXImageLoader.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>EXJSONUtils.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>EXManifests.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>EXUpdatesInterface.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Expo.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>ExpoAsset.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>ExpoFileSystem-ExpoFileSystem_privacy.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>ExpoFileSystem.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>ExpoFont.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>ExpoImagePicker.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>ExpoKeepAwake.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>ExpoModulesCore.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>FBLazyVector.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-Pair.xcscheme</key>
+		<key>Pods-pair.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -149,11 +224,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>React-RCTFBReactNativeSpec.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>React-RCTFabric.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -279,11 +349,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>React-jsinspectortracing.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>React-jsitracing.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -295,6 +360,11 @@
 			<false/>
 		</dict>
 		<key>React-microtasksnativemodule.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>React-nativeconfig.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -349,11 +419,6 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>ReactAppDependencyProvider.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>ReactCodegen.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -384,7 +449,32 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>fast_float.xcscheme</key>
+		<key>expo-dev-client.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>expo-dev-launcher-EXDevLauncher.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>expo-dev-launcher.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>expo-dev-menu-EXDevMenu.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>expo-dev-menu-interface.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>expo-dev-menu.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -405,6 +495,11 @@
 			<false/>
 		</dict>
 		<key>hermes-engine.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>react-native-get-random-values.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

@@ -2,12 +2,13 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
 // Screens
-import GroupProfileScreen from '../screens/Group/GroupProfileScreen';
-import AddGroupMember from '../screens/Group/AddGroupMember';
-import GroupReviewScreen from '../screens/Group/GroupReviewScreen';
-import EditGroupShared from '../screens/Group/EditGroupShared';
-import EditGroupMember from '../screens/Group/EditGroupMember';
-import EditProfileType from '../screens/Profile/EditProfileType';
+import GroupProfileScreen from '../screens/Profile_Group/GroupProfileScreen';
+import AddGroupMember from '../screens/Profile_Group/AddGroupMember';
+import GroupReviewScreen from '../screens/Profile_Group/GroupReviewScreen';
+import EditGroupShared from '../screens/Profile_Group/EditGroupShared';
+import EditGroupMember from '../screens/Profile_Group/EditGroupMember';
+import EditProfileType from '../screens/Profile_Uno/EditProfileType';
+
 
 const Stack = createStackNavigator();
 

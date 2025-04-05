@@ -10,11 +10,11 @@
 
 #include <memory>
 #include <mutex>
-#include <string>
+#include <optional>
 #include <unordered_map>
 #include <vector>
 
-#if defined(__clang__) && (!defined(SWIG)) && defined(_LIBCPP_VERSION) && \
+#if defined(__clang__) && (!defined(SWIG)) && \
     defined(_LIBCPP_ENABLE_THREAD_SAFETY_ANNOTATIONS)
 #include <hermes/ThreadSafetyAnalysis.h>
 #else

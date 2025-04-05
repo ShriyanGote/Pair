@@ -26,6 +26,8 @@ namespace folly {
 
 /**
  * Maps files in memory (read-only).
+ *
+ * @author Tudor Bosman (tudorb@fb.com)
  */
 class MemoryMapping {
  public:

@@ -57,8 +57,11 @@ struct SimdSplitByCharImplToStrings {
 
 template <typename T>
 constexpr bool isSimdSplitSupportedStringViewType =
-    std::is_same<T, folly::StringPiece>::value ||
-    std::is_same<T, std::string_view>::value;
+    std::is_same<T, folly::StringPiece>::value
+#if FOLLY_HAS_STRING_VIEW
+    || std::is_same<T, std::string_view>::value
+#endif
+    ;
 
 template <typename T>
 constexpr bool isSimdSplitSupportedStringType =
@@ -135,7 +138,9 @@ simdSplitByChar(
 
 FOLLY_DETAIL_DECLARE_ALL_SIMD_SPLIT_OVERLOADS(folly::StringPiece)
 
+#if FOLLY_HAS_STRING_VIEW
 FOLLY_DETAIL_DECLARE_ALL_SIMD_SPLIT_OVERLOADS(std::string_view)
+#endif
 
 extern template struct SimdSplitByCharImplToStrings<std::vector<std::string>>;
 extern template struct SimdSplitByCharImplToStrings<

@@ -27,7 +27,7 @@ namespace {
 
 struct poison {};
 
-[[maybe_unused]] FOLLY_ERASE void memrchr(poison) noexcept {}
+FOLLY_MAYBE_UNUSED FOLLY_ERASE void memrchr(poison) noexcept {}
 
 } // namespace
 

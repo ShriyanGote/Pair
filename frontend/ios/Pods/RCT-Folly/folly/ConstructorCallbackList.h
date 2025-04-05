@@ -147,7 +147,7 @@ class ConstructorCallbackList {
  private:
   // use createGlobal to avoid races on shutdown
   struct GlobalStorage {
-    mutable folly::SharedMutex mutex_;
+    folly::SharedMutex mutex_;
     This::CallbackArray callbacks_{};
     std::atomic<size_t> numCallbacks_{0};
   };

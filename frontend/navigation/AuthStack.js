@@ -5,9 +5,9 @@ import RegisterScreen from '../screens/Auth/RegisterScreen';
 import HomeScreen from '../screens/Home/HomeScreen'; 
 import EmailLoginScreen from '../screens/Auth/EmailVerificationScreen';
 import MainTabNavigator from './MainTabNavigator';
-import ProfileScreen from '../screens/Profile/ProfileScreen';
-import ProfileTypeScreen from '../screens/Profile/ProfileTypeScreen';
-import EditProfileType from '../screens/Profile/EditProfileType'; // update path if needed
+import ProfileScreen from '../screens/Profile_Uno/ProfileScreen';
+import ProfileTypeScreen from '../screens/Profile_Uno/ProfileTypeScreen';
+import EditProfileType from '../screens/Profile_Uno/EditProfileType'; // update path if needed
 
 
 

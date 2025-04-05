@@ -1,13 +1,13 @@
 // navigation/DuoStack.tsx or DuoStack.js
 import React from 'react';
 // @ts-ignore
-import DuoProfileSetup from '../screens/Duo/DuoProfileScreen';
-import AddDuoMember from '../screens/Duo/AddDuoMember';
-import DuoReviewScreen from '../screens/Duo/DuoReviewScreen';
+import DuoProfileSetup from '../screens/Profile_Duo/DuoProfileScreen';
+import AddDuoMember from '../screens/Profile_Duo/AddDuoMember';
+import DuoReviewScreen from '../screens/Profile_Duo/DuoReviewScreen';
 import { createStackNavigator } from '@react-navigation/stack';
-import EditDuoShared from '../screens/Duo/EditDuoShared';
-import EditDuoMember from '../screens/Duo/EditDuoMember';
-import EditProfileType from '../screens/Profile/EditProfileType';
+import EditDuoShared from '../screens/Profile_Duo/EditDuoShared';
+import EditDuoMember from '../screens/Profile_Duo/EditDuoMember';
+import EditProfileType from '../screens/Profile_Uno/EditProfileType';
 
 
 const Stack = createStackNavigator();

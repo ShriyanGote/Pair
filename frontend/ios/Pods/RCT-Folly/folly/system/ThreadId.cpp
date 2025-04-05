@@ -27,7 +27,7 @@
 namespace folly {
 
 uint64_t getCurrentThreadID() {
-#if defined(__APPLE__)
+#if __APPLE__
   return uint64_t(pthread_mach_thread_np(pthread_self()));
 #elif defined(_WIN32)
   return uint64_t(GetCurrentThreadId());
@@ -39,7 +39,7 @@ uint64_t getCurrentThreadID() {
 namespace detail {
 
 uint64_t getOSThreadIDSlow() {
-#if defined(__APPLE__)
+#if __APPLE__
   uint64_t tid;
   pthread_threadid_np(nullptr, &tid);
   return tid;
@@ -62,7 +62,8 @@ namespace {
 
 struct CacheState {
   CacheState() {
-    AtFork::registerHandler(this, [] { return true; }, [] {}, [] { ++epoch; });
+    AtFork::registerHandler(
+        this, [] { return true; }, [] {}, [] { ++epoch; });
   }
   ~CacheState() { AtFork::unregisterHandler(this); }
 

@@ -36,6 +36,13 @@ export const getMatches = (token) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 
+  // Make sure deleteMatch is actually defined and exported:
+export const deleteMatch = async (userId, token) => {
+  return axios.delete(`${API_BASE_URL}/matches/${userId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
 export const uploadProfilePhoto = (formData, token) =>
   axios.post(`${API_URL}/upload-profile-photo`, formData, {
     headers: {

@@ -32,6 +32,11 @@
 
 #pragma once
 
+/*
+ * @author Keith Adams <kma@fb.com>
+ * @author Jordan DeLong <delong.j@fb.com>
+ */
+
 #include <array>
 #include <atomic>
 #include <cinttypes>
@@ -74,7 +79,7 @@ struct PicoSpinLock {
 
  public:
   static constexpr UIntType kLockBitMask_ = UIntType(1) << Bit;
-  alignas(atomic_ref<UIntType>::required_alignment) mutable UIntType lock_;
+  mutable UIntType lock_;
 
   /*
    * You must call this function before using this class, if you

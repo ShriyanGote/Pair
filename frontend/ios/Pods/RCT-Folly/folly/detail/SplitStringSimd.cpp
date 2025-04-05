@@ -28,7 +28,7 @@ template <typename Container>
 void SimdSplitByCharImpl<Container>::keepEmpty(
     char sep, folly::StringPiece what, Container& res) {
   PlatformSimdSplitByChar<
-      simd::detail::SimdPlatform<std::uint8_t>,
+      simd_detail::SimdCharPlatform,
       /*ignoreEmpty*/ false>{}(sep, what, res);
 }
 
@@ -36,7 +36,7 @@ template <typename Container>
 void SimdSplitByCharImpl<Container>::dropEmpty(
     char sep, folly::StringPiece what, Container& res) {
   PlatformSimdSplitByChar<
-      simd::detail::SimdPlatform<std::uint8_t>,
+      simd_detail::SimdCharPlatform,
       /*ignoreEmpty*/ true>{}(sep, what, res);
 }
 
@@ -44,7 +44,7 @@ template <typename Container>
 void SimdSplitByCharImplToStrings<Container>::keepEmpty(
     char sep, folly::StringPiece what, Container& res) {
   PlatformSimdSplitByChar<
-      simd::detail::SimdPlatform<std::uint8_t>,
+      simd_detail::SimdCharPlatform,
       /*ignoreEmpty*/ false>{}(sep, what, res);
 }
 
@@ -52,7 +52,7 @@ template <typename Container>
 void SimdSplitByCharImplToStrings<Container>::dropEmpty(
     char sep, folly::StringPiece what, Container& res) {
   PlatformSimdSplitByChar<
-      simd::detail::SimdPlatform<std::uint8_t>,
+      simd_detail::SimdCharPlatform,
       /*ignoreEmpty*/ true>{}(sep, what, res);
 }
 
@@ -72,7 +72,9 @@ void SimdSplitByCharImplToStrings<Container>::dropEmpty(
 
 FOLLY_DETAIL_DEFINE_ALL_SIMD_SPLIT_OVERLOADS(folly::StringPiece)
 
+#if FOLLY_HAS_STRING_VIEW
 FOLLY_DETAIL_DEFINE_ALL_SIMD_SPLIT_OVERLOADS(std::string_view)
+#endif
 
 #undef FOLLY_DETAIL_DEFINE_ALL_SIMD_SPLIT_OVERLOADS
 

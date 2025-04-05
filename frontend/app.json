@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "pair",       
+    "name": "pair",
     "slug": "pair",
+    "scheme": "pair",
     "version": "1.0.0",
     "sdkVersion": "52.0.0",
     "platforms": ["ios", "android"],

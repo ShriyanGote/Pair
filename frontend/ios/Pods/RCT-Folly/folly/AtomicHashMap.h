@@ -73,6 +73,10 @@
  *         95%             95%           0.27         0.10
  *
  *   See folly/tests/AtomicHashMapTest.cpp for more benchmarks.
+ *
+ * @author Spencer Ahrens <sahrens@fb.com>
+ * @author Jordan DeLong <delong.j@fb.com>
+ *
  */
 
 #pragma once

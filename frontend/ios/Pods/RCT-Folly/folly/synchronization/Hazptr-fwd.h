@@ -19,8 +19,6 @@
 #include <atomic>
 #include <memory>
 
-#include <folly/portability/Config.h>
-
 ///
 /// Forward declatations and implicit documentation of all hazptr
 /// top-level classes, functions, macros, default values, and globals.

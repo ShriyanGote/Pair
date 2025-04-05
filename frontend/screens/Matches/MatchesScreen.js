@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getMatches, deleteMatch } from '../../utils/api';
-
+import { getMatches, deleteMatch } from '../../utils/api'; 
 const MatchesScreen = () => {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);

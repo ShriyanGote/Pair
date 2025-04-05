@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import ProfileScreen from '../screens/Profile/ProfileScreen';
+import ProfileScreen from '../screens/Profile_Uno/ProfileScreen';
 import MatchesScreen from '../screens/Matches/MatchesScreen';
 import SwipeScreen from '../screens/Swipe/SwipeScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';

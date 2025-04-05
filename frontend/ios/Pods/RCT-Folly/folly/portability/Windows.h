@@ -100,9 +100,4 @@
 #undef Yield
 #endif
 
-// Defined in nb30.h
-#ifdef REGISTERED
-#undef REGISTERED
-#endif
-
 #endif

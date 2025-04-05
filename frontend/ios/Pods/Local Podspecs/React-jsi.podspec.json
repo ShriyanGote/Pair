@@ -1,6 +1,6 @@
 {
   "name": "React-jsi",
-  "version": "0.78.1",
+  "version": "0.76.8",
   "summary": "JavaScript Interface layer for React Native",
   "homepage": "https://reactnative.dev/",
   "license": "MIT",
@@ -10,26 +10,22 @@
   },
   "source": {
     "git": "https://github.com/facebook/react-native.git",
-    "tag": "v0.78.1"
+    "tag": "v0.76.8"
   },
   "header_dir": "jsi",
   "compiler_flags": "-DFOLLY_NO_CONFIG -DFOLLY_MOBILE=1 -DFOLLY_USE_LIBCPP=1 -DFOLLY_CFG_NO_COROUTINES=1 -DFOLLY_HAVE_CLOCK_GETTIME=1 -Wno-comma -Wno-shorten-64-to-32 -Wno-documentation",
   "pod_target_xcconfig": {
-    "HEADER_SEARCH_PATHS": "\"$(PODS_ROOT)/boost\" \"$(PODS_ROOT)/RCT-Folly\" \"$(PODS_ROOT)/DoubleConversion\" \"$(PODS_ROOT)/fast_float/include\" \"$(PODS_ROOT)/fmt/include\"",
-    "CLANG_CXX_LANGUAGE_STANDARD": "c++20",
+    "HEADER_SEARCH_PATHS": "\"$(PODS_ROOT)/boost\" \"$(PODS_ROOT)/RCT-Folly\" \"$(PODS_ROOT)/DoubleConversion\" \"$(PODS_ROOT)/fmt/include\"",
     "DEFINES_MODULE": "YES"
   },
   "dependencies": {
     "boost": [],
     "DoubleConversion": [],
-    "fast_float": [
-      "6.1.4"
-    ],
     "fmt": [
-      "11.0.2"
+      "9.1.0"
     ],
     "RCT-Folly": [
-      "2024.11.18.00"
+      "2024.01.01.00"
     ],
     "glog": [],
     "hermes-engine": []

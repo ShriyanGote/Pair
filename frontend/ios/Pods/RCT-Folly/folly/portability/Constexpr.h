@@ -23,6 +23,11 @@
 #include <cstring>
 #include <type_traits>
 
+// On MSVC an incorrect <version> header get's picked up
+#if !defined(_MSC_VER) && __has_include(<version>)
+#include <version>
+#endif
+
 namespace folly {
 
 namespace detail {

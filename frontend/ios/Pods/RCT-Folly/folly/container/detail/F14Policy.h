@@ -17,7 +17,6 @@
 #pragma once
 
 #include <memory>
-#include <new>
 #include <type_traits>
 #include <utility>
 
@@ -155,6 +154,17 @@ struct FOLLY_MSVC_DECLSPEC(empty_bases) BasePolicy
   struct AllocIsAlwaysEqual<A, typename A::is_always_equal>
       : A::is_always_equal {};
 
+  // Detection for folly_assume_32bit_hash
+
+  template <typename Hasher, typename Void = void>
+  struct ShouldAssume32BitHash : bool_constant<!sizeof(Hasher)> {};
+
+  template <typename Hasher>
+  struct ShouldAssume32BitHash<
+      Hasher,
+      void_t<typename Hasher::folly_assume_32bit_hash>>
+      : bool_constant<Hasher::folly_assume_32bit_hash::value> {};
+
  public:
   static constexpr bool kAllocIsAlwaysEqual = AllocIsAlwaysEqual<Alloc>::value;
 
@@ -164,8 +174,7 @@ struct FOLLY_MSVC_DECLSPEC(empty_bases) BasePolicy
       std::is_nothrow_default_constructible<Alloc>::value;
 
   static constexpr bool kSwapIsNoexcept = kAllocIsAlwaysEqual &&
-      std::is_nothrow_swappable_v<Hasher> &&
-      std::is_nothrow_swappable_v<KeyEqual>;
+      IsNothrowSwappable<Hasher>{} && IsNothrowSwappable<KeyEqual>{};
 
   static constexpr bool isAvalanchingHasher() {
     return IsAvalanchingHasher<Hasher, Key>::value;
@@ -627,7 +636,7 @@ class ValueContainerPolicy : public BasePolicy<
         // location), but it seems highly likely that it will also cause
         // the compiler to drop such assumptions that are violated due
         // to our UB const_cast in moveValue.
-        destroyItem(*std::launder(std::addressof(src)));
+        destroyItem(*launder(std::addressof(src)));
       } else {
         destroyItem(src);
       }
@@ -1063,7 +1072,7 @@ class VectorContainerPolicy : public BasePolicy<
   static constexpr bool valueIsTriviallyCopyable() {
     return AllocatorHasDefaultObjectConstruct<Alloc, Value, Value>::value &&
         AllocatorHasDefaultObjectDestroy<Alloc, Value>::value &&
-        std::is_trivially_copyable<Value>::value;
+        is_trivially_copyable<Value>::value;
   }
 
  public:
@@ -1248,7 +1257,7 @@ class VectorContainerPolicy : public BasePolicy<
         assume(dst != nullptr);
         AllocTraits::construct(a, dst, Super::moveValue(*src));
         if (kIsMap) {
-          AllocTraits::destroy(a, std::launder(src));
+          AllocTraits::destroy(a, launder(src));
         } else {
           AllocTraits::destroy(a, src);
         }

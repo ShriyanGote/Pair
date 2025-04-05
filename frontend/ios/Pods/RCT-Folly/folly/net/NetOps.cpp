@@ -26,24 +26,34 @@
 #include <cstddef>
 #include <stdexcept>
 
-#include <folly/CPortability.h>
 #include <folly/ScopeGuard.h>
-#include <folly/Utility.h>
 #include <folly/net/detail/SocketFileDescriptorMap.h>
 
 #ifdef _WIN32
 #include <MSWSock.h> // @manual
 #endif
 
-#if (defined(__linux__) && !defined(__ANDROID__)) ||                       \
-    (defined(__ANDROID__) && __ANDROID_API__ >= 21 /* released 2014 */) || \
-    defined(__FreeBSD__) || defined(__SGX__) || defined(__EMSCRIPTEN__)
-static_assert(folly::to_bool(::recvmmsg));
-static_assert(folly::to_bool(::sendmmsg));
+#if !FOLLY_HAVE_RECVMMSG
+#if FOLLY_HAVE_WEAK_SYMBOLS
+extern "C" FOLLY_ATTR_WEAK int recvmmsg(
+    int sockfd,
+    struct mmsghdr* msgvec,
+    unsigned int vlen,
+#if defined(__EMSCRIPTEN__)
+    unsigned int flags,
 #else
-static int (*recvmmsg)(...) = nullptr;
-static int (*sendmmsg)(...) = nullptr;
+    int flags,
 #endif
+    struct timespec* timeout);
+#else
+static int (*recvmmsg)(
+    int sockfd,
+    struct mmsghdr* msgvec,
+    unsigned int vlen,
+    int flags,
+    struct timespec* timeout) = nullptr;
+#endif // FOLLY_HAVE_WEAK_SYMBOLS
+#endif // FOLLY_HAVE_RECVMMSG
 
 namespace folly {
 namespace netops {
@@ -280,9 +290,101 @@ ssize_t recv(NetworkSocket s, void* buf, size_t len, int flags) {
 #endif
 }
 
+ssize_t recvfrom(
+    NetworkSocket s,
+    void* buf,
+    size_t len,
+    int flags,
+    sockaddr* from,
+    socklen_t* fromlen) {
 #ifdef _WIN32
-ssize_t wsaRecvMesg(NetworkSocket s, WSAMSG* wsaMsg) {
+  if ((flags & MSG_TRUNC) == MSG_TRUNC) {
+    SOCKET h = s.data;
+
+    WSABUF wBuf{};
+    wBuf.buf = (CHAR*)buf;
+    wBuf.len = (ULONG)len;
+    WSAMSG wMsg{};
+    wMsg.dwBufferCount = 1;
+    wMsg.lpBuffers = &wBuf;
+    wMsg.name = from;
+    if (fromlen != nullptr) {
+      wMsg.namelen = *fromlen;
+    }
+
+    // WSARecvMsg is an extension, so we don't get
+    // the convenience of being able to call it directly, even though
+    // WSASendMsg is part of the normal API -_-...
+    LPFN_WSARECVMSG WSARecvMsg;
+    GUID WSARecgMsg_GUID = WSAID_WSARECVMSG;
+    DWORD recMsgBytes;
+    WSAIoctl(
+        h,
+        SIO_GET_EXTENSION_FUNCTION_POINTER,
+        &WSARecgMsg_GUID,
+        sizeof(WSARecgMsg_GUID),
+        &WSARecvMsg,
+        sizeof(WSARecvMsg),
+        &recMsgBytes,
+        nullptr,
+        nullptr);
+
+    // Attempt to disable ICMP behavior which kills the socket.
+    BOOL connReset = false;
+    DWORD bytesReturned = 0;
+    WSAIoctl(
+        h,
+        SIO_UDP_CONNRESET,
+        &connReset,
+        sizeof(connReset),
+        nullptr,
+        0,
+        &bytesReturned,
+        nullptr,
+        nullptr);
+
+    DWORD bytesReceived;
+    int res = WSARecvMsg(h, &wMsg, &bytesReceived, nullptr, nullptr);
+    errno = translate_wsa_error(WSAGetLastError(), s, WSARecvMsg, res);
+    if (res == 0) {
+      return bytesReceived;
+    }
+    if (fromlen != nullptr) {
+      *fromlen = wMsg.namelen;
+    }
+    if ((wMsg.dwFlags & MSG_TRUNC) == MSG_TRUNC) {
+      return wBuf.len + 1;
+    }
+    return -1;
+  }
+  return wrapSocketFunction<ssize_t>(
+      ::recvfrom, s, (char*)buf, (int)len, flags, from, fromlen);
+#elif defined(__EMSCRIPTEN__)
+  throw std::logic_error("Not implemented!");
+#else
+  return wrapSocketFunction<ssize_t>(
+      ::recvfrom, s, buf, len, flags, from, fromlen);
+#endif
+}
+
+ssize_t recvmsg(NetworkSocket s, msghdr* message, int flags) {
+#ifdef _WIN32
+  (void)flags;
   SOCKET h = s.data;
+
+  WSAMSG msg;
+  msg.name = (LPSOCKADDR)message->msg_name;
+  msg.namelen = message->msg_namelen;
+  msg.Control.buf = (CHAR*)message->msg_control;
+  msg.Control.len = (ULONG)message->msg_controllen;
+  msg.dwFlags = 0;
+  msg.dwBufferCount = (DWORD)message->msg_iovlen;
+  msg.lpBuffers = new WSABUF[message->msg_iovlen];
+  SCOPE_EXIT { delete[] msg.lpBuffers; };
+  for (size_t i = 0; i < message->msg_iovlen; i++) {
+    msg.lpBuffers[i].buf = (CHAR*)message->msg_iov[i].iov_base;
+    msg.lpBuffers[i].len = (ULONG)message->msg_iov[i].iov_len;
+  }
 
   // WSARecvMsg is an extension, so we don't get
   // the convenience of being able to call it directly, even though
@@ -316,72 +418,9 @@ ssize_t wsaRecvMesg(NetworkSocket s, WSAMSG* wsaMsg) {
       nullptr);
 
   DWORD bytesReceived;
-  int res = WSARecvMsg(h, wsaMsg, &bytesReceived, nullptr, nullptr);
+  int res = WSARecvMsg(h, &msg, &bytesReceived, nullptr, nullptr);
   errno = translate_wsa_error(WSAGetLastError(), s, WSARecvMsg, res);
-
-  if (res == 0) {
-    return bytesReceived;
-  }
-  if ((wsaMsg->dwFlags & MSG_TRUNC) == MSG_TRUNC) {
-    return wsaMsg->lpBuffers[0].len + 1;
-  }
-  return -1;
-}
-#endif
-
-ssize_t recvfrom(
-    NetworkSocket s,
-    void* buf,
-    size_t len,
-    int flags,
-    sockaddr* from,
-    socklen_t* fromlen) {
-#ifdef _WIN32
-  if ((flags & MSG_TRUNC) == MSG_TRUNC) {
-    WSABUF wBuf{};
-    wBuf.buf = (CHAR*)buf;
-    wBuf.len = (ULONG)len;
-    WSAMSG wMsg{};
-    wMsg.dwBufferCount = 1;
-    wMsg.lpBuffers = &wBuf;
-    wMsg.name = from;
-    if (fromlen != nullptr) {
-      wMsg.namelen = *fromlen;
-    }
-
-    return wsaRecvMesg(s, &wMsg);
-  }
-  return wrapSocketFunction<ssize_t>(
-      ::recvfrom, s, (char*)buf, (int)len, flags, from, fromlen);
-#elif defined(__EMSCRIPTEN__)
-  throw std::logic_error("Not implemented!");
-#else
-  return wrapSocketFunction<ssize_t>(
-      ::recvfrom, s, buf, len, flags, from, fromlen);
-#endif
-}
-
-ssize_t recvmsg(NetworkSocket s, msghdr* message, int flags) {
-#ifdef _WIN32
-  (void)flags;
-
-  WSAMSG msg;
-  msg.name = (LPSOCKADDR)message->msg_name;
-  msg.namelen = message->msg_namelen;
-  msg.Control.buf = (CHAR*)message->msg_control;
-  msg.Control.len = (ULONG)message->msg_controllen;
-  msg.dwFlags = 0;
-  msg.dwBufferCount = (DWORD)message->msg_iovlen;
-  msg.lpBuffers = new WSABUF[message->msg_iovlen];
-  SCOPE_EXIT {
-    delete[] msg.lpBuffers;
-  };
-  for (size_t i = 0; i < message->msg_iovlen; i++) {
-    msg.lpBuffers[i].buf = (CHAR*)message->msg_iov[i].iov_base;
-    msg.lpBuffers[i].len = (ULONG)message->msg_iov[i].iov_len;
-  }
-
-  return wsaRecvMesg(s, &msg);
+  return res == 0 ? (ssize_t)bytesReceived : -1;
 #elif defined(__EMSCRIPTEN__)
   throw std::logic_error("Not implemented!");
 #else
@@ -398,12 +437,10 @@ int recvmmsg(
 #if defined(__EMSCRIPTEN__)
   throw std::logic_error("Not implemented!");
 #else
-  if (to_bool(::recvmmsg)) {
+  if (reinterpret_cast<void*>(::recvmmsg) != nullptr) {
     return wrapSocketFunction<int>(::recvmmsg, s, msgvec, vlen, flags, timeout);
   }
   // implement via recvmsg
-  FOLLY_PUSH_WARNING
-  FOLLY_CLANG_DISABLE_WARNING("-Wunreachable-code")
   for (unsigned int i = 0; i < vlen; i++) {
     ssize_t ret = recvmsg(s, &msgvec[i].msg_hdr, flags);
     // in case of an error
@@ -419,7 +456,6 @@ int recvmmsg(
     }
   }
   return static_cast<int>(vlen);
-  FOLLY_POP_WARNING
 #endif
 }
 
@@ -434,9 +470,9 @@ ssize_t send(NetworkSocket s, const void* buf, size_t len, int flags) {
 #endif
 }
 
-[[maybe_unused]] static ssize_t fakeSendmsg(
-    [[maybe_unused]] NetworkSocket socket,
-    [[maybe_unused]] const msghdr* message) {
+FOLLY_MAYBE_UNUSED static ssize_t fakeSendmsg(
+    FOLLY_MAYBE_UNUSED NetworkSocket socket,
+    FOLLY_MAYBE_UNUSED const msghdr* message) {
 #ifdef _WIN32
   SOCKET h = socket.data;
   ssize_t bytesSent = 0;
@@ -473,8 +509,8 @@ ssize_t send(NetworkSocket s, const void* buf, size_t len, int flags) {
 }
 
 #ifdef _WIN32
-[[maybe_unused]] ssize_t wsaSendMsgDirect(
-    [[maybe_unused]] NetworkSocket socket, [[maybe_unused]] WSAMSG* msg) {
+FOLLY_MAYBE_UNUSED ssize_t wsaSendMsgDirect(
+    FOLLY_MAYBE_UNUSED NetworkSocket socket, FOLLY_MAYBE_UNUSED WSAMSG* msg) {
   // WSASendMsg freaks out if this pointer is not set to null but length is 0.
   if (msg->Control.len == 0) {
     msg->Control.buf = nullptr;
@@ -487,10 +523,10 @@ ssize_t send(NetworkSocket s, const void* buf, size_t len, int flags) {
 }
 #endif
 
-[[maybe_unused]] static ssize_t wsaSendMsg(
-    [[maybe_unused]] NetworkSocket socket,
-    [[maybe_unused]] const msghdr* message,
-    [[maybe_unused]] int flags) {
+FOLLY_MAYBE_UNUSED static ssize_t wsaSendMsg(
+    FOLLY_MAYBE_UNUSED NetworkSocket socket,
+    FOLLY_MAYBE_UNUSED const msghdr* message,
+    FOLLY_MAYBE_UNUSED int flags) {
 #ifdef _WIN32
   // Translate msghdr to WSAMSG.
   WSAMSG msg;
@@ -501,9 +537,7 @@ ssize_t send(NetworkSocket s, const void* buf, size_t len, int flags) {
   msg.dwFlags = flags;
   msg.dwBufferCount = (DWORD)message->msg_iovlen;
   msg.lpBuffers = new WSABUF[message->msg_iovlen];
-  SCOPE_EXIT {
-    delete[] msg.lpBuffers;
-  };
+  SCOPE_EXIT { delete[] msg.lpBuffers; };
   for (size_t i = 0; i < message->msg_iovlen; i++) {
     msg.lpBuffers[i].buf = (CHAR*)message->msg_iov[i].iov_base;
     msg.lpBuffers[i].len = (ULONG)message->msg_iov[i].iov_len;
@@ -544,15 +578,12 @@ ssize_t sendmsg(NetworkSocket socket, const msghdr* message, int flags) {
 
 int sendmmsg(
     NetworkSocket socket, mmsghdr* msgvec, unsigned int vlen, int flags) {
-#if defined(__EMSCRIPTEN__)
+#if FOLLY_HAVE_SENDMMSG
+  return wrapSocketFunction<int>(::sendmmsg, socket, msgvec, vlen, flags);
+#elif defined(__EMSCRIPTEN__)
   throw std::logic_error("Not implemented!");
 #else
-  if (to_bool(::sendmmsg)) {
-    return wrapSocketFunction<int>(::sendmmsg, socket, msgvec, vlen, flags);
-  }
   // implement via sendmsg
-  FOLLY_PUSH_WARNING
-  FOLLY_CLANG_DISABLE_WARNING("-Wunreachable-code")
   for (unsigned int i = 0; i < vlen; i++) {
     ssize_t ret = sendmsg(socket, &msgvec[i].msg_hdr, flags);
     // in case of an error
@@ -570,7 +601,6 @@ int sendmmsg(
   }
 
   return static_cast<int>(vlen);
-  FOLLY_POP_WARNING
 #endif
 }
 
@@ -793,8 +823,6 @@ int set_socket_close_on_exec(NetworkSocket s) {
 }
 
 void Msgheader::setName(sockaddr_storage* addrStorage, size_t len) {
-  FOLLY_PUSH_WARNING
-  FOLLY_CLANG_DISABLE_WARNING("-Wundef")
 #ifdef _WIN32
   msg_.name = reinterpret_cast<LPSOCKADDR>(addrStorage);
   msg_.namelen = len;
@@ -804,7 +832,6 @@ void Msgheader::setName(sockaddr_storage* addrStorage, size_t len) {
   msg_.msg_name = reinterpret_cast<void*>(addrStorage);
   msg_.msg_namelen = len;
 #endif
-  FOLLY_POP_WARNING
 }
 
 void Msgheader::setIovecs(const struct iovec* vec, size_t iovec_len) {
@@ -847,8 +874,6 @@ void Msgheader::setFlags(int flags) {
 }
 
 void Msgheader::incrCmsgLen(size_t val) {
-  FOLLY_PUSH_WARNING
-  FOLLY_CLANG_DISABLE_WARNING("-Wundef")
 #ifdef _WIN32
   msg_.Control.len += WSA_CMSG_SPACE(val);
 #elif __EMSCRIPTEN__
@@ -856,7 +881,6 @@ void Msgheader::incrCmsgLen(size_t val) {
 #else
   msg_.msg_controllen += CMSG_SPACE(val);
 #endif
-  FOLLY_POP_WARNING
 }
 
 XPLAT_CMSGHDR* Msgheader::getFirstOrNextCmsgHeader(XPLAT_CMSGHDR* cm) {
@@ -868,8 +892,6 @@ XPLAT_MSGHDR* Msgheader::getMsg() {
 }
 
 XPLAT_CMSGHDR* Msgheader::cmsgNextHrd(XPLAT_CMSGHDR* cm) {
-  FOLLY_PUSH_WARNING
-  FOLLY_CLANG_DISABLE_WARNING("-Wundef")
 #ifdef _WIN32
   return WSA_CMSG_NXTHDR(&msg_, cm);
 #elif __EMSCRIPTEN__
@@ -877,12 +899,9 @@ XPLAT_CMSGHDR* Msgheader::cmsgNextHrd(XPLAT_CMSGHDR* cm) {
 #else
   return CMSG_NXTHDR(&msg_, cm);
 #endif
-  FOLLY_POP_WARNING
 }
 
 XPLAT_CMSGHDR* Msgheader::cmsgFirstHrd() {
-  FOLLY_PUSH_WARNING
-  FOLLY_CLANG_DISABLE_WARNING("-Wundef")
 #ifdef _WIN32
   return WSA_CMSG_FIRSTHDR(&msg_);
 #elif __EMSCRIPTEN__
@@ -890,7 +909,6 @@ XPLAT_CMSGHDR* Msgheader::cmsgFirstHrd() {
 #else
   return CMSG_FIRSTHDR(&msg_);
 #endif
-  FOLLY_POP_WARNING
 }
 } // namespace netops
 } // namespace folly

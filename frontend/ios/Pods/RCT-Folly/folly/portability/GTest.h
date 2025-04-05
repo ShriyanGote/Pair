@@ -29,7 +29,5 @@
 FOLLY_PUSH_WARNING
 FOLLY_MSVC_DISABLE_WARNING(4251)
 FOLLY_MSVC_DISABLE_WARNING(4275)
-// IWYU pragma: begin_exports
 #include <gtest/gtest.h>
-// IWYU pragma: end_exports
 FOLLY_POP_WARNING

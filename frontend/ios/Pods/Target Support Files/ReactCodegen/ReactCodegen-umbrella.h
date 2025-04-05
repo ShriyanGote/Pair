@@ -10,8 +10,9 @@
 #endif
 #endif
 
+#import "FBReactNativeSpec/FBReactNativeSpec.h"
+#import "FBReactNativeSpecJSI.h"
 #import "RCTModulesConformingToProtocolsProvider.h"
-#import "RCTThirdPartyComponentsProvider.h"
 #import "react/renderer/components/rngesturehandler_codegen/ComponentDescriptors.h"
 #import "react/renderer/components/rngesturehandler_codegen/EventEmitters.h"
 #import "react/renderer/components/rngesturehandler_codegen/Props.h"

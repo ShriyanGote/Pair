@@ -23,11 +23,10 @@
 #include <folly/ConstexprMath.h>
 #include <folly/Likely.h>
 #include <folly/Portability.h>
-#include <folly/container/detail/F14IntrinsicsAvailability.h>
 #include <folly/lang/Assume.h>
 #include <folly/lang/SafeAssert.h>
 
-#if FOLLY_F14_VECTOR_INTRINSICS_AVAILABLE
+#if (FOLLY_SSE >= 2 || (FOLLY_NEON && FOLLY_AARCH64)) && !FOLLY_MOBILE
 
 namespace folly {
 namespace f14 {
@@ -47,7 +46,7 @@ FOLLY_ALWAYS_INLINE static unsigned findFirstSetNonZero(T mask) {
 using MaskType = uint64_t;
 
 constexpr unsigned kMaskSpacing = 4;
-#else // FOLLY_SSE >= 2 || FOLLY_RISCV64
+#else // SSE2
 using MaskType = uint32_t;
 
 constexpr unsigned kMaskSpacing = 1;

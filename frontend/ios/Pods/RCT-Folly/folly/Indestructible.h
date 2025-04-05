@@ -69,13 +69,12 @@ template <typename T>
 class Indestructible final {
  public:
   template <typename S = T, typename = decltype(S())>
-  constexpr Indestructible() noexcept(noexcept(T()))
-      : storage_{std::in_place} {}
+  constexpr Indestructible() noexcept(noexcept(T())) : storage_{in_place} {}
 
   /**
    * Constructor accepting a single argument by forwarding reference, this
    * allows using list initialization without the overhead of things like
-   * std::in_place, etc and also works with std::initializer_list constructors
+   * in_place, etc and also works with std::initializer_list constructors
    * which can't be deduced, the default parameter helps there.
    *
    *    auto i = folly::Indestructible<std::map<int, int>>{{{1, 2}}};
@@ -96,7 +95,7 @@ class Indestructible final {
       std::enable_if_t<!std::is_convertible<U&&, T>::value>* = nullptr>
   explicit constexpr Indestructible(U&& u) noexcept(
       noexcept(T(std::declval<U>())))
-      : storage_{std::in_place, std::forward<U>(u)} {}
+      : storage_{in_place, std::forward<U>(u)} {}
   template <
       typename U = T,
       std::enable_if_t<std::is_constructible<T, U&&>::value>* = nullptr,
@@ -106,12 +105,12 @@ class Indestructible final {
       std::enable_if_t<std::is_convertible<U&&, T>::value>* = nullptr>
   /* implicit */ constexpr Indestructible(U&& u) noexcept(
       noexcept(T(std::declval<U>())))
-      : storage_{std::in_place, std::forward<U>(u)} {}
+      : storage_{in_place, std::forward<U>(u)} {}
 
   template <typename... Args, typename = decltype(T(std::declval<Args>()...))>
   explicit constexpr Indestructible(Args&&... args) noexcept(
       noexcept(T(std::declval<Args>()...)))
-      : storage_{std::in_place, std::forward<Args>(args)...} {}
+      : storage_{in_place, std::forward<Args>(args)...} {}
   template <
       typename U,
       typename... Args,
@@ -120,7 +119,7 @@ class Indestructible final {
   explicit constexpr Indestructible(std::initializer_list<U> il, Args... args) noexcept(
       noexcept(T(
           std::declval<std::initializer_list<U>&>(), std::declval<Args>()...)))
-      : storage_{std::in_place, il, std::forward<Args>(args)...} {}
+      : storage_{in_place, il, std::forward<Args>(args)...} {}
 
   template <typename Factory>
   constexpr Indestructible(factory_constructor_t, Factory&& factory) noexcept(
@@ -140,14 +139,14 @@ class Indestructible final {
   T const* operator->() const noexcept { return get(); }
 
   /* implicit */ operator T&() noexcept { return *get(); }
-  /* implicit */ operator T const&() const noexcept { return *get(); }
+  /* implicit */ operator T const &() const noexcept { return *get(); }
 
  private:
   struct Storage {
     aligned_storage_for_t<T> bytes;
 
     template <typename... Args, typename = decltype(T(std::declval<Args>()...))>
-    explicit constexpr Storage(std::in_place_t, Args&&... args) noexcept(
+    explicit constexpr Storage(in_place_t, Args&&... args) noexcept(
         noexcept(T(std::declval<Args>()...))) {
       ::new (&bytes) T(std::forward<Args>(args)...);
     }

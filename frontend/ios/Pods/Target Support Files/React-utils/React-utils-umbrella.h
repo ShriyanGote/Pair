@@ -11,6 +11,7 @@
 #endif
 
 #import "react/utils/ContextContainer.h"
+#import "react/utils/CoreFeatures.h"
 #import "react/utils/FloatComparison.h"
 #import "react/utils/fnv1a.h"
 #import "react/utils/hash_combine.h"
