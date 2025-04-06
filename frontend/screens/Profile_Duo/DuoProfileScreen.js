@@ -75,7 +75,6 @@ const DuoProfileScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Duo Profile</Text>
-      <Text style={styles.header}>Logout</Text>
 
       <View style={styles.card}>
         <Text style={styles.label}>📍 Location:</Text>
@@ -102,6 +101,11 @@ const DuoProfileScreen = () => {
         <Text style={styles.changeTypeButton}>Change Profile Type</Text>
       </TouchableOpacity>
 
+      <>
+        <TouchableOpacity onPress={handleLogout}>
+          <Text style={styles.logout}>Logout</Text>
+        </TouchableOpacity>
+      </>
 
 
       <Text style={styles.subHeader}>Members</Text>
