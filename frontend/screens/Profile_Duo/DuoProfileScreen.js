@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getCurrentUser } from '../../utils/api';
+import { getCurrentUser, getGroupMemberPhotos } from '../../utils/api';
 import { useNavigation } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
@@ -18,13 +18,31 @@ const DuoProfileScreen = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
+  const [memberPhotosMap, setMemberPhotosMap] = useState({});
 
   const fetchUser = async () => {
+    setLoading(true);
     const token = await AsyncStorage.getItem('token');
     if (!token) return;
+  
     try {
       const response = await getCurrentUser(token);
-      setUser(response.data);
+      const userData = response.data;
+      setUser(userData);
+  
+      if (userData.profile_type === 'duo' && userData.members) {
+        const newMap = {};
+        for (const mem of userData.members) {
+          try {
+            const res = await getGroupMemberPhotos(mem.id, token);
+            newMap[mem.id] = res.data; 
+          } catch (err) {
+            console.error('Error fetching photos for member', mem.id, err);
+            newMap[mem.id] = []; 
+          }
+        }
+        setMemberPhotosMap(newMap);
+      }
     } catch (error) {
       console.error('Error fetching user:', error);
     } finally {
@@ -136,30 +154,44 @@ const DuoProfileScreen = () => {
       </TouchableOpacity>
       )}
 
-      {user.members && user.members.length > 0 ? (
-        user.members.map((member) => (
-          <View key={member.id} style={styles.memberCard}>
-            {member.profile_photo ? (
-              <Image source={{ uri: member.profile_photo }} style={styles.photo} />
-            ) : (
-              <View style={styles.photoPlaceholder}>
-                <Text style={styles.initials}>{member.name?.[0]}</Text>
-              </View>
-            )}
-            <View style={{ flex: 1 }}>
-              <Text style={styles.memberName}>{member.name}</Text>
-              <Text>Age: {member.age}</Text>
-              {member.height && <Text>Height: {member.height}"</Text>}
-            </View>
+    {user.members.map((member) => {
+      const memberPics = memberPhotosMap[member.id] || [];  // array of objects: {id, photo_url}
 
-            <TouchableOpacity onPress={() => handleEditMember(member)}>
-              <Text style={styles.editText}>Edit</Text>
-            </TouchableOpacity>
+      return (
+        <View key={member.id} style={styles.memberCard}>
+          {/* Existing block for member’s single profile_photo */}
+          {member.profile_photo ? (
+            <Image source={{ uri: member.profile_photo }} style={styles.photo} />
+          ) : (
+            <View style={styles.photoPlaceholder}>
+              <Text style={styles.initials}>{member.name?.[0]}</Text>
+            </View>
+          )}
+          <View style={{ flex: 1 }}>
+            <Text style={styles.memberName}>{member.name}</Text>
+            <Text>Age: {member.age}</Text>
+            {member.height && <Text>Height: {member.height}"</Text>}
           </View>
-        ))
-      ) : (
-        <Text style={styles.noMembers}>No members added yet.</Text>
-      )}
+
+          <TouchableOpacity onPress={() => handleEditMember(member)}>
+            <Text style={styles.editText}>Edit</Text>
+          </TouchableOpacity>
+
+          {/* Then a mini-grid of that member’s photos */}
+          {memberPics.length > 0 && (
+            <View style={styles.miniPhotoGrid}>
+              {memberPics.map((pic) => (
+                <Image
+                  key={pic.id}
+                  source={{ uri: pic.photo_url }}
+                  style={styles.miniPhoto}
+                />
+              ))}
+            </View>
+          )}
+        </View>
+      );
+    })}
 
 
     </ScrollView>
@@ -207,30 +239,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   memberCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
     backgroundColor: '#fff',
     borderRadius: 10,
+    padding: 12,
     marginBottom: 12,
-    shadowColor: '#ccc',
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-  },
-  photo: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 16,
-  },
-  photoPlaceholder: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 16,
-    backgroundColor: '#ccc',
-    justifyContent: 'center',
-    alignItems: 'center',
+    shadow: 100,
+    // any shadow or border you like
   },
   initials: {
     fontSize: 24,
@@ -284,5 +298,46 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     marginTop: 20,
+  },  miniPhotoGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 10,
+  },
+  miniPhoto: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  photo: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginRight: 16,
+  },
+  photoRow: {
+    flexDirection: 'row',
+    marginTop: 10,
+    flexWrap: 'wrap', // if you want them to wrap to new lines
+  },
+  editText: {
+    color: '#007AFF',
+    fontSize: 14,
+    fontWeight: '500',
+    marginLeft: 8,
+  },
+  photoPlaceholder: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginRight: 10,
+    backgroundColor: '#ccc',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  infoContainer: {
+    flex: 1, 
+    // so text can flow, giving it as much horizontal space as needed
   },
 });

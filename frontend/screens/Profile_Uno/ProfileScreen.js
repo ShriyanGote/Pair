@@ -470,19 +470,3 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
 });
-
-// ---
-
-// ### Key Points
-
-// 1. **Backend Must Return IDs**:  
-//    - Your GET `/users/:id/photos` should return objects like `[{"id": 1, "photo_url": "..."}]`.  
-//    - Your POST `/upload-uno-photo` should return something like `{"photo_id": 7, "photo_url": "..."}`.  
-
-// 2. **Storing Photos**:  
-//    In the code above, we store an array of objects in `photos`. Example: 
-//    ```js
-//    // photos: [
-//    //   { id: 1, photo_url: 'https://...' },
-//    //   { id: 2, photo_url: 'https://...' },
-//    // ]

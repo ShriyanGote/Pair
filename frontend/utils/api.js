@@ -83,3 +83,22 @@ export const deleteUserPhotoByUrl = (userId, photoUrl, token) => {
       params: { photo_url: photoUrl },
     });
 };
+
+
+export const getGroupMemberPhotos = (memberId, token) =>
+  axios.get(`${API_URL}/group-members/${memberId}/photos`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const uploadGroupMemberPhoto = (memberId, formData, token) =>
+  axios.post(`${API_URL}/group-members/${memberId}/photos`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+export const deleteGroupMemberPhoto = (memberId, photoId, token) =>
+  axios.delete(`${API_URL}/group-members/${memberId}/photos/${photoId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
