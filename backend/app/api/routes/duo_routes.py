@@ -3,9 +3,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Body, Header
 from sqlalchemy.orm import Session
 from app.db.database import SessionLocal
-from app.models.model import User, DuoProfileInput, GroupMemberInput, GroupMember
+from app.models.model import User, DuoProfileInput, GroupMemberInput, GroupMember, GroupMemberPhoto
 from app.db.crud import get_user_by_email
 from app.core.auth import decode_access_token
+
 
 router = APIRouter()
 
@@ -87,3 +88,4 @@ def update_group_member(
     db.commit()
     db.refresh(member)
     return {"message": "Member updated", "member": member}
+

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 from app.db.database import SessionLocal
-from app.models.model import User, UserPhoto
+from app.models.model import User, UserPhoto, GroupMemberPhoto, GroupMember
 from app.core.auth import decode_access_token
 import boto3, os, uuid
 
@@ -120,4 +120,74 @@ def delete_user_photo(user_id: int, photo_id: int, current_user: User = Depends(
     db.delete(photo_record)
     db.commit()
 
+    return {"message": "Photo deleted"}
+
+
+
+
+
+@router.get("/group-members/{member_id}/photos")
+def get_group_member_photos(member_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    # 1) Verify the group member is indeed part of current_user.id
+    member = db.query(GroupMember).filter_by(id=member_id, group_id=current_user.id).first()
+    if not member:
+        raise HTTPException(status_code=404, detail="Group member not found")
+
+    # Return all photos
+    return [{"id": p.id, "photo_url": p.photo_url} for p in member.photos]
+
+@router.post("/group-members/{member_id}/photos")
+def upload_group_member_photo(member_id: int, file: UploadFile = File(...), db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    # 1) Find group member
+    member = db.query(GroupMember).filter_by(id=member_id, group_id=current_user.id).first()
+    if not member:
+        raise HTTPException(status_code=404, detail="Group member not found")
+
+    # 2) Limit to 3 photos
+    existing_count = db.query(GroupMemberPhoto).filter_by(group_member_id=member_id).count()
+    if existing_count >= 3:
+        raise HTTPException(status_code=400, detail="Already have 3 photos for this member")
+
+    # 3) S3 Upload
+    s3 = boto3.client(
+        "s3",
+        aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+        region_name=os.getenv("AWS_S3_REGION"),
+    )
+    extension = file.filename.split(".")[-1]
+    unique_filename = f"profile_photos/{uuid.uuid4()}.{extension}"
+
+    try:
+        s3.upload_fileobj(
+            file.file,
+            os.getenv("AWS_S3_BUCKET_NAME"),
+            unique_filename,
+            ExtraArgs={"ContentType": file.content_type},
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to upload to S3: {str(e)}")
+
+    photo_url = f"https://{os.getenv('AWS_S3_BUCKET_NAME')}.s3.{os.getenv('AWS_S3_REGION')}.amazonaws.com/{unique_filename}"
+
+    # 4) Save
+    new_photo = GroupMemberPhoto(group_member_id=member.id, photo_url=photo_url)
+    db.add(new_photo)
+    db.commit()
+    db.refresh(new_photo)
+
+    return {"photo_id": new_photo.id, "photo_url": photo_url}
+
+@router.delete("/group-members/{member_id}/photos/{photo_id}")
+def delete_group_member_photo(member_id: int, photo_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    member = db.query(GroupMember).filter_by(id=member_id, group_id=current_user.id).first()
+    if not member:
+        raise HTTPException(status_code=404, detail="Group member not found")
+
+    photo = db.query(GroupMemberPhoto).filter_by(id=photo_id, group_member_id=member_id).first()
+    if not photo:
+        raise HTTPException(status_code=404, detail="Photo not found")
+
+    db.delete(photo)
+    db.commit()
     return {"message": "Photo deleted"}

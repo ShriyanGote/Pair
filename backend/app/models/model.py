@@ -87,6 +87,18 @@ class GroupMemberInput(BaseModel):
     height: Optional[float] = None
     profile_photo: Optional[str] = None
 
+# models.py
+
+class GroupMemberPhoto(Base):
+    __tablename__ = "group_member_photos"
+
+    id = Column(Integer, primary_key=True, index=True)
+    group_member_id = Column(Integer, ForeignKey("group_members.id"), nullable=False)
+    photo_url = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    group_member = relationship("GroupMember", backref="photos")
+
 
 class DuoProfileInput(BaseModel):
     location: Optional[str] = None
@@ -128,7 +140,6 @@ class UserUpdate(BaseModel):
 
 class EmailRequest(BaseModel):
     email: str
-
 
 
 
