@@ -8,6 +8,7 @@ from pydantic import BaseModel, EmailStr, validator
 from app.db.database import Base
 from typing import Optional, List
 import re 
+from app.db.database import Base
 
 
 # swipe op
@@ -86,12 +87,12 @@ class GroupMemberInput(BaseModel):
     height: Optional[float] = None
     profile_photo: Optional[str] = None
 
-class DuoProfileInput(BaseModel):
-    location: str
-    interests: str
-    looking_for: str
-    members: List[GroupMemberInput]
 
+class DuoProfileInput(BaseModel):
+    location: Optional[str] = None
+    interests: Optional[str] = None
+    looking_for: Optional[str] = None
+    members: List[GroupMemberInput]
 
 
 
@@ -127,3 +128,17 @@ class UserUpdate(BaseModel):
 
 class EmailRequest(BaseModel):
     email: str
+
+
+
+
+class UserPhoto(Base):
+    __tablename__ = "user_photos"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    photo_url = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # relationship back to user
+    user = relationship("User", backref="user_photos")

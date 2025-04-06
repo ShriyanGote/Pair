@@ -94,6 +94,7 @@ def verify_code(email: str = Body(...), code: str = Body(...), db: Session = Dep
     token = create_access_token(data={"sub": user.email})
     return {"message": "Email verified", "access_token": token}
 
+
 @router.put("/profile-type")
 def update_profile_type(
     new_type: str = Body(..., embed=True),
@@ -107,12 +108,23 @@ def update_profile_type(
     if current_user.profile_type == new_type:
         return {"message": "Already this profile type."}
 
-    # Cleanup if downgrading to "uno"
-    if new_type == "uno":
-        db.query(GroupMember).filter_by(group_id=current_user.id).delete()
+    # Clear all existing member records when switching profiles
+    db.query(GroupMember).filter_by(group_id=current_user.id).delete()
 
-    # Update profile type
+    # Update the profile type and any shared info if needed
     current_user.profile_type = new_type
+    # Optionally, reset shared info (location, interests, looking_for) too:
+    current_user.location = None
+    current_user.interests = None
+    current_user.looking_for = None
+
+    if new_type == "uno":
+        current_user.name = None
+        current_user.age = None
+        current_user.gender = None
+        current_user.height = None
+        current_user.bio = None
+
     db.commit()
 
     return {"message": f"Profile type updated to '{new_type}'."}

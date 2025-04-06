@@ -97,5 +97,5 @@ def google_auth_callback(request: Request, db: Session = Depends(get_db)):
 
     token = create_access_token(data={"sub": user.email})
 
-    # for dev/testing, redirect back to your app or mobile deep link
-    return RedirectResponse(url=f"http://localhost:8000/?token={token}")
+    # Redirect back to your app using the deep link scheme (e.g., pair://login-callback)
+    return RedirectResponse(url=f"pair://login-callback?token={token}")
