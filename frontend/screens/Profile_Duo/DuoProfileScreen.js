@@ -192,8 +192,6 @@ const DuoProfileScreen = () => {
         </View>
       );
     })}
-
-
     </ScrollView>
   );
 };

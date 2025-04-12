@@ -100,8 +100,50 @@ const SwipeScreen = () => {
               source={{ uri: user.profile_photo || 'https://placekitten.com/300/300' }}
               style={styles.photo}
             />
-            <Text style={styles.name}>{user.name}, {user.age}</Text>
-            <Text style={styles.bio}>{user.bio}</Text>
+            <Text style={styles.profileType}>
+              {user.profile_type === 'uno' && '🧍 Uno'}
+              {user.profile_type === 'duo' && '🧑‍🤝‍🧑 Duo'}
+              {user.profile_type === 'group' && '👯 Group'}
+            </Text>
+        
+            {user.profile_type === 'uno' && (
+              <>
+                <Text style={styles.name}>{user.name}, {user.age}</Text>
+                {user.height && <Text style={styles.meta}>Height: {user.height}'</Text>}
+                <Text style={styles.meta}>📍 {user.location}</Text>
+                <Text style={styles.bio}>{user.bio}</Text>
+              </>
+            )}
+        
+            {user.profile_type === 'duo' && (
+              <>
+                <Text style={styles.shared}>📍 {user.location}</Text>
+                <Text style={styles.shared}>🎯 {user.looking_for}</Text>
+                <Text style={styles.shared}>🎨 {user.interests}</Text>
+        
+                <Text style={styles.name}>Members</Text>
+                {user.members?.map((m, i) => (
+                  <Text key={m.id || i} style={styles.meta}>
+                    {m.name} {m.height ? `- ${m.height}'` : ''}
+                  </Text>
+                ))}
+              </>
+            )}
+        
+            {user.profile_type === 'group' && (
+              <>
+                <Text style={styles.shared}>📍 {user.location}</Text>
+                <Text style={styles.shared}>🎯 {user.looking_for}</Text>
+                <Text style={styles.shared}>🎨 {user.interests}</Text>
+        
+                <Text style={styles.name}>Group Members</Text>
+                {user.members?.map((m, i) => (
+                  <Text key={m.id || i} style={styles.meta}>
+                    {m.name}
+                  </Text>
+                ))}
+              </>
+            )}
           </View>
         )}
         onSwipedLeft={(index) => handleSwipe(index, 'left')}
@@ -154,5 +196,23 @@ const styles = StyleSheet.create({
   noMoreText: {
     fontSize: 18,
     color: 'gray',
+  },
+  profileType: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#555',
+    marginBottom: 6,
+  },
+  shared: {
+    fontSize: 15,
+    color: '#333',
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  meta: {
+    fontSize: 14,
+    color: 'gray',
+    marginBottom: 3,
+    textAlign: 'center',
   },
 });

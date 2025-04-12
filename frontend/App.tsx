@@ -9,9 +9,6 @@ import { getCurrentUser } from './utils/api'; // at the top of App.tsx
 import 'react-native-get-random-values';
 
 
-
-
-
 const linking = {
   prefixes: ['pairs://'],
   config: {

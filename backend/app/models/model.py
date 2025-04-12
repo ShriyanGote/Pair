@@ -42,6 +42,19 @@ class Match(Base):
     __table_args__ = (UniqueConstraint("user1_id", "user2_id", name="unique_match"),)
 
 
+
+class Message(Base):
+    __tablename__ = "messages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    sender_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    receiver_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    content = Column(String, nullable=False)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+
+    sender = relationship("User", foreign_keys=[sender_id])
+    receiver = relationship("User", foreign_keys=[receiver_id])
+    
 # base user
 class User(Base):
     __tablename__ = "users"
@@ -66,7 +79,6 @@ class User(Base):
     verification_code: Mapped[Optional[str]] = mapped_column(nullable=True)
 
 
-# base user (group / duo)
 class GroupMember(Base):
     __tablename__ = "group_members"
 
@@ -75,9 +87,10 @@ class GroupMember(Base):
     name = Column(String)
     age = Column(Integer)
     profile_photo = Column(String, nullable=True)
-    height = Column(Integer, nullable=True)  # 
+    height = Column(Integer, nullable=True)
 
     group = relationship("User", backref="members")
+    photos = relationship("GroupMemberPhoto", back_populates="group_member", cascade="all, delete")
 
 
 
@@ -93,11 +106,11 @@ class GroupMemberPhoto(Base):
     __tablename__ = "group_member_photos"
 
     id = Column(Integer, primary_key=True, index=True)
-    group_member_id = Column(Integer, ForeignKey("group_members.id"), nullable=False)
+    group_member_id = Column(Integer, ForeignKey("group_members.id", ondelete="CASCADE"), nullable=False)
     photo_url = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    group_member = relationship("GroupMember", backref="photos")
+    group_member = relationship("GroupMember", back_populates="photos")
 
 
 class DuoProfileInput(BaseModel):

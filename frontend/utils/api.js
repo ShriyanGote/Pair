@@ -24,13 +24,17 @@ export const getPotentialMatches = (token) =>
     headers: { Authorization: `Bearer ${token}` },
   });
 
-export const sendSwipe = (swipeeId, direction, token) => {
-  console.log(`[API] Sending swipe: ${direction} on ID: ${swipeeId}`);
-  return axios.post(`${API_URL}/swipe`, null, {
-    params: { swipee_id: swipeeId, direction },
-    headers: { Authorization: `Bearer ${token}` },
-  });
-};
+export const sendSwipe = async (swipeeId, direction, token) => {
+    return axios.post(`${API_BASE_URL}/swipe`, null, {
+      params: {
+        swipee_id: swipeeId,
+        direction: direction,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  };
 
 
 export const getMatches = (token) =>
@@ -100,5 +104,11 @@ export const uploadGroupMemberPhoto = (memberId, formData, token) =>
 
 export const deleteGroupMemberPhoto = (memberId, photoId, token) =>
   axios.delete(`${API_URL}/group-members/${memberId}/photos/${photoId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+
+export const updateGroupMember = (memberId, data, token) =>
+  axios.put(`${API_URL}/group-members/${memberId}`, data, {
     headers: { Authorization: `Bearer ${token}` },
   });

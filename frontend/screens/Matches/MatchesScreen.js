@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getMatches, deleteMatch } from '../../utils/api'; 
+import { getMatches, deleteMatch, getCurrentUser } from '../../utils/api'; 
+import { useNavigation } from '@react-navigation/native';
+
 const MatchesScreen = () => {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const navigation = useNavigation();
 
   const loadMatches = async () => {
     try {
@@ -20,7 +24,22 @@ const MatchesScreen = () => {
   };
 
   useEffect(() => {
-    loadMatches();
+    const loadData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const userRes = await getCurrentUser(token);
+        setCurrentUserId(userRes.data.id); // ✅ Set the ID
+        const matchRes = await getMatches(token);
+        setMatches(matchRes.data);
+      } catch (err) {
+        console.error(err);
+        Alert.alert('Error', 'Failed to load matches');
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    loadData();
   }, []);
 
 
@@ -59,7 +78,20 @@ const MatchesScreen = () => {
       <View style={{ flex: 1 }}>
         <Text style={styles.name}>{item.name}</Text>
         <Text>{item.age} • {item.location}</Text>
+  
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('ChatScreen', {
+              userId: currentUserId,  // Set this up
+              matchId: item.id,
+              matchName: item.name,
+            })
+          }
+        >
+          <Text style={styles.chatText}>💬 Chat</Text>
+        </TouchableOpacity>
       </View>
+  
       <TouchableOpacity onPress={() => handleUnmatch(item.id, item.name)}>
         <Text style={styles.unmatchText}>Unmatch</Text>
       </TouchableOpacity>

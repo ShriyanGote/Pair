@@ -45,7 +45,7 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
     db_user = get_user_by_email(db, user.email)
     if not db_user or not verify_password(user.password, db_user.hashed_password):
         return {"error": "Invalid email or password"}
-    token = create_access_token(data={"sub": db_user.email}, expires_delta=timedelta(minutes=30))
+    token = create_access_token(data={"sub": db_user.email}, expires_delta=timedelta(days=7))
     return {"access_token": token, "token_type": "bearer"}
 
 @router.get("/me")

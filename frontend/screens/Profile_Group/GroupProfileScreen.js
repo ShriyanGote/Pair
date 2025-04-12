@@ -11,18 +11,40 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getCurrentUser } from '../../utils/api';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import {
+  getGroupMemberPhotos,
+  uploadGroupMemberPhoto,
+  deleteGroupMemberPhoto,
+  updateGroupMember,
+} from '../../utils/api'; // you'll define these
 
 const GroupProfileScreen = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
+  const [memberPhotosMap, setMemberPhotosMap] = useState({});
 
   const fetchUser = async () => {
     const token = await AsyncStorage.getItem('token');
     if (!token) return;
     try {
       const response = await getCurrentUser(token);
-      setUser(response.data);
+      const userData = response.data;
+      setUser(userData);
+  
+      if (userData.profile_type === 'group' && userData.members) {
+        const newMap = {};
+        for (const mem of userData.members) {
+          try {
+            const res = await getGroupMemberPhotos(mem.id, token);
+            newMap[mem.id] = res.data; // array of { id, photo_url }
+          } catch (err) {
+            console.error('Error fetching photos for member', mem.id, err);
+            newMap[mem.id] = [];
+          }
+        }
+        setMemberPhotosMap(newMap);
+      }
     } catch (error) {
       console.error('Error fetching user:', error);
     } finally {
@@ -128,8 +150,9 @@ const GroupProfileScreen = () => {
         </TouchableOpacity>
       )}
 
-      {user.members && user.members.length > 0 ? (
-        user.members.map((member) => (
+      {user.members && user.members.length > 0 ? (user.members.map((member) => {
+        const memberPics = memberPhotosMap[member.id] || []; // <--- 🔥 MOVE THIS INSIDE!
+        return (
           <View key={member.id} style={styles.memberCard}>
             {member.profile_photo ? (
               <Image source={{ uri: member.profile_photo }} style={styles.photo} />
@@ -144,14 +167,28 @@ const GroupProfileScreen = () => {
               {member.height && <Text>Height: {member.height}"</Text>}
             </View>
 
+            {/* Mini photo grid for member photos */}
+            {memberPics.length > 0 && (
+              <View style={styles.miniPhotoGrid}>
+                {memberPics.map((pic) => (
+                  <Image
+                    key={pic.id}
+                    source={{ uri: pic.photo_url }}
+                    style={styles.miniPhoto}
+                  />
+                ))}
+              </View>
+            )}
+
             <TouchableOpacity onPress={() => handleEditMember(member)}>
               <Text style={styles.editText}>Edit</Text>
             </TouchableOpacity>
           </View>
-        ))
-      ) : (
-        <Text style={styles.noMembers}>No members added yet.</Text>
-      )}
+        );
+      })
+    ) : (
+      <Text style={styles.noMembers}>No members added yet.</Text>
+    )}
     </ScrollView>
   );
 };
@@ -271,5 +308,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     marginTop: 20,
+  },
+  miniPhotoGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 10,
+  },
+  miniPhoto: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    marginRight: 8,
+    marginBottom: 8,
   },
 });

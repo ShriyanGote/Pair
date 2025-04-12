@@ -1,0 +1,1001 @@
+age,ethnicity,gender,location,personality,past_activities,occupation,social_media_use
+24,Hispanic,Male,New York,Introverted,"['Water Sports', 'Video Games', 'Creative', 'Team Sports']",Maintenance,2
+40,Mixed,Non-Binary,Chicago,Social,"['Outdoor', 'Creative']",Office/Admin,3
+24,Black,Female,New York,Introverted,"['Water Sports', 'Strength Training', 'Dance', 'Video Games']",Sales,3
+19,Other,Male,New York,Introverted,"['Strength Training', 'Mind-Body']",Student,3
+21,Asian,Female,San Francisco,Ambitious,"['Video Games', 'Team Sports']",Student,2
+25,Other,Male,Chicago,Extroverted,"['Creative', 'Mind-Body']",Creative,1
+18,Mixed,Female,Austin,Social,['Mind-Body'],Student,2
+22,Hispanic,Male,Phoenix,Extroverted,"['Individual Sports', 'Video Games']",Student,4
+19,Middle Eastern,Male,New York,Extroverted,"['Water Sports', 'Mind-Body', 'Video Games']",Student,3
+32,Black,Non-Binary,Austin,Extroverted,"['Team Sports', 'Outdoor', 'Indoor Activites', 'Water Sports']",Healthcare,2
+27,White,Male,San Diego,Ambitious,['Creative'],Environmental,4
+36,Middle Eastern,Non-Binary,Chicago,Introverted,"['Individual Sports', 'Video Games', 'Mind-Body', 'Strength Training']",Creative,2
+22,Black,Male,Austin,Relaxed,"['Individual Sports', 'Dance']",Student,1
+22,Middle Eastern,Non-Binary,San Francisco,Social,"['Video Games', 'Individual Sports', 'Strength Training']",Student,1
+30,Black,Female,San Diego,Extroverted,['Video Games'],Technology,3
+24,Hispanic,Male,Chicago,Relaxed,['Strength Training'],Creative,5
+25,Other,Male,San Diego,Social,"['Indoor Activites', 'Outdoor', 'Individual Sports', 'Creative']",Media,4
+23,Middle Eastern,Male,San Francisco,Social,"['Mind-Body', 'Creative', 'Team Sports']",Production,1
+37,Mixed,Female,San Francisco,Extroverted,['Dance'],Legal Work,5
+20,Mixed,Female,Houston,Introverted,"['Team Sports', 'Creative']",Student,1
+21,Black,Female,Chicago,Social,['Individual Sports'],Research,4
+38,Middle Eastern,Male,Houston,Relaxed,"['Team Sports', 'Dance']",Maintenance,1
+23,Mixed,Female,Chicago,Extroverted,"['Dance', 'Water Sports']",Office/Admin,4
+19,Asian,Male,Houston,Extroverted,"['Team Sports', 'Dance']",Student,5
+20,White,Non-Binary,Austin,Extroverted,['Mind-Body'],Technology,5
+21,White,Female,Austin,Social,['Video Games'],Student,5
+18,Mixed,Non-Binary,Chicago,Social,['Strength Training'],Student,1
+24,Middle Eastern,Female,New York,Social,"['Video Games', 'Indoor Activites']",Sales,2
+18,Other,Non-Binary,Phoenix,Introverted,"['Strength Training', 'Dance', 'Indoor Activites', 'Creative']",Student,1
+27,Hispanic,Female,San Francisco,Introverted,['Mind-Body'],Healthcare,4
+24,Hispanic,Male,Austin,Ambitious,['Strength Training'],Sales,2
+27,Middle Eastern,Female,Austin,Extroverted,['Creative'],Healthcare,5
+20,Asian,Female,San Francisco,Social,"['Outdoor', 'Creative', 'Video Games', 'Mind-Body']",Student,2
+24,White,Male,Austin,Extroverted,"['Dance', 'Video Games']",Media,4
+18,Black,Female,Phoenix,Extroverted,"['Dance', 'Mind-Body', 'Indoor Activites', 'Video Games']",Student,2
+22,Asian,Non-Binary,San Francisco,Social,['Video Games'],Research,4
+19,Other,Female,Los Angeles,Relaxed,"['Creative', 'Outdoor', 'Indoor Activites', 'Video Games']",Student,3
+27,White,Male,San Francisco,Social,"['Mind-Body', 'Team Sports']",Creative,3
+23,White,Male,Houston,Social,['Outdoor'],Education,1
+20,Hispanic,Male,Austin,Introverted,"['Mind-Body', 'Water Sports', 'Strength Training']",Production,5
+24,Other,Male,San Francisco,Extroverted,"['Mind-Body', 'Outdoor', 'Video Games']",HR,2
+25,Other,Female,Phoenix,Extroverted,"['Individual Sports', 'Strength Training', 'Outdoor', 'Dance']",Environmental,2
+20,Asian,Male,New York,Relaxed,"['Indoor Activites', 'Individual Sports', 'Mind-Body']",Student,2
+30,White,Non-Binary,San Diego,Relaxed,"['Creative', 'Water Sports', 'Dance', 'Team Sports']",Legal Work,2
+20,White,Male,Los Angeles,Extroverted,"['Individual Sports', 'Creative', 'Team Sports', 'Mind-Body']",Student,3
+25,Black,Male,Chicago,Social,['Creative'],Education,3
+32,Other,Male,New York,Ambitious,"['Outdoor', 'Water Sports', 'Video Games', 'Team Sports']",Creative,1
+18,Middle Eastern,Female,San Diego,Social,"['Individual Sports', 'Video Games']",Student,3
+29,Middle Eastern,Female,Phoenix,Extroverted,"['Mind-Body', 'Creative']",Healthcare,2
+25,Hispanic,Female,Phoenix,Extroverted,"['Team Sports', 'Individual Sports', 'Water Sports', 'Indoor Activites']",Retired,2
+31,Middle Eastern,Non-Binary,Austin,Social,"['Outdoor', 'Water Sports']",Creative,4
+25,Hispanic,Female,San Diego,Extroverted,"['Water Sports', 'Team Sports']",Technology,1
+18,Asian,Female,San Diego,Social,"['Indoor Activites', 'Individual Sports', 'Team Sports', 'Dance']",Student,3
+25,Asian,Male,New York,Social,"['Dance', 'Video Games', 'Individual Sports', 'Indoor Activites']",Media,2
+19,Asian,Male,Phoenix,Extroverted,['Outdoor'],Student,4
+25,Asian,Female,San Francisco,Social,['Outdoor'],Creative,1
+22,Mixed,Male,Chicago,Ambitious,"['Dance', 'Team Sports', 'Video Games', 'Creative']",Student,4
+28,Mixed,Female,San Diego,Social,"['Outdoor', 'Video Games', 'Dance']",Legal Work,2
+21,Middle Eastern,Non-Binary,Houston,Social,"['Team Sports', 'Creative']",Student,3
+32,White,Non-Binary,Houston,Introverted,"['Strength Training', 'Individual Sports', 'Mind-Body', 'Team Sports']",Retired,4
+18,Hispanic,Male,New York,Ambitious,"['Video Games', 'Water Sports', 'Individual Sports', 'Strength Training']",Student,5
+27,Asian,Female,Los Angeles,Introverted,['Dance'],Technology,4
+22,Middle Eastern,Male,Chicago,Relaxed,"['Strength Training', 'Creative', 'Indoor Activites', 'Video Games']",Student,4
+24,Other,Male,Phoenix,Introverted,"['Outdoor', 'Dance']",Environmental,2
+40,Mixed,Male,Los Angeles,Social,"['Creative', 'Dance', 'Mind-Body']",Media,5
+40,Mixed,Non-Binary,Chicago,Extroverted,"['Strength Training', 'Team Sports', 'Video Games']",Legal Work,2
+30,Black,Male,San Diego,Relaxed,"['Outdoor', 'Water Sports', 'Video Games', 'Team Sports']",HR,1
+24,Mixed,Female,San Francisco,Extroverted,"['Team Sports', 'Water Sports']",Technology,3
+22,Asian,Female,San Diego,Extroverted,['Outdoor'],Retired,4
+18,White,Male,Austin,Extroverted,"['Mind-Body', 'Strength Training', 'Individual Sports', 'Dance']",Student,3
+26,White,Non-Binary,Phoenix,Ambitious,"['Individual Sports', 'Mind-Body']",HR,1
+25,Asian,Non-Binary,Los Angeles,Ambitious,"['Mind-Body', 'Strength Training', 'Creative']",Office/Admin,1
+25,Middle Eastern,Male,Austin,Relaxed,"['Video Games', 'Mind-Body']",Healthcare,4
+24,Black,Female,New York,Ambitious,['Dance'],Retired,1
+21,Asian,Non-Binary,Los Angeles,Relaxed,"['Individual Sports', 'Dance', 'Video Games', 'Water Sports']",Research,3
+19,Other,Male,Austin,Social,"['Water Sports', 'Indoor Activites', 'Video Games', 'Outdoor']",Student,1
+25,Black,Non-Binary,Los Angeles,Extroverted,"['Water Sports', 'Outdoor', 'Individual Sports', 'Strength Training']",Environmental,5
+37,Hispanic,Female,Austin,Relaxed,['Water Sports'],Legal Work,3
+25,Middle Eastern,Male,San Francisco,Relaxed,"['Mind-Body', 'Outdoor', 'Indoor Activites', 'Video Games']",Production,5
+33,Asian,Female,Los Angeles,Relaxed,"['Mind-Body', 'Creative', 'Outdoor', 'Team Sports']",Education,5
+25,White,Female,Chicago,Extroverted,"['Team Sports', 'Dance']",Research,1
+24,Asian,Female,San Diego,Ambitious,"['Creative', 'Video Games', 'Water Sports', 'Strength Training']",Sales,3
+25,Asian,Female,Chicago,Extroverted,"['Strength Training', 'Creative', 'Indoor Activites', 'Water Sports']",Media,4
+24,Hispanic,Male,San Francisco,Social,['Strength Training'],Maintenance,2
+20,Asian,Female,Phoenix,Social,['Team Sports'],Student,4
+20,Hispanic,Non-Binary,Houston,Introverted,"['Creative', 'Strength Training', 'Dance', 'Outdoor']",Student,4
+22,Black,Female,Austin,Extroverted,"['Team Sports', 'Mind-Body']",Student,5
+23,White,Male,San Diego,Introverted,"['Water Sports', 'Strength Training']",Legal Work,2
+23,Other,Female,San Diego,Relaxed,"['Video Games', 'Strength Training', 'Mind-Body']",Healthcare,3
+24,White,Non-Binary,San Diego,Social,"['Outdoor', 'Creative', 'Indoor Activites']",Education,1
+28,Asian,Non-Binary,Austin,Ambitious,"['Video Games', 'Outdoor']",Maintenance,3
+21,Middle Eastern,Male,Phoenix,Social,"['Team Sports', 'Indoor Activites', 'Dance']",Student,2
+22,Hispanic,Non-Binary,Chicago,Relaxed,"['Outdoor', 'Indoor Activites', 'Creative', 'Team Sports']",Student,2
+18,Middle Eastern,Non-Binary,San Francisco,Introverted,"['Individual Sports', 'Water Sports']",Retired,1
+24,Other,Female,San Diego,Extroverted,"['Mind-Body', 'Video Games', 'Water Sports', 'Strength Training']",Client Relation/Support,5
+19,Asian,Female,New York,Extroverted,"['Creative', 'Strength Training', 'Individual Sports', 'Water Sports']",Student,5
+18,Mixed,Male,San Diego,Introverted,['Outdoor'],Legal Work,4
+21,Mixed,Non-Binary,Austin,Extroverted,"['Water Sports', 'Team Sports', 'Strength Training']",Production,1
+35,Asian,Female,Phoenix,Relaxed,"['Outdoor', 'Creative', 'Mind-Body']",Education,4
+18,Middle Eastern,Non-Binary,San Diego,Introverted,"['Creative', 'Dance']",Student,2
+27,Mixed,Female,Chicago,Introverted,"['Outdoor', 'Creative']",Client Relation/Support,4
+20,Mixed,Male,Los Angeles,Introverted,"['Water Sports', 'Strength Training']",Student,5
+29,Other,Female,New York,Introverted,"['Dance', 'Creative', 'Strength Training']",Retired,5
+37,Other,Female,Los Angeles,Relaxed,"['Water Sports', 'Creative', 'Individual Sports', 'Outdoor']",Client Relation/Support,3
+18,Other,Female,San Diego,Introverted,"['Indoor Activites', 'Mind-Body']",Student,1
+22,White,Female,Austin,Extroverted,"['Water Sports', 'Mind-Body']",Student,2
+19,Black,Female,Houston,Introverted,['Dance'],Student,3
+23,Black,Female,New York,Extroverted,"['Outdoor', 'Creative']",Education,4
+23,Mixed,Female,Los Angeles,Relaxed,"['Water Sports', 'Mind-Body', 'Team Sports', 'Outdoor']",Creative,4
+21,White,Female,San Diego,Extroverted,['Dance'],Student,3
+23,Asian,Male,Chicago,Social,"['Water Sports', 'Dance', 'Outdoor']",Media,1
+19,Middle Eastern,Male,Phoenix,Ambitious,['Individual Sports'],Student,4
+27,Other,Non-Binary,Chicago,Extroverted,"['Team Sports', 'Water Sports', 'Strength Training']",Research,3
+25,Mixed,Female,Los Angeles,Social,"['Water Sports', 'Mind-Body', 'Creative', 'Outdoor']",Environmental,1
+25,Other,Non-Binary,Chicago,Social,['Strength Training'],Client Relation/Support,3
+23,Other,Female,San Francisco,Extroverted,"['Dance', 'Mind-Body', 'Individual Sports', 'Water Sports']",Production,2
+18,Other,Female,San Diego,Extroverted,"['Creative', 'Indoor Activites', 'Dance']",Maintenance,2
+25,Hispanic,Non-Binary,Los Angeles,Social,['Dance'],Education,1
+18,Hispanic,Male,New York,Extroverted,"['Indoor Activites', 'Strength Training', 'Team Sports']",Student,1
+23,Other,Female,San Francisco,Extroverted,['Outdoor'],Sales,5
+18,Middle Eastern,Non-Binary,Phoenix,Relaxed,"['Video Games', 'Mind-Body']",Student,1
+23,Black,Non-Binary,San Francisco,Social,"['Outdoor', 'Video Games', 'Water Sports']",Legal Work,2
+20,Black,Female,Los Angeles,Extroverted,"['Mind-Body', 'Creative', 'Strength Training', 'Water Sports']",Legal Work,2
+31,Middle Eastern,Non-Binary,Houston,Extroverted,"['Creative', 'Video Games', 'Water Sports']",Creative,1
+22,Middle Eastern,Male,San Diego,Introverted,"['Team Sports', 'Dance', 'Video Games', 'Strength Training']",Student,3
+24,Middle Eastern,Female,San Diego,Introverted,"['Outdoor', 'Water Sports', 'Indoor Activites']",Retired,3
+23,Hispanic,Male,Houston,Extroverted,"['Strength Training', 'Outdoor', 'Creative']",Technology,2
+24,White,Male,Chicago,Extroverted,"['Video Games', 'Dance', 'Team Sports']",Environmental,4
+21,Asian,Male,Chicago,Social,"['Team Sports', 'Mind-Body']",Student,5
+27,Middle Eastern,Female,Phoenix,Introverted,"['Strength Training', 'Outdoor', 'Team Sports']",Legal Work,2
+24,Mixed,Female,Austin,Extroverted,"['Water Sports', 'Dance']",Retired,4
+22,Mixed,Female,Chicago,Introverted,"['Individual Sports', 'Mind-Body', 'Creative', 'Water Sports']",Student,5
+22,Black,Female,Houston,Social,"['Indoor Activites', 'Team Sports']",Student,1
+22,Mixed,Female,Chicago,Introverted,['Dance'],Education,2
+19,White,Female,Phoenix,Ambitious,['Mind-Body'],Student,5
+21,Middle Eastern,Female,San Francisco,Social,"['Team Sports', 'Individual Sports', 'Indoor Activites']",Student,5
+22,Hispanic,Male,Phoenix,Social,"['Team Sports', 'Video Games']",Student,4
+22,Hispanic,Male,San Francisco,Extroverted,"['Indoor Activites', 'Mind-Body', 'Strength Training']",Environmental,4
+21,Other,Female,Los Angeles,Relaxed,"['Outdoor', 'Creative']",Student,2
+19,Hispanic,Female,Chicago,Extroverted,"['Dance', 'Team Sports']",Student,3
+23,Black,Male,Phoenix,Ambitious,['Creative'],Office/Admin,4
+35,Other,Female,Los Angeles,Introverted,"['Dance', 'Strength Training', 'Creative', 'Water Sports']",Retired,5
+19,Black,Male,Los Angeles,Social,['Team Sports'],Student,2
+34,Asian,Female,Chicago,Relaxed,['Team Sports'],Technology,3
+32,White,Male,Houston,Ambitious,"['Individual Sports', 'Team Sports']",Production,3
+24,Black,Male,Phoenix,Extroverted,"['Indoor Activites', 'Team Sports']",Retired,3
+23,Hispanic,Female,Chicago,Relaxed,['Team Sports'],Client Relation/Support,4
+21,Hispanic,Female,Austin,Social,"['Dance', 'Indoor Activites']",Student,2
+35,Hispanic,Female,Houston,Extroverted,"['Strength Training', 'Individual Sports', 'Mind-Body', 'Water Sports']",Maintenance,1
+35,Other,Non-Binary,Austin,Extroverted,"['Individual Sports', 'Outdoor', 'Strength Training', 'Creative']",Client Relation/Support,3
+36,Asian,Male,Houston,Extroverted,"['Outdoor', 'Video Games']",Media,5
+22,Black,Female,San Diego,Social,"['Video Games', 'Individual Sports', 'Water Sports', 'Dance']",Creative,1
+24,Hispanic,Female,Los Angeles,Relaxed,"['Mind-Body', 'Dance', 'Team Sports', 'Video Games']",Environmental,5
+25,White,Male,Houston,Social,"['Water Sports', 'Video Games']",Sales,4
+22,White,Female,Austin,Relaxed,"['Indoor Activites', 'Creative']",Student,3
+23,Mixed,Female,New York,Social,"['Strength Training', 'Video Games']",Creative,3
+24,Hispanic,Male,Chicago,Relaxed,"['Video Games', 'Individual Sports', 'Dance']",Production,3
+24,Middle Eastern,Non-Binary,Chicago,Extroverted,"['Video Games', 'Creative']",Maintenance,4
+23,Hispanic,Non-Binary,Phoenix,Social,['Water Sports'],Retired,3
+23,Middle Eastern,Male,Austin,Extroverted,"['Individual Sports', 'Water Sports', 'Strength Training']",Retired,4
+18,Middle Eastern,Male,San Francisco,Extroverted,"['Creative', 'Indoor Activites', 'Mind-Body', 'Water Sports']",Student,5
+33,White,Female,Los Angeles,Social,"['Video Games', 'Indoor Activites']",Technology,3
+21,Other,Male,San Francisco,Ambitious,"['Outdoor', 'Strength Training', 'Individual Sports']",Student,4
+22,White,Male,Phoenix,Extroverted,"['Indoor Activites', 'Strength Training']",Student,1
+19,Asian,Male,Chicago,Extroverted,"['Team Sports', 'Strength Training', 'Indoor Activites', 'Dance']",Student,5
+23,Other,Non-Binary,Chicago,Extroverted,"['Mind-Body', 'Indoor Activites', 'Individual Sports']",Media,2
+22,Black,Female,New York,Extroverted,"['Indoor Activites', 'Video Games', 'Outdoor']",Student,5
+24,Other,Male,Los Angeles,Ambitious,"['Outdoor', 'Team Sports', 'Dance', 'Video Games']",Office/Admin,3
+31,Black,Female,New York,Relaxed,"['Strength Training', 'Individual Sports', 'Mind-Body', 'Water Sports']",Media,2
+20,Asian,Female,Phoenix,Social,"['Water Sports', 'Indoor Activites']",Student,3
+25,Middle Eastern,Male,San Francisco,Social,['Individual Sports'],Media,5
+24,Mixed,Female,New York,Introverted,"['Strength Training', 'Mind-Body']",Client Relation/Support,1
+20,White,Non-Binary,Chicago,Relaxed,['Strength Training'],Office/Admin,4
+20,Hispanic,Male,San Diego,Extroverted,['Strength Training'],Production,2
+27,White,Male,San Diego,Relaxed,"['Water Sports', 'Dance', 'Mind-Body', 'Outdoor']",Healthcare,2
+19,Asian,Non-Binary,San Diego,Extroverted,"['Water Sports', 'Team Sports', 'Creative']",Student,4
+21,White,Female,San Diego,Extroverted,"['Video Games', 'Strength Training']",Student,3
+19,White,Female,New York,Ambitious,['Dance'],Student,3
+20,Black,Male,New York,Introverted,"['Strength Training', 'Dance']",Student,2
+31,Mixed,Male,San Francisco,Extroverted,"['Water Sports', 'Video Games']",Client Relation/Support,2
+24,Mixed,Non-Binary,Houston,Relaxed,"['Mind-Body', 'Indoor Activites', 'Video Games']",Production,2
+20,Other,Male,San Diego,Introverted,"['Individual Sports', 'Strength Training', 'Video Games']",Student,5
+20,Hispanic,Male,Los Angeles,Introverted,['Indoor Activites'],Student,1
+22,Hispanic,Female,San Francisco,Extroverted,"['Outdoor', 'Mind-Body', 'Video Games', 'Dance']",Student,2
+22,Other,Non-Binary,Phoenix,Introverted,"['Individual Sports', 'Mind-Body', 'Creative', 'Indoor Activites']",Student,5
+24,Other,Male,Houston,Introverted,"['Water Sports', 'Indoor Activites']",Office/Admin,5
+19,Black,Non-Binary,Austin,Introverted,['Outdoor'],Student,2
+30,Middle Eastern,Male,Chicago,Extroverted,['Indoor Activites'],Client Relation/Support,4
+23,Middle Eastern,Female,Los Angeles,Extroverted,"['Water Sports', 'Indoor Activites']",Retired,4
+20,Black,Non-Binary,San Diego,Relaxed,"['Dance', 'Individual Sports', 'Water Sports']",Technology,3
+25,White,Non-Binary,Houston,Ambitious,['Individual Sports'],Education,5
+23,Hispanic,Male,San Francisco,Extroverted,"['Strength Training', 'Water Sports', 'Individual Sports']",HR,4
+24,Black,Male,Austin,Relaxed,['Creative'],Client Relation/Support,2
+21,Middle Eastern,Female,Phoenix,Social,"['Creative', 'Mind-Body', 'Team Sports', 'Video Games']",Student,5
+23,Asian,Female,Los Angeles,Introverted,"['Water Sports', 'Outdoor', 'Team Sports']",Creative,5
+33,Asian,Male,Los Angeles,Ambitious,"['Indoor Activites', 'Creative', 'Video Games', 'Individual Sports']",Legal Work,3
+22,White,Non-Binary,San Francisco,Relaxed,"['Dance', 'Indoor Activites', 'Mind-Body', 'Strength Training']",Student,4
+22,Middle Eastern,Female,Chicago,Social,['Video Games'],Student,1
+18,Middle Eastern,Male,San Francisco,Social,['Dance'],Student,3
+23,Middle Eastern,Non-Binary,San Francisco,Social,"['Team Sports', 'Mind-Body', 'Creative', 'Dance']",Research,3
+28,Black,Male,Austin,Ambitious,"['Indoor Activites', 'Strength Training']",Retired,5
+19,Mixed,Non-Binary,New York,Extroverted,"['Strength Training', 'Indoor Activites', 'Individual Sports']",Student,1
+25,Other,Male,Los Angeles,Extroverted,"['Video Games', 'Team Sports', 'Indoor Activites']",Environmental,5
+25,Mixed,Female,Chicago,Social,"['Water Sports', 'Team Sports', 'Mind-Body', 'Dance']",Maintenance,2
+24,Hispanic,Male,Houston,Extroverted,"['Individual Sports', 'Mind-Body', 'Team Sports']",Client Relation/Support,4
+36,Other,Non-Binary,San Diego,Extroverted,"['Team Sports', 'Individual Sports', 'Indoor Activites', 'Creative']",Retired,2
+26,Black,Female,Chicago,Social,"['Creative', 'Dance', 'Mind-Body', 'Indoor Activites']",Media,1
+21,Asian,Female,San Diego,Social,['Indoor Activites'],Student,1
+20,Black,Female,Phoenix,Extroverted,"['Outdoor', 'Strength Training', 'Individual Sports', 'Dance']",Student,5
+24,Hispanic,Female,Chicago,Social,['Outdoor'],Retired,3
+25,Middle Eastern,Male,Houston,Extroverted,"['Video Games', 'Team Sports']",Technology,1
+25,Other,Male,Austin,Introverted,"['Water Sports', 'Outdoor', 'Individual Sports']",HR,3
+34,Middle Eastern,Female,San Francisco,Ambitious,"['Mind-Body', 'Individual Sports', 'Indoor Activites']",Education,4
+21,Asian,Non-Binary,Chicago,Social,"['Water Sports', 'Video Games']",Maintenance,2
+23,Middle Eastern,Male,Austin,Social,"['Strength Training', 'Team Sports', 'Mind-Body', 'Individual Sports']",Production,3
+18,White,Male,Phoenix,Introverted,"['Individual Sports', 'Team Sports', 'Video Games', 'Creative']",Student,4
+38,Black,Male,San Diego,Ambitious,"['Strength Training', 'Creative', 'Team Sports']",Research,3
+36,Mixed,Male,New York,Introverted,"['Team Sports', 'Creative']",Education,2
+23,Black,Male,Los Angeles,Extroverted,"['Creative', 'Water Sports', 'Individual Sports']",Technology,5
+27,White,Male,Houston,Social,"['Video Games', 'Team Sports', 'Strength Training', 'Outdoor']",Maintenance,4
+22,Mixed,Female,New York,Ambitious,"['Indoor Activites', 'Video Games']",Student,3
+35,Other,Male,Phoenix,Social,"['Individual Sports', 'Outdoor', 'Mind-Body']",Environmental,5
+29,Other,Female,San Francisco,Introverted,"['Outdoor', 'Team Sports', 'Strength Training']",Legal Work,5
+36,Asian,Female,Austin,Social,"['Team Sports', 'Outdoor', 'Creative']",Retired,2
+25,Asian,Male,San Francisco,Extroverted,"['Water Sports', 'Mind-Body', 'Outdoor', 'Indoor Activites']",Client Relation/Support,2
+20,Hispanic,Male,New York,Social,['Outdoor'],Student,1
+25,Asian,Female,San Diego,Extroverted,"['Team Sports', 'Dance', 'Indoor Activites', 'Outdoor']",Client Relation/Support,2
+19,White,Non-Binary,Los Angeles,Relaxed,"['Outdoor', 'Individual Sports']",Client Relation/Support,5
+20,Black,Male,New York,Extroverted,"['Individual Sports', 'Team Sports', 'Indoor Activites']",Student,4
+25,Asian,Male,Houston,Extroverted,"['Outdoor', 'Indoor Activites', 'Individual Sports']",Office/Admin,1
+25,White,Female,Los Angeles,Social,"['Dance', 'Creative']",Maintenance,5
+36,Mixed,Non-Binary,San Francisco,Extroverted,"['Creative', 'Strength Training', 'Outdoor', 'Individual Sports']",Maintenance,2
+21,Black,Female,Chicago,Extroverted,"['Outdoor', 'Dance', 'Strength Training']",Retired,1
+22,Black,Male,Phoenix,Extroverted,"['Individual Sports', 'Strength Training', 'Outdoor', 'Team Sports']",Student,4
+22,Mixed,Male,Chicago,Introverted,"['Team Sports', 'Video Games']",Student,5
+19,Other,Male,Austin,Social,['Video Games'],Student,3
+22,Asian,Male,San Diego,Ambitious,"['Team Sports', 'Video Games', 'Individual Sports']",Student,4
+20,Asian,Male,New York,Social,"['Video Games', 'Water Sports']",Maintenance,1
+18,Black,Female,Chicago,Introverted,"['Indoor Activites', 'Strength Training']",Student,5
+22,Asian,Non-Binary,Austin,Ambitious,"['Individual Sports', 'Team Sports']",Student,3
+20,Other,Male,Los Angeles,Social,['Video Games'],Student,2
+23,Other,Female,New York,Ambitious,"['Outdoor', 'Strength Training', 'Team Sports']",Environmental,2
+28,Other,Male,Chicago,Extroverted,"['Individual Sports', 'Strength Training']",Office/Admin,1
+19,Middle Eastern,Female,Phoenix,Social,"['Team Sports', 'Creative']",Student,3
+29,Other,Non-Binary,San Francisco,Social,"['Video Games', 'Team Sports', 'Outdoor', 'Mind-Body']",Retired,2
+25,White,Non-Binary,Los Angeles,Extroverted,"['Water Sports', 'Strength Training']",HR,1
+25,White,Male,New York,Social,"['Creative', 'Mind-Body']",Sales,3
+24,Hispanic,Non-Binary,New York,Introverted,['Video Games'],Healthcare,1
+22,Other,Male,Los Angeles,Extroverted,"['Indoor Activites', 'Strength Training', 'Creative', 'Mind-Body']",Student,5
+29,Hispanic,Male,Austin,Social,"['Dance', 'Outdoor', 'Water Sports', 'Indoor Activites']",Office/Admin,1
+35,White,Non-Binary,Phoenix,Ambitious,['Indoor Activites'],Production,2
+25,Asian,Female,Los Angeles,Relaxed,"['Creative', 'Dance', 'Individual Sports', 'Outdoor']",Production,3
+21,Mixed,Male,Houston,Extroverted,"['Outdoor', 'Mind-Body']",Student,2
+20,White,Non-Binary,San Francisco,Social,['Indoor Activites'],Student,2
+22,White,Male,Phoenix,Ambitious,"['Team Sports', 'Dance']",Technology,1
+37,Mixed,Male,San Francisco,Relaxed,"['Team Sports', 'Mind-Body']",Creative,3
+19,Asian,Non-Binary,New York,Introverted,"['Outdoor', 'Creative', 'Strength Training', 'Video Games']",Student,2
+25,Asian,Male,Los Angeles,Introverted,['Strength Training'],Media,1
+18,Other,Male,Chicago,Social,"['Water Sports', 'Outdoor']",Student,4
+30,Middle Eastern,Male,San Francisco,Social,['Strength Training'],Research,1
+25,White,Male,Los Angeles,Social,"['Water Sports', 'Creative', 'Strength Training', 'Individual Sports']",HR,1
+22,Middle Eastern,Male,Phoenix,Relaxed,"['Strength Training', 'Individual Sports']",Maintenance,1
+27,Asian,Male,Los Angeles,Ambitious,['Mind-Body'],Environmental,1
+25,White,Male,Phoenix,Extroverted,"['Video Games', 'Creative']",Research,2
+37,White,Male,New York,Introverted,"['Mind-Body', 'Outdoor']",Research,3
+23,White,Female,Austin,Social,"['Creative', 'Video Games', 'Strength Training']",Environmental,4
+25,Asian,Female,New York,Ambitious,"['Team Sports', 'Dance', 'Individual Sports']",Media,5
+19,Middle Eastern,Male,San Francisco,Relaxed,"['Team Sports', 'Dance', 'Strength Training']",Student,2
+20,Asian,Non-Binary,San Francisco,Extroverted,"['Dance', 'Water Sports', 'Outdoor']",Student,3
+23,White,Female,Chicago,Social,"['Mind-Body', 'Water Sports']",Technology,1
+18,Asian,Female,Chicago,Ambitious,"['Individual Sports', 'Indoor Activites', 'Video Games']",Student,4
+32,Mixed,Female,San Diego,Extroverted,['Creative'],Retired,4
+18,Middle Eastern,Male,Chicago,Extroverted,"['Strength Training', 'Video Games', 'Team Sports']",Student,1
+22,Black,Female,San Francisco,Introverted,['Dance'],Student,2
+37,Mixed,Female,Austin,Introverted,['Dance'],Maintenance,1
+24,Mixed,Female,San Diego,Introverted,"['Strength Training', 'Mind-Body', 'Outdoor', 'Video Games']",Production,3
+18,Mixed,Male,Chicago,Social,"['Strength Training', 'Outdoor', 'Creative', 'Indoor Activites']",Office/Admin,1
+18,Asian,Male,San Diego,Ambitious,"['Creative', 'Water Sports']",Student,2
+20,Hispanic,Male,Los Angeles,Ambitious,"['Indoor Activites', 'Dance', 'Video Games', 'Water Sports']",Student,1
+27,Hispanic,Male,Chicago,Extroverted,['Indoor Activites'],Sales,4
+29,White,Non-Binary,Austin,Social,"['Creative', 'Individual Sports']",Client Relation/Support,5
+34,Middle Eastern,Male,San Francisco,Ambitious,"['Video Games', 'Creative', 'Water Sports']",Sales,4
+27,Asian,Male,Houston,Extroverted,['Strength Training'],Maintenance,1
+28,Middle Eastern,Male,San Francisco,Social,"['Dance', 'Outdoor']",Production,3
+32,Asian,Non-Binary,Phoenix,Social,"['Indoor Activites', 'Dance', 'Individual Sports', 'Water Sports']",Office/Admin,1
+21,Mixed,Female,San Diego,Extroverted,"['Video Games', 'Dance', 'Team Sports']",Maintenance,4
+24,White,Female,Los Angeles,Social,['Video Games'],Retired,4
+30,Asian,Female,Chicago,Ambitious,['Strength Training'],Production,2
+20,Other,Male,Phoenix,Ambitious,"['Individual Sports', 'Indoor Activites']",Student,5
+21,Hispanic,Female,Austin,Extroverted,['Mind-Body'],Student,1
+26,Asian,Female,Chicago,Social,"['Creative', 'Outdoor', 'Video Games']",Legal Work,1
+27,Other,Female,New York,Introverted,"['Team Sports', 'Creative', 'Strength Training', 'Video Games']",Education,2
+23,Mixed,Non-Binary,Austin,Introverted,['Outdoor'],Creative,2
+19,Hispanic,Female,New York,Introverted,"['Team Sports', 'Video Games', 'Outdoor']",Student,3
+34,Asian,Non-Binary,Houston,Introverted,"['Individual Sports', 'Water Sports', 'Strength Training', 'Team Sports']",Sales,1
+34,Black,Non-Binary,San Diego,Relaxed,['Indoor Activites'],Client Relation/Support,3
+20,Hispanic,Female,San Diego,Social,['Individual Sports'],Research,1
+21,White,Male,Chicago,Relaxed,['Water Sports'],Student,2
+25,Other,Female,San Francisco,Ambitious,['Water Sports'],Sales,2
+30,Asian,Female,Houston,Ambitious,"['Individual Sports', 'Strength Training', 'Team Sports', 'Creative']",Retired,5
+22,Other,Female,Chicago,Introverted,"['Video Games', 'Strength Training']",Student,3
+23,Black,Female,San Francisco,Extroverted,"['Team Sports', 'Water Sports']",Production,4
+23,Asian,Male,Chicago,Social,['Indoor Activites'],Client Relation/Support,3
+29,Middle Eastern,Non-Binary,New York,Introverted,"['Creative', 'Outdoor', 'Dance']",Sales,2
+32,Other,Non-Binary,Los Angeles,Extroverted,['Strength Training'],Legal Work,5
+24,White,Male,San Francisco,Extroverted,"['Team Sports', 'Strength Training', 'Water Sports', 'Mind-Body']",Production,3
+22,Black,Male,San Diego,Relaxed,"['Individual Sports', 'Mind-Body']",Student,1
+29,White,Non-Binary,Chicago,Extroverted,['Water Sports'],Client Relation/Support,1
+20,Other,Male,Phoenix,Social,"['Creative', 'Outdoor']",Student,1
+23,Black,Male,Phoenix,Ambitious,"['Indoor Activites', 'Individual Sports', 'Outdoor']",Maintenance,1
+18,Middle Eastern,Non-Binary,Los Angeles,Social,"['Outdoor', 'Team Sports', 'Dance']",Student,1
+18,Mixed,Male,San Diego,Social,"['Creative', 'Strength Training', 'Outdoor', 'Individual Sports']",Student,5
+32,Middle Eastern,Male,Los Angeles,Introverted,"['Team Sports', 'Individual Sports', 'Creative']",Office/Admin,4
+23,Middle Eastern,Male,Austin,Social,['Mind-Body'],Environmental,4
+20,Other,Female,Los Angeles,Introverted,['Water Sports'],Student,4
+18,Middle Eastern,Non-Binary,San Diego,Social,"['Indoor Activites', 'Individual Sports', 'Mind-Body', 'Dance']",Student,3
+18,Other,Non-Binary,San Francisco,Extroverted,"['Team Sports', 'Dance', 'Creative', 'Strength Training']",Student,3
+25,White,Female,Phoenix,Extroverted,"['Water Sports', 'Dance', 'Team Sports', 'Indoor Activites']",Sales,1
+23,Black,Male,New York,Social,"['Individual Sports', 'Mind-Body', 'Strength Training', 'Water Sports']",Environmental,3
+29,Mixed,Female,Houston,Ambitious,['Outdoor'],Production,1
+24,Middle Eastern,Female,New York,Social,"['Creative', 'Individual Sports', 'Video Games', 'Water Sports']",Education,3
+27,Asian,Female,Chicago,Ambitious,"['Creative', 'Strength Training', 'Indoor Activites']",Technology,2
+32,Middle Eastern,Non-Binary,Phoenix,Social,"['Strength Training', 'Video Games', 'Creative', 'Individual Sports']",Production,1
+24,Black,Male,Chicago,Ambitious,['Outdoor'],Research,3
+22,Hispanic,Female,Austin,Relaxed,"['Video Games', 'Dance', 'Outdoor']",Technology,5
+25,Hispanic,Male,New York,Extroverted,['Creative'],Sales,5
+35,Middle Eastern,Non-Binary,Houston,Extroverted,"['Mind-Body', 'Outdoor', 'Creative']",Technology,1
+18,Other,Male,Chicago,Ambitious,"['Individual Sports', 'Mind-Body', 'Water Sports', 'Outdoor']",Student,3
+28,Mixed,Non-Binary,San Diego,Extroverted,['Water Sports'],Education,5
+24,Mixed,Female,San Diego,Extroverted,"['Strength Training', 'Individual Sports']",Environmental,5
+26,Other,Male,Phoenix,Extroverted,"['Water Sports', 'Outdoor']",Education,4
+27,Mixed,Male,Houston,Extroverted,"['Dance', 'Video Games']",Environmental,4
+18,White,Female,San Francisco,Extroverted,['Water Sports'],Sales,1
+23,White,Non-Binary,Chicago,Relaxed,"['Individual Sports', 'Creative', 'Indoor Activites']",Retired,5
+25,Asian,Male,San Diego,Extroverted,['Strength Training'],Education,5
+22,Black,Male,New York,Social,"['Video Games', 'Indoor Activites', 'Team Sports', 'Water Sports']",Legal Work,3
+21,Other,Female,Los Angeles,Introverted,['Individual Sports'],Student,4
+23,Black,Female,Los Angeles,Extroverted,"['Water Sports', 'Team Sports']",Client Relation/Support,3
+23,Middle Eastern,Female,Houston,Extroverted,"['Water Sports', 'Dance', 'Creative', 'Indoor Activites']",Office/Admin,4
+23,Other,Male,San Francisco,Extroverted,"['Water Sports', 'Strength Training', 'Outdoor']",Sales,5
+19,Mixed,Male,Austin,Social,"['Creative', 'Team Sports', 'Dance']",Media,3
+25,Middle Eastern,Male,San Diego,Introverted,"['Video Games', 'Outdoor']",Sales,2
+23,Hispanic,Non-Binary,Chicago,Ambitious,['Dance'],Retired,5
+21,Mixed,Female,New York,Extroverted,"['Team Sports', 'Dance', 'Strength Training', 'Mind-Body']",Student,4
+25,Other,Female,Chicago,Ambitious,"['Indoor Activites', 'Creative']",HR,3
+40,White,Female,San Diego,Introverted,['Indoor Activites'],Environmental,5
+23,Mixed,Female,San Francisco,Social,"['Team Sports', 'Dance', 'Video Games', 'Creative']",Technology,1
+23,Other,Male,Chicago,Relaxed,"['Dance', 'Individual Sports']",Maintenance,3
+28,Other,Non-Binary,Houston,Relaxed,"['Creative', 'Indoor Activites', 'Team Sports']",Client Relation/Support,5
+19,Black,Female,Houston,Extroverted,['Dance'],Student,2
+18,White,Non-Binary,San Diego,Extroverted,['Individual Sports'],Student,5
+32,White,Female,San Diego,Social,['Outdoor'],HR,4
+25,Middle Eastern,Female,Phoenix,Relaxed,"['Video Games', 'Outdoor']",Retired,2
+19,Black,Female,Austin,Social,"['Dance', 'Team Sports', 'Indoor Activites', 'Video Games']",Student,5
+30,Black,Female,Los Angeles,Introverted,"['Creative', 'Individual Sports', 'Dance']",Research,5
+20,Hispanic,Male,San Diego,Social,"['Team Sports', 'Individual Sports']",Student,2
+21,Asian,Female,San Francisco,Ambitious,"['Creative', 'Dance', 'Individual Sports']",Student,1
+22,White,Male,Los Angeles,Ambitious,"['Mind-Body', 'Individual Sports', 'Dance', 'Indoor Activites']",Student,4
+25,Asian,Male,San Francisco,Extroverted,"['Dance', 'Strength Training', 'Creative', 'Outdoor']",Education,3
+22,Hispanic,Non-Binary,Phoenix,Extroverted,"['Team Sports', 'Strength Training']",Student,1
+23,Asian,Non-Binary,Chicago,Relaxed,"['Mind-Body', 'Dance', 'Creative']",Media,1
+18,Mixed,Non-Binary,Houston,Social,"['Team Sports', 'Mind-Body', 'Individual Sports']",Student,3
+19,Mixed,Female,Los Angeles,Extroverted,['Indoor Activites'],Student,4
+25,Mixed,Female,Chicago,Extroverted,"['Mind-Body', 'Creative']",Environmental,2
+18,Black,Male,Phoenix,Relaxed,"['Indoor Activites', 'Individual Sports', 'Dance']",Student,1
+22,Asian,Female,Austin,Ambitious,"['Video Games', 'Outdoor', 'Indoor Activites', 'Individual Sports']",Student,2
+25,White,Male,Los Angeles,Extroverted,['Dance'],Technology,3
+25,White,Non-Binary,Austin,Extroverted,"['Indoor Activites', 'Mind-Body', 'Outdoor']",Research,5
+20,Mixed,Non-Binary,San Francisco,Introverted,"['Team Sports', 'Indoor Activites']",Student,3
+19,Other,Non-Binary,Chicago,Extroverted,"['Mind-Body', 'Video Games']",Student,1
+29,Middle Eastern,Female,Chicago,Extroverted,"['Team Sports', 'Individual Sports', 'Dance']",Legal Work,3
+29,Other,Male,Phoenix,Ambitious,"['Outdoor', 'Creative', 'Dance', 'Mind-Body']",Legal Work,1
+19,Black,Male,Phoenix,Introverted,"['Video Games', 'Team Sports']",Student,1
+25,Hispanic,Female,Chicago,Social,"['Team Sports', 'Dance', 'Strength Training', 'Outdoor']",Technology,1
+20,Middle Eastern,Female,San Diego,Ambitious,"['Individual Sports', 'Water Sports']",Media,3
+23,Black,Female,Los Angeles,Introverted,['Video Games'],Creative,2
+19,Black,Male,Chicago,Extroverted,"['Individual Sports', 'Video Games', 'Outdoor', 'Water Sports']",Student,1
+24,Middle Eastern,Male,Chicago,Ambitious,['Mind-Body'],Media,4
+18,Hispanic,Female,New York,Ambitious,"['Dance', 'Strength Training', 'Creative', 'Individual Sports']",Creative,5
+28,Asian,Male,San Diego,Extroverted,"['Outdoor', 'Creative']",Media,4
+21,Other,Male,Houston,Relaxed,"['Outdoor', 'Strength Training']",Student,1
+22,Mixed,Male,Los Angeles,Social,"['Dance', 'Outdoor', 'Individual Sports']",Student,4
+20,Mixed,Female,Houston,Ambitious,"['Water Sports', 'Strength Training', 'Mind-Body', 'Outdoor']",Student,4
+31,Other,Male,Houston,Social,"['Dance', 'Team Sports', 'Creative']",Technology,4
+29,Other,Female,San Diego,Introverted,"['Team Sports', 'Individual Sports', 'Water Sports', 'Creative']",HR,5
+23,Mixed,Male,Chicago,Introverted,"['Creative', 'Indoor Activites']",Office/Admin,2
+24,White,Non-Binary,Los Angeles,Social,"['Outdoor', 'Creative']",Retired,3
+24,Black,Female,Austin,Relaxed,"['Video Games', 'Team Sports', 'Dance', 'Water Sports']",Retired,3
+28,Black,Female,Austin,Social,"['Strength Training', 'Indoor Activites']",Creative,5
+21,Middle Eastern,Non-Binary,Austin,Social,"['Individual Sports', 'Team Sports', 'Indoor Activites']",Student,5
+22,White,Female,San Francisco,Social,"['Dance', 'Individual Sports', 'Strength Training']",Research,3
+22,Other,Male,New York,Relaxed,"['Water Sports', 'Indoor Activites']",Student,1
+21,Hispanic,Female,Austin,Social,"['Outdoor', 'Water Sports', 'Creative']",Student,3
+18,Hispanic,Female,Los Angeles,Ambitious,"['Mind-Body', 'Strength Training', 'Creative', 'Outdoor']",Student,4
+21,Hispanic,Female,Los Angeles,Extroverted,"['Individual Sports', 'Indoor Activites', 'Mind-Body']",Student,5
+30,Asian,Female,Chicago,Ambitious,"['Video Games', 'Individual Sports']",Media,1
+28,Asian,Male,San Francisco,Relaxed,"['Team Sports', 'Creative', 'Outdoor', 'Dance']",HR,4
+29,White,Male,New York,Extroverted,"['Water Sports', 'Creative']",Media,4
+23,Asian,Non-Binary,Austin,Ambitious,"['Outdoor', 'Team Sports', 'Strength Training', 'Video Games']",Education,1
+23,Mixed,Male,Chicago,Extroverted,"['Video Games', 'Creative', 'Individual Sports', 'Indoor Activites']",Legal Work,1
+29,Mixed,Female,Austin,Extroverted,"['Video Games', 'Team Sports', 'Strength Training']",Production,4
+30,Black,Non-Binary,Phoenix,Relaxed,"['Indoor Activites', 'Video Games']",Technology,4
+36,Other,Female,San Diego,Social,"['Team Sports', 'Creative', 'Dance']",Creative,2
+29,White,Non-Binary,Austin,Social,['Indoor Activites'],Media,4
+24,Hispanic,Female,Austin,Extroverted,['Individual Sports'],Media,4
+30,Mixed,Male,New York,Ambitious,"['Indoor Activites', 'Individual Sports']",Client Relation/Support,5
+27,Asian,Non-Binary,Chicago,Extroverted,"['Outdoor', 'Video Games', 'Water Sports']",Environmental,1
+23,Hispanic,Female,Phoenix,Relaxed,"['Strength Training', 'Creative']",Production,2
+22,Mixed,Female,Houston,Social,['Outdoor'],Student,3
+22,Asian,Female,Phoenix,Extroverted,"['Water Sports', 'Team Sports', 'Strength Training', 'Creative']",Student,2
+20,Black,Non-Binary,New York,Extroverted,"['Creative', 'Outdoor']",Environmental,5
+33,Other,Male,Houston,Social,"['Individual Sports', 'Water Sports']",Research,5
+21,Asian,Female,Austin,Relaxed,"['Outdoor', 'Individual Sports', 'Mind-Body']",Student,5
+23,Hispanic,Female,Phoenix,Social,"['Indoor Activites', 'Individual Sports']",Healthcare,3
+21,Asian,Male,San Francisco,Introverted,"['Strength Training', 'Creative']",Student,1
+23,Asian,Female,New York,Ambitious,['Water Sports'],Education,2
+25,Middle Eastern,Non-Binary,Austin,Ambitious,"['Creative', 'Indoor Activites', 'Mind-Body']",Legal Work,1
+23,Black,Non-Binary,San Diego,Social,"['Water Sports', 'Creative']",Environmental,1
+22,Middle Eastern,Male,Los Angeles,Social,"['Individual Sports', 'Dance', 'Water Sports', 'Outdoor']",Student,4
+22,Black,Male,New York,Extroverted,['Water Sports'],Student,1
+23,Hispanic,Male,Houston,Relaxed,"['Creative', 'Video Games', 'Outdoor']",Client Relation/Support,3
+29,Mixed,Non-Binary,Chicago,Relaxed,"['Indoor Activites', 'Water Sports', 'Team Sports']",Research,1
+20,Mixed,Non-Binary,Chicago,Extroverted,"['Outdoor', 'Strength Training', 'Team Sports']",Client Relation/Support,5
+19,White,Male,Houston,Introverted,"['Video Games', 'Water Sports', 'Strength Training']",Environmental,1
+21,Hispanic,Female,New York,Introverted,"['Outdoor', 'Strength Training', 'Mind-Body']",Student,2
+28,White,Female,San Diego,Extroverted,"['Creative', 'Indoor Activites', 'Individual Sports', 'Mind-Body']",Media,5
+28,White,Male,New York,Social,"['Creative', 'Indoor Activites', 'Dance', 'Team Sports']",Retired,3
+35,Hispanic,Male,Houston,Ambitious,"['Strength Training', 'Video Games', 'Dance']",Environmental,2
+37,Asian,Female,Austin,Extroverted,"['Video Games', 'Indoor Activites', 'Strength Training', 'Dance']",Technology,5
+20,Middle Eastern,Non-Binary,San Francisco,Social,"['Dance', 'Team Sports']",Student,3
+22,Black,Male,Austin,Ambitious,"['Team Sports', 'Strength Training']",Student,4
+21,Middle Eastern,Female,Austin,Extroverted,"['Strength Training', 'Dance', 'Outdoor']",Maintenance,2
+22,Other,Male,Austin,Ambitious,"['Water Sports', 'Video Games', 'Dance', 'Indoor Activites']",Student,4
+18,Middle Eastern,Male,Chicago,Introverted,"['Video Games', 'Outdoor', 'Individual Sports']",Student,3
+22,Other,Female,Los Angeles,Extroverted,"['Strength Training', 'Team Sports']",Student,1
+18,Asian,Male,San Francisco,Social,"['Video Games', 'Individual Sports']",Student,3
+27,Asian,Male,Phoenix,Social,['Outdoor'],Sales,3
+19,Middle Eastern,Female,San Francisco,Extroverted,"['Dance', 'Team Sports', 'Strength Training', 'Mind-Body']",Student,3
+29,Black,Male,Chicago,Extroverted,['Mind-Body'],Office/Admin,5
+37,Middle Eastern,Male,Chicago,Extroverted,"['Team Sports', 'Water Sports']",Media,4
+23,White,Female,Austin,Introverted,['Mind-Body'],Maintenance,4
+23,Hispanic,Male,San Diego,Extroverted,['Water Sports'],Healthcare,5
+23,Middle Eastern,Male,Austin,Relaxed,"['Dance', 'Creative', 'Team Sports', 'Video Games']",Client Relation/Support,2
+28,White,Male,Los Angeles,Relaxed,"['Outdoor', 'Individual Sports', 'Video Games']",Environmental,4
+24,Hispanic,Male,Los Angeles,Introverted,"['Water Sports', 'Video Games', 'Outdoor', 'Mind-Body']",Sales,2
+20,Hispanic,Male,Los Angeles,Social,"['Team Sports', 'Dance']",Student,3
+30,Mixed,Female,Los Angeles,Relaxed,"['Outdoor', 'Video Games', 'Water Sports', 'Team Sports']",Maintenance,2
+19,White,Female,Phoenix,Social,"['Indoor Activites', 'Team Sports', 'Creative']",Sales,4
+24,Middle Eastern,Female,Austin,Social,"['Mind-Body', 'Individual Sports']",Creative,1
+24,White,Female,Los Angeles,Social,['Water Sports'],Technology,1
+40,Other,Non-Binary,San Diego,Introverted,"['Dance', 'Indoor Activites']",Sales,5
+20,Black,Female,Phoenix,Introverted,['Indoor Activites'],Student,3
+24,Middle Eastern,Non-Binary,Los Angeles,Social,['Mind-Body'],HR,4
+22,White,Male,Houston,Relaxed,['Strength Training'],Student,1
+24,Asian,Non-Binary,Phoenix,Introverted,"['Team Sports', 'Creative']",Media,3
+31,White,Female,New York,Social,"['Video Games', 'Indoor Activites']",Production,2
+22,Black,Non-Binary,Austin,Extroverted,"['Team Sports', 'Outdoor']",Student,5
+22,Mixed,Male,Phoenix,Relaxed,['Water Sports'],Student,5
+23,White,Male,Chicago,Relaxed,"['Individual Sports', 'Strength Training', 'Creative']",Technology,4
+27,Black,Male,Houston,Extroverted,"['Dance', 'Outdoor', 'Team Sports', 'Individual Sports']",Sales,5
+38,Other,Male,New York,Ambitious,['Strength Training'],Office/Admin,4
+22,Asian,Female,Chicago,Introverted,['Video Games'],Student,5
+20,Asian,Female,Houston,Relaxed,"['Strength Training', 'Video Games']",Healthcare,1
+22,White,Male,New York,Extroverted,"['Outdoor', 'Dance', 'Individual Sports', 'Team Sports']",Student,5
+23,Hispanic,Female,Chicago,Extroverted,"['Outdoor', 'Water Sports', 'Team Sports']",Office/Admin,4
+24,Mixed,Non-Binary,Phoenix,Extroverted,['Indoor Activites'],HR,2
+32,Hispanic,Male,Los Angeles,Extroverted,['Video Games'],Healthcare,5
+19,Hispanic,Female,San Francisco,Social,"['Dance', 'Strength Training', 'Video Games', 'Individual Sports']",Student,3
+30,Asian,Male,San Diego,Extroverted,['Dance'],Technology,4
+22,Black,Male,San Diego,Ambitious,"['Team Sports', 'Outdoor', 'Strength Training', 'Creative']",Student,4
+18,Asian,Non-Binary,Austin,Extroverted,"['Team Sports', 'Mind-Body', 'Video Games', 'Individual Sports']",Student,5
+31,Mixed,Male,Austin,Extroverted,['Video Games'],Research,5
+23,Black,Male,New York,Relaxed,"['Team Sports', 'Outdoor']",Sales,1
+19,White,Male,San Diego,Extroverted,"['Water Sports', 'Mind-Body']",Student,5
+25,Black,Female,Los Angeles,Relaxed,"['Strength Training', 'Team Sports']",HR,1
+25,Asian,Male,Chicago,Social,"['Mind-Body', 'Water Sports', 'Creative', 'Video Games']",Technology,3
+20,Black,Non-Binary,New York,Extroverted,"['Creative', 'Mind-Body', 'Outdoor']",Maintenance,5
+22,Middle Eastern,Non-Binary,Los Angeles,Social,"['Mind-Body', 'Video Games', 'Outdoor', 'Dance']",Student,3
+29,Black,Male,Chicago,Relaxed,"['Dance', 'Individual Sports', 'Water Sports']",Technology,5
+24,Hispanic,Female,Austin,Introverted,"['Individual Sports', 'Strength Training', 'Dance', 'Water Sports']",Creative,5
+24,White,Male,San Francisco,Social,"['Strength Training', 'Video Games']",Media,1
+20,Asian,Male,San Diego,Ambitious,['Individual Sports'],Student,3
+36,Hispanic,Female,Houston,Relaxed,['Strength Training'],Healthcare,4
+28,Asian,Male,San Diego,Ambitious,['Mind-Body'],Technology,2
+20,Black,Female,San Diego,Extroverted,"['Team Sports', 'Strength Training', 'Creative']",Student,3
+20,Hispanic,Male,New York,Extroverted,"['Individual Sports', 'Video Games', 'Strength Training', 'Outdoor']",Student,3
+29,Black,Female,Austin,Extroverted,['Indoor Activites'],Maintenance,2
+20,Hispanic,Female,Phoenix,Relaxed,"['Strength Training', 'Indoor Activites', 'Team Sports', 'Dance']",Student,4
+19,Mixed,Non-Binary,San Francisco,Social,['Indoor Activites'],Creative,3
+18,Middle Eastern,Female,Chicago,Extroverted,"['Strength Training', 'Water Sports', 'Outdoor']",Healthcare,2
+19,Middle Eastern,Female,San Francisco,Extroverted,"['Outdoor', 'Strength Training']",Student,3
+19,Black,Male,San Diego,Extroverted,"['Strength Training', 'Water Sports']",Client Relation/Support,4
+25,Black,Female,Phoenix,Extroverted,"['Outdoor', 'Dance', 'Video Games', 'Mind-Body']",Research,5
+32,Black,Female,Houston,Relaxed,['Video Games'],Media,1
+18,Middle Eastern,Male,Houston,Extroverted,"['Indoor Activites', 'Creative']",Student,3
+20,Asian,Male,Chicago,Social,['Water Sports'],Student,3
+26,Other,Female,Phoenix,Relaxed,"['Strength Training', 'Team Sports']",HR,4
+22,Middle Eastern,Non-Binary,Los Angeles,Extroverted,"['Individual Sports', 'Team Sports']",Student,1
+29,White,Non-Binary,Houston,Extroverted,"['Dance', 'Strength Training']",Retired,2
+34,Hispanic,Female,San Francisco,Extroverted,['Strength Training'],Environmental,5
+23,Hispanic,Non-Binary,Phoenix,Social,['Water Sports'],Technology,1
+20,Hispanic,Female,New York,Extroverted,"['Dance', 'Indoor Activites', 'Creative']",Student,2
+23,Other,Female,New York,Relaxed,"['Team Sports', 'Dance', 'Water Sports']",Creative,3
+21,Other,Female,San Diego,Ambitious,"['Water Sports', 'Strength Training', 'Dance', 'Video Games']",Student,5
+34,Black,Male,New York,Social,"['Strength Training', 'Outdoor']",Sales,5
+24,Other,Male,Austin,Social,"['Strength Training', 'Individual Sports', 'Creative']",Research,5
+24,Hispanic,Female,Houston,Introverted,"['Video Games', 'Water Sports']",Maintenance,5
+28,Middle Eastern,Female,Los Angeles,Extroverted,"['Team Sports', 'Mind-Body', 'Indoor Activites', 'Video Games']",Sales,3
+25,Black,Male,Austin,Social,"['Creative', 'Outdoor', 'Dance', 'Individual Sports']",Education,2
+38,Hispanic,Female,Los Angeles,Introverted,"['Indoor Activites', 'Video Games']",Client Relation/Support,1
+23,Middle Eastern,Male,Phoenix,Ambitious,"['Outdoor', 'Creative', 'Team Sports']",HR,1
+23,Hispanic,Male,Austin,Social,"['Dance', 'Outdoor']",Research,5
+38,White,Non-Binary,Chicago,Social,"['Mind-Body', 'Strength Training']",Environmental,4
+29,Other,Male,Chicago,Social,"['Outdoor', 'Water Sports']",Healthcare,5
+25,Asian,Male,San Diego,Relaxed,"['Individual Sports', 'Strength Training', 'Team Sports']",Environmental,4
+25,Mixed,Male,Phoenix,Relaxed,"['Strength Training', 'Creative', 'Water Sports']",Education,5
+24,Asian,Male,San Diego,Ambitious,"['Video Games', 'Creative', 'Strength Training', 'Individual Sports']",Technology,5
+18,Hispanic,Male,Chicago,Extroverted,['Team Sports'],Sales,5
+19,Hispanic,Male,Austin,Introverted,['Strength Training'],Student,3
+20,Mixed,Male,Austin,Social,"['Water Sports', 'Indoor Activites', 'Strength Training']",Student,3
+20,Asian,Non-Binary,Chicago,Extroverted,"['Creative', 'Team Sports', 'Indoor Activites', 'Water Sports']",HR,4
+24,Other,Female,Austin,Social,"['Creative', 'Team Sports']",Production,3
+21,White,Male,Los Angeles,Extroverted,"['Creative', 'Video Games', 'Individual Sports']",Student,5
+24,White,Female,New York,Extroverted,"['Outdoor', 'Indoor Activites']",Client Relation/Support,4
+34,Middle Eastern,Female,Houston,Social,"['Team Sports', 'Individual Sports', 'Water Sports', 'Video Games']",Media,2
+23,Middle Eastern,Female,Phoenix,Social,"['Dance', 'Outdoor', 'Strength Training']",Client Relation/Support,1
+20,Middle Eastern,Female,Houston,Introverted,"['Individual Sports', 'Outdoor', 'Creative']",Student,5
+21,Other,Female,San Francisco,Relaxed,"['Dance', 'Creative', 'Mind-Body', 'Individual Sports']",Student,5
+19,Middle Eastern,Female,Phoenix,Ambitious,"['Mind-Body', 'Team Sports', 'Water Sports']",Student,2
+21,Hispanic,Female,Phoenix,Social,['Video Games'],Student,3
+25,Middle Eastern,Male,Phoenix,Relaxed,"['Video Games', 'Indoor Activites', 'Team Sports']",Education,2
+24,Black,Non-Binary,Phoenix,Extroverted,['Outdoor'],Media,1
+22,Other,Female,Chicago,Extroverted,"['Video Games', 'Team Sports', 'Water Sports']",Student,2
+27,Black,Non-Binary,Los Angeles,Ambitious,"['Water Sports', 'Video Games', 'Creative', 'Indoor Activites']",Media,4
+25,Asian,Female,Phoenix,Introverted,"['Creative', 'Indoor Activites', 'Dance', 'Individual Sports']",HR,1
+25,Other,Male,San Diego,Social,"['Indoor Activites', 'Creative', 'Individual Sports', 'Video Games']",Legal Work,4
+19,Hispanic,Non-Binary,New York,Social,"['Indoor Activites', 'Strength Training', 'Creative']",Student,2
+24,Middle Eastern,Male,Houston,Introverted,"['Outdoor', 'Team Sports', 'Strength Training', 'Video Games']",Office/Admin,2
+27,Mixed,Male,Los Angeles,Extroverted,['Water Sports'],Research,5
+24,Black,Female,Austin,Social,"['Video Games', 'Creative', 'Strength Training']",Retired,5
+23,Hispanic,Female,Chicago,Extroverted,"['Dance', 'Outdoor', 'Water Sports', 'Team Sports']",Client Relation/Support,4
+25,Black,Female,Chicago,Extroverted,['Team Sports'],Media,4
+20,Middle Eastern,Female,San Francisco,Introverted,"['Water Sports', 'Video Games', 'Mind-Body']",Creative,3
+21,White,Male,San Diego,Extroverted,['Indoor Activites'],Student,5
+23,Hispanic,Non-Binary,Houston,Ambitious,['Mind-Body'],Sales,5
+21,Middle Eastern,Female,Phoenix,Extroverted,"['Dance', 'Strength Training', 'Outdoor', 'Creative']",Student,3
+24,Black,Male,New York,Social,['Water Sports'],Technology,4
+19,Mixed,Non-Binary,Los Angeles,Extroverted,['Mind-Body'],Student,1
+25,Black,Male,Austin,Social,['Indoor Activites'],Healthcare,2
+26,Other,Female,San Francisco,Introverted,"['Strength Training', 'Team Sports', 'Individual Sports', 'Indoor Activites']",Research,4
+23,Other,Male,Chicago,Relaxed,"['Strength Training', 'Indoor Activites']",Environmental,5
+32,Mixed,Male,Austin,Relaxed,"['Team Sports', 'Outdoor', 'Mind-Body', 'Video Games']",Office/Admin,4
+24,Middle Eastern,Female,Austin,Social,"['Outdoor', 'Mind-Body']",Production,3
+23,Hispanic,Female,San Francisco,Extroverted,['Dance'],Retired,2
+20,Asian,Female,San Diego,Ambitious,['Mind-Body'],Student,2
+25,Middle Eastern,Female,Houston,Ambitious,"['Creative', 'Team Sports', 'Video Games']",Environmental,3
+40,Asian,Female,Los Angeles,Extroverted,"['Water Sports', 'Team Sports', 'Individual Sports']",Education,2
+33,Asian,Non-Binary,Houston,Extroverted,"['Individual Sports', 'Mind-Body', 'Strength Training', 'Water Sports']",Sales,5
+25,Middle Eastern,Non-Binary,San Francisco,Social,"['Video Games', 'Water Sports', 'Team Sports', 'Strength Training']",Media,2
+20,White,Female,San Diego,Extroverted,"['Creative', 'Strength Training', 'Water Sports']",Research,5
+26,Other,Male,Houston,Social,"['Strength Training', 'Creative', 'Team Sports', 'Water Sports']",Client Relation/Support,4
+19,Hispanic,Male,Houston,Social,"['Individual Sports', 'Mind-Body']",Student,5
+33,Mixed,Female,Chicago,Relaxed,"['Water Sports', 'Outdoor']",Environmental,1
+25,Mixed,Male,Houston,Relaxed,"['Video Games', 'Individual Sports']",Retired,3
+25,White,Female,Chicago,Social,"['Outdoor', 'Dance']",Research,3
+20,White,Male,Phoenix,Ambitious,"['Strength Training', 'Team Sports', 'Water Sports', 'Individual Sports']",Student,3
+21,White,Non-Binary,Austin,Extroverted,['Mind-Body'],Creative,5
+20,Mixed,Male,San Francisco,Extroverted,['Strength Training'],Student,1
+24,Black,Female,Chicago,Introverted,['Strength Training'],Media,5
+25,White,Female,Los Angeles,Extroverted,"['Creative', 'Water Sports', 'Strength Training']",Sales,1
+28,Middle Eastern,Non-Binary,Houston,Relaxed,"['Creative', 'Team Sports', 'Dance', 'Video Games']",Sales,2
+24,Mixed,Non-Binary,Houston,Social,['Dance'],Research,4
+38,Mixed,Male,New York,Relaxed,"['Dance', 'Individual Sports', 'Outdoor', 'Water Sports']",Client Relation/Support,4
+23,Mixed,Female,Austin,Social,"['Strength Training', 'Individual Sports', 'Team Sports', 'Indoor Activites']",Maintenance,3
+27,Black,Female,New York,Introverted,"['Dance', 'Outdoor']",Office/Admin,3
+25,Asian,Female,Houston,Social,"['Indoor Activites', 'Outdoor', 'Strength Training', 'Video Games']",Media,3
+23,Hispanic,Female,San Francisco,Relaxed,"['Dance', 'Creative', 'Indoor Activites']",Healthcare,4
+20,Black,Female,Houston,Extroverted,"['Individual Sports', 'Water Sports', 'Creative']",Student,4
+34,White,Non-Binary,Chicago,Social,"['Team Sports', 'Individual Sports', 'Strength Training', 'Indoor Activites']",Client Relation/Support,4
+29,Asian,Female,San Diego,Social,"['Video Games', 'Mind-Body', 'Indoor Activites', 'Creative']",Education,2
+24,Hispanic,Female,Austin,Social,"['Individual Sports', 'Creative', 'Team Sports']",Research,1
+22,Black,Female,San Diego,Extroverted,"['Creative', 'Video Games']",Student,3
+34,Black,Male,Chicago,Ambitious,"['Video Games', 'Team Sports']",Environmental,3
+23,Asian,Female,Phoenix,Social,"['Strength Training', 'Individual Sports', 'Mind-Body']",Education,4
+19,Asian,Male,Los Angeles,Extroverted,"['Indoor Activites', 'Video Games', 'Water Sports', 'Creative']",Student,3
+19,White,Male,New York,Relaxed,"['Outdoor', 'Water Sports', 'Indoor Activites']",Media,4
+25,Asian,Male,San Diego,Ambitious,['Individual Sports'],Education,5
+23,White,Male,Houston,Relaxed,"['Individual Sports', 'Video Games', 'Creative']",Healthcare,2
+25,Black,Male,Los Angeles,Social,['Water Sports'],Technology,5
+21,Middle Eastern,Male,Austin,Relaxed,"['Strength Training', 'Creative', 'Dance']",Student,3
+26,Mixed,Female,New York,Introverted,"['Video Games', 'Outdoor', 'Indoor Activites', 'Strength Training']",Technology,1
+20,Mixed,Female,Houston,Introverted,['Team Sports'],Student,2
+19,Other,Male,San Diego,Social,"['Team Sports', 'Mind-Body', 'Dance']",Technology,2
+18,Other,Male,Chicago,Introverted,"['Water Sports', 'Team Sports', 'Individual Sports', 'Dance']",Student,1
+22,Asian,Non-Binary,Los Angeles,Social,"['Strength Training', 'Outdoor', 'Indoor Activites', 'Video Games']",Student,5
+19,Asian,Non-Binary,New York,Social,"['Video Games', 'Dance']",Office/Admin,2
+23,Hispanic,Male,Chicago,Relaxed,['Video Games'],HR,1
+31,Black,Female,Phoenix,Ambitious,"['Outdoor', 'Individual Sports']",Retired,2
+19,Middle Eastern,Female,Austin,Social,['Outdoor'],Student,2
+22,Other,Female,Austin,Relaxed,"['Dance', 'Outdoor', 'Creative']",Student,2
+24,Other,Male,Phoenix,Relaxed,"['Team Sports', 'Dance', 'Creative', 'Water Sports']",Retired,5
+23,Black,Male,New York,Social,"['Outdoor', 'Strength Training', 'Water Sports']",Office/Admin,4
+23,Mixed,Female,San Diego,Extroverted,"['Outdoor', 'Mind-Body', 'Strength Training', 'Water Sports']",Office/Admin,1
+19,White,Male,San Diego,Ambitious,['Creative'],Technology,4
+29,White,Female,Houston,Social,['Video Games'],Legal Work,4
+23,Hispanic,Female,San Diego,Extroverted,"['Video Games', 'Mind-Body', 'Dance', 'Water Sports']",Office/Admin,4
+28,Other,Female,Austin,Ambitious,"['Outdoor', 'Mind-Body', 'Video Games']",Client Relation/Support,5
+25,Hispanic,Male,Chicago,Social,"['Outdoor', 'Dance', 'Creative']",Creative,2
+34,Middle Eastern,Female,Chicago,Extroverted,"['Water Sports', 'Individual Sports', 'Dance']",Environmental,4
+34,Mixed,Female,Houston,Extroverted,"['Creative', 'Strength Training']",Education,5
+21,Middle Eastern,Male,New York,Extroverted,['Strength Training'],Student,5
+22,Mixed,Non-Binary,Houston,Relaxed,['Strength Training'],Student,1
+19,Middle Eastern,Female,Los Angeles,Introverted,"['Water Sports', 'Individual Sports']",Student,1
+21,Black,Male,Austin,Introverted,"['Team Sports', 'Individual Sports']",Environmental,3
+24,Hispanic,Non-Binary,New York,Ambitious,"['Strength Training', 'Creative']",Sales,5
+19,Hispanic,Male,Houston,Relaxed,"['Water Sports', 'Strength Training', 'Dance']",Office/Admin,3
+23,Middle Eastern,Male,Chicago,Extroverted,"['Mind-Body', 'Strength Training', 'Outdoor']",Creative,2
+24,Mixed,Male,Phoenix,Introverted,"['Video Games', 'Creative', 'Individual Sports', 'Mind-Body']",Legal Work,1
+21,Hispanic,Female,Phoenix,Ambitious,['Video Games'],Student,4
+25,Hispanic,Male,Houston,Extroverted,"['Video Games', 'Individual Sports']",Media,1
+21,White,Female,New York,Introverted,"['Video Games', 'Creative']",Student,5
+18,Black,Male,Phoenix,Social,"['Water Sports', 'Strength Training']",Student,4
+23,White,Male,Los Angeles,Extroverted,"['Individual Sports', 'Team Sports', 'Video Games']",Research,4
+23,Asian,Female,Phoenix,Social,['Individual Sports'],Media,4
+20,Mixed,Female,Los Angeles,Social,['Creative'],Student,2
+31,Middle Eastern,Female,Austin,Social,['Strength Training'],Legal Work,5
+36,Middle Eastern,Male,New York,Extroverted,"['Individual Sports', 'Outdoor']",Client Relation/Support,3
+25,White,Female,Phoenix,Ambitious,"['Team Sports', 'Outdoor']",Client Relation/Support,3
+21,Hispanic,Female,Los Angeles,Ambitious,['Outdoor'],Student,5
+18,Hispanic,Male,Los Angeles,Social,['Water Sports'],Student,1
+19,Asian,Female,Phoenix,Social,['Dance'],Student,3
+31,Middle Eastern,Male,Los Angeles,Extroverted,['Dance'],Legal Work,5
+25,White,Male,Chicago,Social,['Video Games'],Office/Admin,2
+39,Middle Eastern,Female,San Diego,Ambitious,"['Strength Training', 'Outdoor', 'Individual Sports']",Sales,2
+23,Mixed,Non-Binary,San Francisco,Extroverted,['Strength Training'],Media,1
+28,Black,Non-Binary,Chicago,Introverted,"['Team Sports', 'Individual Sports', 'Outdoor']",Legal Work,1
+32,Asian,Female,Austin,Relaxed,"['Dance', 'Strength Training', 'Individual Sports', 'Outdoor']",HR,5
+20,White,Non-Binary,Chicago,Social,"['Creative', 'Individual Sports', 'Team Sports', 'Indoor Activites']",Student,3
+18,Middle Eastern,Non-Binary,Phoenix,Ambitious,"['Strength Training', 'Video Games', 'Creative']",Environmental,5
+25,Asian,Female,New York,Extroverted,"['Strength Training', 'Water Sports', 'Mind-Body']",Education,4
+20,White,Non-Binary,Chicago,Social,"['Water Sports', 'Individual Sports']",Student,4
+21,Mixed,Male,San Diego,Extroverted,['Creative'],Student,4
+34,Mixed,Male,New York,Introverted,"['Individual Sports', 'Outdoor', 'Team Sports']",Media,4
+24,Black,Female,Phoenix,Introverted,"['Individual Sports', 'Team Sports', 'Indoor Activites', 'Mind-Body']",Sales,4
+25,Mixed,Female,Phoenix,Social,['Water Sports'],Media,2
+23,Hispanic,Non-Binary,Chicago,Extroverted,['Individual Sports'],Environmental,3
+32,Black,Female,Chicago,Ambitious,"['Dance', 'Indoor Activites']",Legal Work,2
+22,White,Non-Binary,Chicago,Ambitious,"['Video Games', 'Creative', 'Team Sports']",Student,1
+18,Middle Eastern,Female,Phoenix,Ambitious,['Outdoor'],Student,3
+31,Asian,Male,Houston,Extroverted,['Mind-Body'],Creative,2
+21,Other,Female,Chicago,Social,['Strength Training'],Legal Work,3
+20,Asian,Female,San Francisco,Ambitious,['Dance'],Production,5
+18,White,Non-Binary,Los Angeles,Relaxed,"['Outdoor', 'Creative', 'Individual Sports']",Student,5
+19,Middle Eastern,Female,Los Angeles,Social,"['Creative', 'Water Sports', 'Strength Training']",Student,4
+19,Black,Male,Los Angeles,Relaxed,"['Team Sports', 'Strength Training']",Student,2
+29,Middle Eastern,Non-Binary,New York,Relaxed,"['Water Sports', 'Indoor Activites']",Client Relation/Support,5
+27,Black,Non-Binary,San Francisco,Extroverted,"['Strength Training', 'Team Sports']",Healthcare,3
+30,White,Female,San Francisco,Social,"['Team Sports', 'Indoor Activites', 'Creative']",HR,2
+25,Other,Male,Austin,Relaxed,"['Video Games', 'Team Sports', 'Creative', 'Dance']",Media,2
+25,Asian,Male,Austin,Introverted,['Strength Training'],Technology,3
+23,Hispanic,Female,Phoenix,Extroverted,['Individual Sports'],Education,4
+21,Black,Male,Austin,Relaxed,['Creative'],Student,5
+31,White,Male,Houston,Relaxed,"['Outdoor', 'Water Sports', 'Strength Training']",Legal Work,5
+25,Other,Male,Austin,Extroverted,"['Water Sports', 'Video Games', 'Dance']",Maintenance,3
+26,White,Male,Chicago,Extroverted,"['Creative', 'Dance']",Production,2
+18,White,Male,Los Angeles,Ambitious,"['Creative', 'Individual Sports']",Student,3
+21,White,Male,San Diego,Extroverted,"['Video Games', 'Team Sports', 'Strength Training']",Student,2
+30,Hispanic,Male,New York,Extroverted,"['Mind-Body', 'Water Sports']",Retired,1
+19,Black,Male,San Diego,Relaxed,"['Mind-Body', 'Dance', 'Outdoor']",Student,1
+22,Middle Eastern,Male,Austin,Extroverted,"['Team Sports', 'Dance', 'Strength Training']",Legal Work,4
+22,Hispanic,Male,Chicago,Introverted,"['Dance', 'Video Games', 'Indoor Activites']",Student,1
+21,Other,Male,Chicago,Social,"['Outdoor', 'Dance', 'Strength Training']",Student,4
+24,Other,Male,New York,Extroverted,"['Mind-Body', 'Team Sports']",Sales,2
+19,Middle Eastern,Male,New York,Extroverted,"['Team Sports', 'Dance', 'Indoor Activites']",Student,1
+25,Asian,Non-Binary,Los Angeles,Relaxed,"['Outdoor', 'Mind-Body']",Maintenance,5
+22,Middle Eastern,Non-Binary,New York,Introverted,['Dance'],Student,5
+24,Hispanic,Non-Binary,Chicago,Extroverted,"['Strength Training', 'Creative', 'Water Sports']",Healthcare,1
+24,Middle Eastern,Male,Phoenix,Introverted,"['Video Games', 'Dance', 'Outdoor', 'Team Sports']",HR,3
+28,Other,Male,Houston,Introverted,"['Individual Sports', 'Strength Training']",Creative,4
+25,Asian,Female,Phoenix,Extroverted,"['Water Sports', 'Creative', 'Outdoor']",Retired,4
+18,Other,Female,San Diego,Extroverted,['Individual Sports'],Student,4
+39,Mixed,Male,Austin,Extroverted,"['Dance', 'Water Sports', 'Strength Training']",Technology,1
+22,Asian,Male,San Diego,Ambitious,['Strength Training'],Student,1
+30,Black,Non-Binary,Chicago,Extroverted,['Strength Training'],Media,4
+25,Hispanic,Female,New York,Extroverted,"['Strength Training', 'Outdoor', 'Mind-Body', 'Individual Sports']",Client Relation/Support,2
+21,White,Male,Chicago,Introverted,"['Strength Training', 'Indoor Activites']",Student,3
+24,Black,Non-Binary,San Francisco,Introverted,"['Dance', 'Creative', 'Outdoor']",Technology,1
+19,White,Female,Houston,Ambitious,"['Outdoor', 'Individual Sports']",Student,2
+21,Mixed,Male,Austin,Extroverted,"['Dance', 'Water Sports']",Student,5
+26,Mixed,Male,Houston,Social,"['Strength Training', 'Mind-Body', 'Individual Sports', 'Dance']",Environmental,2
+32,Asian,Male,Los Angeles,Social,['Strength Training'],Media,3
+21,Black,Female,Austin,Ambitious,"['Mind-Body', 'Individual Sports']",Student,2
+24,White,Non-Binary,Houston,Social,"['Water Sports', 'Mind-Body']",HR,4
+21,Hispanic,Male,Phoenix,Ambitious,"['Video Games', 'Strength Training', 'Dance']",Student,2
+22,White,Female,Los Angeles,Introverted,"['Dance', 'Mind-Body', 'Team Sports', 'Outdoor']",Student,5
+22,Hispanic,Male,San Diego,Social,"['Team Sports', 'Strength Training']",Student,2
+29,Hispanic,Non-Binary,Chicago,Relaxed,"['Mind-Body', 'Team Sports']",Creative,5
+23,Mixed,Male,Phoenix,Social,['Dance'],Office/Admin,5
+21,White,Non-Binary,New York,Extroverted,"['Creative', 'Water Sports']",Research,4
+25,Other,Female,New York,Extroverted,"['Water Sports', 'Video Games', 'Dance']",Client Relation/Support,3
+22,Mixed,Female,New York,Ambitious,"['Outdoor', 'Indoor Activites']",Student,2
+21,Other,Male,Chicago,Social,"['Water Sports', 'Dance']",Student,1
+33,Asian,Male,Austin,Ambitious,"['Team Sports', 'Strength Training', 'Outdoor', 'Water Sports']",HR,2
+25,Black,Non-Binary,New York,Introverted,"['Dance', 'Team Sports']",Technology,1
+35,Middle Eastern,Female,Phoenix,Introverted,"['Indoor Activites', 'Outdoor', 'Video Games']",Office/Admin,2
+24,Middle Eastern,Female,Austin,Introverted,"['Indoor Activites', 'Strength Training']",Research,4
+26,Black,Female,Austin,Introverted,"['Creative', 'Video Games', 'Strength Training']",Creative,5
+22,Hispanic,Non-Binary,Phoenix,Ambitious,['Individual Sports'],Client Relation/Support,2
+22,Other,Male,Los Angeles,Social,"['Mind-Body', 'Team Sports']",Student,1
+20,Asian,Non-Binary,San Francisco,Extroverted,['Indoor Activites'],Student,1
+22,Middle Eastern,Female,New York,Extroverted,['Team Sports'],Student,3
+19,Hispanic,Male,Austin,Social,"['Individual Sports', 'Outdoor', 'Mind-Body']",Student,2
+25,White,Non-Binary,Houston,Ambitious,"['Mind-Body', 'Video Games', 'Team Sports', 'Individual Sports']",Healthcare,1
+23,Hispanic,Male,San Diego,Extroverted,"['Individual Sports', 'Water Sports', 'Indoor Activites', 'Creative']",Healthcare,3
+22,Hispanic,Non-Binary,Los Angeles,Extroverted,"['Water Sports', 'Individual Sports']",Student,4
+20,Hispanic,Female,Austin,Social,"['Individual Sports', 'Video Games', 'Water Sports', 'Strength Training']",Student,4
+25,Mixed,Male,Houston,Relaxed,"['Strength Training', 'Individual Sports']",Creative,4
+33,Asian,Non-Binary,San Diego,Social,"['Mind-Body', 'Outdoor']",Sales,3
+22,White,Male,Austin,Extroverted,"['Indoor Activites', 'Mind-Body']",Student,2
+19,Mixed,Male,Chicago,Extroverted,"['Strength Training', 'Dance', 'Individual Sports', 'Outdoor']",Maintenance,4
+18,White,Female,Phoenix,Social,"['Indoor Activites', 'Water Sports', 'Outdoor', 'Team Sports']",Student,2
+22,Black,Male,San Francisco,Extroverted,"['Strength Training', 'Indoor Activites', 'Outdoor', 'Dance']",Student,3
+20,Asian,Non-Binary,Chicago,Extroverted,"['Creative', 'Strength Training', 'Individual Sports']",Creative,2
+22,Black,Male,New York,Ambitious,"['Dance', 'Team Sports', 'Water Sports', 'Strength Training']",Student,2
+25,Black,Female,San Francisco,Social,"['Water Sports', 'Individual Sports', 'Indoor Activites', 'Strength Training']",Sales,5
+20,Mixed,Non-Binary,San Francisco,Relaxed,"['Outdoor', 'Team Sports', 'Indoor Activites', 'Water Sports']",Student,4
+32,Asian,Male,Chicago,Social,"['Dance', 'Outdoor', 'Creative']",Healthcare,3
+25,White,Female,San Francisco,Social,"['Water Sports', 'Individual Sports', 'Strength Training', 'Team Sports']",Media,5
+24,Hispanic,Female,San Diego,Relaxed,"['Mind-Body', 'Strength Training', 'Indoor Activites', 'Water Sports']",Healthcare,4
+23,Middle Eastern,Non-Binary,Austin,Ambitious,"['Outdoor', 'Creative']",Maintenance,3
+22,Black,Male,Chicago,Social,"['Dance', 'Strength Training', 'Mind-Body']",Student,2
+30,Mixed,Non-Binary,Chicago,Introverted,['Video Games'],Education,1
+27,Mixed,Female,New York,Ambitious,"['Creative', 'Water Sports', 'Outdoor']",Maintenance,4
+18,Other,Non-Binary,Los Angeles,Introverted,"['Team Sports', 'Individual Sports', 'Video Games']",Student,1
+19,Asian,Non-Binary,New York,Introverted,"['Indoor Activites', 'Outdoor', 'Creative']",Student,4
+35,Other,Female,Houston,Extroverted,"['Indoor Activites', 'Video Games', 'Outdoor']",Environmental,3
+23,Black,Female,Los Angeles,Extroverted,"['Water Sports', 'Individual Sports', 'Creative', 'Outdoor']",Maintenance,2
+40,Hispanic,Non-Binary,Austin,Social,"['Dance', 'Team Sports']",Client Relation/Support,2
+21,Other,Male,Austin,Extroverted,"['Indoor Activites', 'Dance']",Student,3
+20,Middle Eastern,Female,Chicago,Social,"['Dance', 'Creative', 'Team Sports', 'Water Sports']",Student,1
+25,Mixed,Female,Chicago,Introverted,"['Team Sports', 'Individual Sports', 'Creative', 'Mind-Body']",Research,4
+28,Middle Eastern,Female,New York,Ambitious,"['Creative', 'Outdoor', 'Dance']",Healthcare,4
+34,Black,Female,New York,Social,"['Outdoor', 'Mind-Body']",Research,4
+27,Middle Eastern,Female,Houston,Social,['Team Sports'],Technology,1
+30,Middle Eastern,Male,Houston,Introverted,"['Indoor Activites', 'Individual Sports', 'Team Sports', 'Strength Training']",Media,3
+35,Black,Non-Binary,Houston,Extroverted,"['Individual Sports', 'Mind-Body', 'Dance']",Media,5
+25,Black,Female,New York,Social,"['Water Sports', 'Strength Training']",Creative,4
+21,Middle Eastern,Male,New York,Ambitious,['Dance'],Student,2
+24,Asian,Male,San Diego,Social,"['Water Sports', 'Creative', 'Video Games']",Production,1
+32,Other,Female,Los Angeles,Introverted,"['Indoor Activites', 'Outdoor', 'Video Games']",Healthcare,1
+34,Black,Male,San Francisco,Relaxed,"['Dance', 'Individual Sports', 'Indoor Activites']",Environmental,3
+21,Hispanic,Female,Austin,Social,"['Team Sports', 'Individual Sports', 'Strength Training']",Student,4
+25,Asian,Male,San Francisco,Ambitious,"['Indoor Activites', 'Video Games']",Sales,2
+23,Middle Eastern,Female,San Diego,Introverted,"['Dance', 'Water Sports', 'Strength Training', 'Individual Sports']",Technology,5
+21,Hispanic,Male,New York,Ambitious,"['Water Sports', 'Strength Training']",Student,1
+33,Black,Male,New York,Ambitious,"['Mind-Body', 'Indoor Activites']",Legal Work,1
+20,Hispanic,Female,San Francisco,Extroverted,"['Video Games', 'Water Sports', 'Strength Training']",Student,3
+19,Mixed,Male,New York,Extroverted,['Creative'],HR,1
+26,Other,Male,Austin,Extroverted,"['Video Games', 'Individual Sports']",Client Relation/Support,2
+24,Hispanic,Non-Binary,San Diego,Social,"['Individual Sports', 'Video Games', 'Creative', 'Water Sports']",Sales,4
+20,Asian,Female,Chicago,Extroverted,"['Indoor Activites', 'Water Sports']",Student,5
+29,Mixed,Female,San Francisco,Social,"['Team Sports', 'Dance']",HR,5
+18,Black,Non-Binary,San Diego,Relaxed,['Indoor Activites'],Student,4
+26,White,Female,Chicago,Relaxed,['Strength Training'],Environmental,5
+19,Other,Male,Houston,Extroverted,"['Individual Sports', 'Indoor Activites']",Student,1
+18,Hispanic,Male,Houston,Introverted,"['Creative', 'Dance']",Student,4
+24,White,Male,San Francisco,Extroverted,"['Creative', 'Team Sports', 'Mind-Body', 'Outdoor']",Legal Work,1
+28,Hispanic,Male,San Diego,Social,"['Creative', 'Team Sports', 'Strength Training', 'Video Games']",Office/Admin,4
+28,White,Female,Phoenix,Social,"['Creative', 'Mind-Body']",Research,1
+21,Mixed,Male,Austin,Extroverted,"['Creative', 'Indoor Activites']",Production,2
+30,Other,Non-Binary,Houston,Relaxed,"['Indoor Activites', 'Strength Training', 'Dance']",Creative,4
+27,Hispanic,Female,Phoenix,Ambitious,"['Dance', 'Team Sports']",Technology,4
+25,Asian,Male,Phoenix,Extroverted,"['Video Games', 'Indoor Activites', 'Outdoor', 'Mind-Body']",Environmental,3
+21,White,Male,New York,Extroverted,"['Mind-Body', 'Team Sports', 'Video Games']",Creative,1
+25,Hispanic,Non-Binary,San Francisco,Extroverted,['Team Sports'],Office/Admin,4
+19,Middle Eastern,Female,Houston,Ambitious,"['Water Sports', 'Outdoor', 'Video Games', 'Individual Sports']",Retired,5
+20,Mixed,Male,New York,Extroverted,['Individual Sports'],Student,4
+22,White,Male,New York,Relaxed,['Creative'],Healthcare,3
+19,White,Male,Houston,Extroverted,['Dance'],Healthcare,4
+25,Mixed,Male,Houston,Social,"['Video Games', 'Mind-Body', 'Outdoor', 'Team Sports']",Research,1
+19,Middle Eastern,Male,New York,Extroverted,"['Strength Training', 'Mind-Body']",Student,2
+33,Middle Eastern,Male,Austin,Social,"['Dance', 'Mind-Body', 'Individual Sports', 'Indoor Activites']",Legal Work,1
+24,Middle Eastern,Male,Houston,Ambitious,"['Mind-Body', 'Creative', 'Video Games']",Education,1
+21,Middle Eastern,Non-Binary,Los Angeles,Relaxed,"['Individual Sports', 'Video Games', 'Water Sports']",Retired,3
+20,Mixed,Male,Houston,Relaxed,['Strength Training'],Student,2
+25,Asian,Male,Austin,Ambitious,"['Water Sports', 'Creative']",Sales,4
+19,White,Male,San Francisco,Extroverted,"['Dance', 'Strength Training', 'Creative', 'Team Sports']",Research,2
+26,White,Female,Los Angeles,Ambitious,"['Strength Training', 'Dance', 'Team Sports', 'Creative']",Production,5
+34,Black,Female,Los Angeles,Relaxed,"['Outdoor', 'Team Sports', 'Video Games', 'Creative']",Maintenance,5
+18,Hispanic,Female,New York,Extroverted,['Mind-Body'],Student,5
+30,Other,Female,Chicago,Social,"['Water Sports', 'Outdoor', 'Individual Sports', 'Video Games']",Legal Work,2
+19,Middle Eastern,Female,New York,Extroverted,"['Individual Sports', 'Creative', 'Dance']",Production,1
+22,White,Female,San Diego,Introverted,"['Indoor Activites', 'Dance']",Technology,2
+20,White,Female,San Diego,Ambitious,"['Dance', 'Individual Sports', 'Indoor Activites', 'Mind-Body']",Student,3
+18,Mixed,Male,Phoenix,Extroverted,['Indoor Activites'],Student,2
+23,Middle Eastern,Female,San Diego,Extroverted,['Team Sports'],Technology,2
+25,Hispanic,Male,Los Angeles,Relaxed,['Mind-Body'],Environmental,1
+25,Asian,Male,San Francisco,Relaxed,"['Mind-Body', 'Individual Sports', 'Water Sports', 'Indoor Activites']",Maintenance,2
+24,Mixed,Female,Los Angeles,Social,"['Outdoor', 'Dance', 'Indoor Activites', 'Team Sports']",Legal Work,5
+24,Asian,Female,San Diego,Ambitious,"['Strength Training', 'Water Sports', 'Individual Sports', 'Video Games']",Maintenance,1
+22,Hispanic,Male,San Francisco,Introverted,"['Mind-Body', 'Individual Sports', 'Video Games']",Student,2
+20,Asian,Female,Chicago,Introverted,"['Indoor Activites', 'Outdoor', 'Water Sports', 'Creative']",Student,5
+19,White,Female,San Diego,Social,"['Video Games', 'Mind-Body']",Student,5
+21,Mixed,Male,New York,Extroverted,"['Creative', 'Strength Training']",Student,4
+24,Asian,Male,Chicago,Extroverted,"['Indoor Activites', 'Video Games', 'Individual Sports', 'Team Sports']",Research,1
+35,Black,Female,San Francisco,Extroverted,['Mind-Body'],Research,1
+20,Asian,Female,Phoenix,Extroverted,['Individual Sports'],Student,2
+25,White,Female,Houston,Extroverted,"['Individual Sports', 'Strength Training']",Legal Work,5
+21,Other,Non-Binary,New York,Extroverted,['Water Sports'],Student,2
+30,Hispanic,Female,Phoenix,Relaxed,"['Water Sports', 'Dance', 'Team Sports', 'Video Games']",Media,1
+18,Mixed,Female,Los Angeles,Social,"['Team Sports', 'Water Sports', 'Individual Sports', 'Outdoor']",Student,2
+20,Other,Female,San Diego,Introverted,"['Water Sports', 'Team Sports']",Media,5
+18,Other,Non-Binary,Los Angeles,Relaxed,"['Mind-Body', 'Creative', 'Video Games']",Maintenance,4
+23,Hispanic,Female,San Diego,Extroverted,['Video Games'],Maintenance,2
+24,Black,Male,San Francisco,Ambitious,['Indoor Activites'],Healthcare,5
+23,Hispanic,Non-Binary,Houston,Relaxed,"['Individual Sports', 'Dance', 'Strength Training', 'Water Sports']",Sales,4
+34,Black,Male,New York,Extroverted,"['Outdoor', 'Water Sports', 'Individual Sports', 'Indoor Activites']",Production,5
+30,Mixed,Male,Phoenix,Social,['Dance'],Environmental,2
+20,Asian,Female,Phoenix,Extroverted,"['Strength Training', 'Dance', 'Water Sports', 'Outdoor']",Student,2
+26,Mixed,Non-Binary,Los Angeles,Introverted,"['Strength Training', 'Individual Sports', 'Creative', 'Indoor Activites']",Office/Admin,1
+20,Asian,Female,Austin,Social,"['Outdoor', 'Strength Training', 'Creative', 'Video Games']",Student,1
+29,Hispanic,Non-Binary,Austin,Relaxed,"['Team Sports', 'Outdoor', 'Strength Training', 'Creative']",HR,5
+27,Asian,Male,Phoenix,Ambitious,"['Video Games', 'Outdoor', 'Strength Training', 'Mind-Body']",Media,2
+23,White,Female,Chicago,Social,"['Video Games', 'Individual Sports']",Retired,2
+23,White,Female,Houston,Extroverted,['Creative'],Technology,1
+19,Asian,Female,San Francisco,Extroverted,"['Creative', 'Water Sports']",Student,1
+23,Middle Eastern,Male,Los Angeles,Ambitious,"['Team Sports', 'Water Sports', 'Mind-Body', 'Indoor Activites']",Healthcare,4
+25,Other,Female,Phoenix,Social,"['Creative', 'Water Sports', 'Team Sports', 'Dance']",Retired,2
+32,Hispanic,Male,Los Angeles,Introverted,"['Mind-Body', 'Strength Training', 'Video Games', 'Creative']",Healthcare,1
+25,Asian,Male,New York,Ambitious,"['Outdoor', 'Mind-Body', 'Strength Training', 'Water Sports']",Research,2
+21,Asian,Female,Chicago,Relaxed,"['Mind-Body', 'Water Sports', 'Dance']",Student,4
+22,Hispanic,Male,Houston,Ambitious,['Individual Sports'],Student,5
+27,Other,Male,New York,Extroverted,"['Team Sports', 'Individual Sports']",Production,2
+23,Asian,Female,Austin,Social,"['Outdoor', 'Dance', 'Individual Sports']",Environmental,4
+19,Asian,Non-Binary,Houston,Introverted,"['Creative', 'Team Sports', 'Indoor Activites']",Student,3
+23,Hispanic,Non-Binary,Chicago,Relaxed,"['Mind-Body', 'Indoor Activites', 'Video Games']",Education,5
+21,Other,Male,Houston,Relaxed,['Dance'],Sales,4
+32,Mixed,Female,Chicago,Extroverted,"['Mind-Body', 'Individual Sports', 'Water Sports']",Maintenance,3
+22,Black,Male,San Diego,Ambitious,['Creative'],Student,4
+32,Asian,Female,Chicago,Relaxed,"['Team Sports', 'Individual Sports', 'Strength Training', 'Indoor Activites']",Client Relation/Support,5
+24,Asian,Female,Houston,Social,"['Mind-Body', 'Outdoor', 'Individual Sports']",Office/Admin,3
+18,Asian,Male,San Francisco,Relaxed,"['Video Games', 'Team Sports', 'Strength Training']",Student,3
+22,Black,Male,Phoenix,Social,['Indoor Activites'],Student,5
+23,Asian,Male,San Francisco,Ambitious,"['Mind-Body', 'Individual Sports']",Creative,4
+23,Black,Non-Binary,Houston,Social,"['Outdoor', 'Strength Training', 'Water Sports', 'Team Sports']",Healthcare,4
+23,Mixed,Non-Binary,Houston,Relaxed,['Dance'],Environmental,3
+19,Mixed,Male,Phoenix,Introverted,"['Team Sports', 'Strength Training']",Student,2
+19,White,Female,New York,Introverted,['Creative'],Student,3
+20,Middle Eastern,Non-Binary,Phoenix,Extroverted,['Dance'],Student,3
+20,Middle Eastern,Non-Binary,Phoenix,Ambitious,"['Individual Sports', 'Video Games', 'Strength Training']",Student,1
+39,Asian,Female,Phoenix,Introverted,"['Mind-Body', 'Outdoor', 'Individual Sports', 'Water Sports']",Office/Admin,4
+20,White,Male,San Diego,Social,['Indoor Activites'],Legal Work,2
+18,Other,Female,Los Angeles,Introverted,"['Mind-Body', 'Strength Training']",Student,3
+23,Middle Eastern,Female,Chicago,Introverted,"['Outdoor', 'Water Sports']",Creative,4
+29,Mixed,Non-Binary,Austin,Relaxed,"['Video Games', 'Mind-Body']",Maintenance,2
+21,White,Non-Binary,Los Angeles,Social,"['Video Games', 'Team Sports']",Student,5
+28,White,Male,Chicago,Extroverted,"['Strength Training', 'Dance', 'Outdoor', 'Indoor Activites']",Legal Work,4
+20,Middle Eastern,Female,Houston,Social,"['Outdoor', 'Water Sports', 'Mind-Body']",Student,1
+35,Hispanic,Female,Phoenix,Social,"['Mind-Body', 'Creative', 'Dance', 'Water Sports']",Technology,2
+27,Middle Eastern,Non-Binary,Chicago,Ambitious,"['Team Sports', 'Water Sports', 'Creative']",Technology,2
+18,White,Male,Chicago,Social,"['Video Games', 'Creative', 'Water Sports']",Student,1
+21,Other,Male,Austin,Extroverted,"['Mind-Body', 'Individual Sports']",Maintenance,4
+23,Hispanic,Female,Los Angeles,Social,"['Team Sports', 'Video Games']",Office/Admin,5
+28,Black,Male,San Francisco,Extroverted,"['Creative', 'Strength Training', 'Indoor Activites']",Office/Admin,5
+39,Middle Eastern,Female,Phoenix,Ambitious,"['Individual Sports', 'Water Sports', 'Team Sports', 'Strength Training']",Environmental,4
+23,White,Non-Binary,San Francisco,Social,['Team Sports'],Sales,2
+28,Mixed,Female,San Francisco,Introverted,"['Water Sports', 'Mind-Body', 'Strength Training', 'Outdoor']",Retired,3
+20,Mixed,Non-Binary,Austin,Social,['Strength Training'],Student,4
+24,Mixed,Male,Chicago,Extroverted,"['Mind-Body', 'Strength Training']",Maintenance,5
+23,White,Female,San Diego,Social,['Mind-Body'],Client Relation/Support,4
+25,Other,Male,Houston,Ambitious,"['Team Sports', 'Dance', 'Creative']",Maintenance,2
+29,Hispanic,Male,Chicago,Social,"['Individual Sports', 'Creative', 'Team Sports', 'Strength Training']",Healthcare,2
+19,Other,Female,San Francisco,Extroverted,"['Strength Training', 'Creative']",Student,5
+36,Hispanic,Female,Houston,Ambitious,"['Video Games', 'Outdoor', 'Strength Training']",Research,5
+34,White,Female,San Diego,Extroverted,['Team Sports'],Education,1
+32,Middle Eastern,Female,Austin,Relaxed,['Video Games'],Environmental,2
+20,Middle Eastern,Male,San Diego,Extroverted,"['Water Sports', 'Mind-Body', 'Strength Training', 'Video Games']",Student,4
+19,Hispanic,Male,Chicago,Introverted,"['Strength Training', 'Outdoor']",Student,3
+20,Middle Eastern,Male,Phoenix,Extroverted,"['Outdoor', 'Video Games', 'Individual Sports', 'Creative']",Student,1
+23,Black,Male,San Diego,Ambitious,"['Individual Sports', 'Water Sports', 'Team Sports', 'Outdoor']",Education,2
+29,White,Male,San Diego,Ambitious,"['Dance', 'Strength Training', 'Video Games', 'Outdoor']",Office/Admin,2
+34,White,Male,New York,Ambitious,"['Water Sports', 'Creative', 'Video Games', 'Strength Training']",Production,3
+25,Mixed,Male,Houston,Social,"['Dance', 'Mind-Body', 'Outdoor']",Office/Admin,4
+28,Other,Non-Binary,New York,Social,"['Water Sports', 'Strength Training']",Client Relation/Support,4
+24,Asian,Female,Phoenix,Social,['Water Sports'],Office/Admin,4
+23,Middle Eastern,Female,San Francisco,Extroverted,"['Individual Sports', 'Video Games', 'Mind-Body']",Office/Admin,4
+27,Middle Eastern,Male,New York,Social,['Video Games'],Media,3
+29,Hispanic,Male,San Diego,Social,"['Outdoor', 'Creative']",HR,3
+22,White,Female,Austin,Extroverted,"['Dance', 'Outdoor', 'Video Games']",Retired,4
+23,Mixed,Female,New York,Social,['Creative'],Research,4
+22,Asian,Female,New York,Social,"['Video Games', 'Mind-Body', 'Strength Training']",Student,1
+22,Middle Eastern,Male,Austin,Social,['Individual Sports'],Student,5
+20,Mixed,Male,San Francisco,Social,"['Strength Training', 'Video Games', 'Individual Sports']",Student,3
+29,Hispanic,Non-Binary,Los Angeles,Ambitious,"['Indoor Activites', 'Water Sports', 'Team Sports', 'Dance']",Environmental,4
+29,Mixed,Male,Austin,Ambitious,"['Video Games', 'Team Sports']",Technology,3
+28,White,Female,San Diego,Introverted,['Creative'],Technology,2
+27,Mixed,Non-Binary,Chicago,Relaxed,"['Water Sports', 'Strength Training']",Media,3
+33,Other,Male,San Francisco,Relaxed,"['Dance', 'Video Games', 'Individual Sports', 'Indoor Activites']",Office/Admin,1
+19,Hispanic,Non-Binary,Austin,Introverted,"['Creative', 'Water Sports', 'Outdoor', 'Individual Sports']",Production,5
+23,Hispanic,Female,San Diego,Extroverted,"['Creative', 'Video Games', 'Dance', 'Team Sports']",Office/Admin,2
+20,Asian,Female,Chicago,Social,"['Indoor Activites', 'Water Sports']",Student,2
+26,Mixed,Female,Austin,Extroverted,"['Water Sports', 'Creative', 'Individual Sports', 'Video Games']",Production,1
+38,Middle Eastern,Male,Houston,Introverted,"['Indoor Activites', 'Mind-Body', 'Outdoor']",Healthcare,3
+34,White,Female,Los Angeles,Extroverted,"['Dance', 'Individual Sports', 'Water Sports']",Retired,5
+24,Middle Eastern,Female,New York,Social,"['Individual Sports', 'Dance', 'Strength Training']",Client Relation/Support,3
+22,Asian,Female,Austin,Ambitious,"['Outdoor', 'Indoor Activites']",Sales,2
+31,Black,Female,Phoenix,Ambitious,['Indoor Activites'],Maintenance,1
+27,Asian,Female,Phoenix,Social,"['Creative', 'Dance']",Production,5
+37,Black,Female,Los Angeles,Relaxed,"['Video Games', 'Water Sports', 'Outdoor']",Office/Admin,1
+26,Asian,Female,San Diego,Extroverted,"['Creative', 'Individual Sports']",Legal Work,1
+21,Black,Male,Los Angeles,Extroverted,"['Mind-Body', 'Outdoor', 'Team Sports']",Student,1
+18,Other,Female,Phoenix,Extroverted,"['Water Sports', 'Indoor Activites', 'Individual Sports', 'Mind-Body']",Student,1
+35,Mixed,Male,Austin,Extroverted,"['Mind-Body', 'Video Games', 'Water Sports']",Client Relation/Support,4
+29,Mixed,Female,Phoenix,Extroverted,"['Individual Sports', 'Indoor Activites', 'Dance']",Education,5
+23,Middle Eastern,Male,Phoenix,Extroverted,['Strength Training'],Technology,3
+25,Mixed,Non-Binary,Los Angeles,Introverted,['Strength Training'],Client Relation/Support,4
+23,Asian,Male,Chicago,Extroverted,"['Dance', 'Individual Sports', 'Strength Training']",Media,5
+22,Mixed,Male,Los Angeles,Relaxed,"['Mind-Body', 'Strength Training', 'Dance', 'Video Games']",Legal Work,4
+30,Hispanic,Male,Chicago,Introverted,"['Creative', 'Water Sports']",Retired,5
+26,Asian,Male,New York,Extroverted,"['Dance', 'Mind-Body']",Creative,4
+19,Hispanic,Non-Binary,New York,Relaxed,"['Dance', 'Team Sports']",Student,1
+39,Other,Male,Phoenix,Ambitious,"['Dance', 'Creative', 'Outdoor', 'Indoor Activites']",Client Relation/Support,4
+32,White,Male,Los Angeles,Extroverted,"['Team Sports', 'Mind-Body']",Maintenance,5
+31,Black,Non-Binary,Austin,Introverted,"['Team Sports', 'Creative', 'Video Games', 'Individual Sports']",Creative,2
+21,Other,Male,Phoenix,Social,"['Water Sports', 'Strength Training', 'Mind-Body']",Student,1
+26,Other,Female,Los Angeles,Relaxed,"['Strength Training', 'Video Games', 'Creative']",Office/Admin,2
+21,Other,Female,San Diego,Ambitious,"['Outdoor', 'Indoor Activites']",Student,5
+25,Middle Eastern,Female,San Francisco,Social,"['Mind-Body', 'Strength Training', 'Outdoor', 'Team Sports']",Client Relation/Support,2
+18,Black,Female,Chicago,Social,['Individual Sports'],Student,1
+27,Hispanic,Female,New York,Social,"['Video Games', 'Creative', 'Water Sports', 'Team Sports']",Production,5
+23,Asian,Female,Houston,Extroverted,"['Indoor Activites', 'Mind-Body', 'Outdoor']",Production,5
+22,Asian,Non-Binary,Los Angeles,Extroverted,['Mind-Body'],Student,2
+19,Middle Eastern,Female,San Diego,Social,"['Water Sports', 'Outdoor', 'Team Sports', 'Strength Training']",Student,5
+19,Mixed,Non-Binary,Austin,Ambitious,"['Indoor Activites', 'Video Games', 'Strength Training']",Student,5
+29,Other,Male,San Diego,Extroverted,"['Video Games', 'Dance']",Sales,3
+30,Black,Male,Chicago,Ambitious,"['Indoor Activites', 'Team Sports']",Research,1
+23,White,Female,Houston,Introverted,"['Strength Training', 'Indoor Activites', 'Creative']",Education,4
+24,Hispanic,Female,New York,Relaxed,"['Creative', 'Mind-Body', 'Outdoor', 'Water Sports']",Research,3
+30,Other,Female,San Francisco,Extroverted,['Outdoor'],HR,3
+23,White,Female,San Diego,Relaxed,"['Video Games', 'Dance', 'Water Sports']",Environmental,3
+24,Asian,Male,Los Angeles,Relaxed,"['Indoor Activites', 'Strength Training', 'Dance']",Office/Admin,4
+23,Mixed,Male,Los Angeles,Social,"['Strength Training', 'Creative', 'Mind-Body', 'Individual Sports']",Sales,3
+24,White,Female,Los Angeles,Social,"['Creative', 'Individual Sports', 'Strength Training', 'Outdoor']",Retired,5
+23,Mixed,Male,New York,Social,['Video Games'],Client Relation/Support,2
+22,Other,Male,Los Angeles,Extroverted,"['Team Sports', 'Individual Sports']",Media,3
+25,Black,Female,Chicago,Social,"['Dance', 'Indoor Activites']",Research,3
+27,Other,Female,Chicago,Ambitious,"['Indoor Activites', 'Team Sports', 'Creative', 'Outdoor']",Office/Admin,1
+40,White,Female,New York,Social,"['Creative', 'Indoor Activites']",Media,1
+20,Mixed,Male,Houston,Extroverted,"['Strength Training', 'Water Sports', 'Individual Sports', 'Dance']",Environmental,3
+21,Black,Female,Chicago,Social,['Video Games'],HR,4
+24,Mixed,Male,Austin,Relaxed,"['Water Sports', 'Dance']",Client Relation/Support,1
+25,Hispanic,Male,Phoenix,Relaxed,['Individual Sports'],Education,5
+25,Other,Female,San Diego,Extroverted,"['Indoor Activites', 'Mind-Body']",Production,1
+18,White,Male,Houston,Ambitious,['Water Sports'],HR,4
+20,Asian,Non-Binary,Chicago,Extroverted,"['Creative', 'Outdoor', 'Mind-Body', 'Indoor Activites']",Student,4
+24,Mixed,Non-Binary,Austin,Introverted,['Water Sports'],Office/Admin,3
+22,Asian,Non-Binary,Los Angeles,Ambitious,"['Mind-Body', 'Individual Sports', 'Dance']",Student,5
+24,Asian,Female,Phoenix,Relaxed,"['Mind-Body', 'Outdoor']",Office/Admin,1
+24,Middle Eastern,Non-Binary,Chicago,Ambitious,"['Indoor Activites', 'Mind-Body']",Maintenance,5
+24,Hispanic,Male,San Diego,Extroverted,"['Video Games', 'Team Sports', 'Water Sports']",Environmental,1
+20,White,Non-Binary,Houston,Relaxed,"['Outdoor', 'Strength Training', 'Water Sports']",Student,4
+21,Black,Female,New York,Social,"['Video Games', 'Team Sports', 'Water Sports']",Legal Work,4
+32,Other,Female,Los Angeles,Extroverted,"['Video Games', 'Water Sports', 'Indoor Activites']",Office/Admin,1
+36,Asian,Non-Binary,San Diego,Relaxed,"['Water Sports', 'Outdoor', 'Creative', 'Video Games']",Healthcare,3
+18,White,Non-Binary,San Francisco,Introverted,"['Mind-Body', 'Water Sports', 'Video Games']",Research,4
+19,Mixed,Female,San Francisco,Extroverted,"['Indoor Activites', 'Mind-Body', 'Video Games', 'Outdoor']",Student,2
+24,Black,Female,Chicago,Ambitious,"['Mind-Body', 'Indoor Activites', 'Team Sports']",Legal Work,5
+28,Mixed,Male,Phoenix,Social,"['Indoor Activites', 'Individual Sports', 'Strength Training']",Environmental,4
+22,White,Non-Binary,Los Angeles,Social,"['Dance', 'Outdoor', 'Indoor Activites', 'Mind-Body']",Student,3
+24,Hispanic,Male,Los Angeles,Extroverted,"['Individual Sports', 'Creative', 'Water Sports', 'Mind-Body']",Media,5
+25,White,Non-Binary,Los Angeles,Ambitious,"['Video Games', 'Mind-Body', 'Team Sports']",Education,5
+29,White,Male,Austin,Introverted,"['Team Sports', 'Outdoor', 'Strength Training', 'Video Games']",Office/Admin,1
+20,Asian,Non-Binary,New York,Social,"['Team Sports', 'Strength Training', 'Water Sports', 'Creative']",Student,3
+24,Hispanic,Female,Chicago,Social,"['Mind-Body', 'Individual Sports', 'Strength Training']",Production,2
+20,Other,Female,Houston,Relaxed,"['Water Sports', 'Strength Training', 'Outdoor', 'Dance']",Student,2
+29,White,Female,San Diego,Relaxed,"['Team Sports', 'Water Sports', 'Video Games', 'Outdoor']",Education,2
+22,Other,Male,Los Angeles,Social,"['Mind-Body', 'Individual Sports']",Student,2
+23,Black,Female,New York,Relaxed,"['Dance', 'Water Sports', 'Creative']",Office/Admin,5
+21,Black,Non-Binary,San Diego,Ambitious,"['Water Sports', 'Individual Sports', 'Creative', 'Video Games']",Client Relation/Support,1
+18,Hispanic,Non-Binary,Houston,Social,"['Mind-Body', 'Indoor Activites', 'Dance', 'Outdoor']",Student,1
+24,Mixed,Male,Austin,Extroverted,"['Video Games', 'Creative', 'Individual Sports', 'Water Sports']",Legal Work,5
+35,Hispanic,Male,Los Angeles,Introverted,"['Dance', 'Outdoor']",Technology,2
+19,Black,Female,Austin,Introverted,['Video Games'],Student,4
+30,Other,Non-Binary,Chicago,Social,"['Strength Training', 'Mind-Body', 'Water Sports']",Maintenance,3
+24,White,Male,Houston,Extroverted,"['Creative', 'Video Games', 'Individual Sports']",Technology,1
+25,Mixed,Female,San Diego,Introverted,"['Water Sports', 'Outdoor', 'Team Sports', 'Mind-Body']",Production,3
+19,Mixed,Male,Los Angeles,Relaxed,"['Water Sports', 'Strength Training']",Student,5
+18,White,Male,San Francisco,Social,"['Strength Training', 'Dance', 'Indoor Activites']",Student,1
+33,Middle Eastern,Male,Houston,Extroverted,"['Creative', 'Team Sports', 'Individual Sports']",Research,1
+19,Hispanic,Female,New York,Extroverted,"['Strength Training', 'Creative', 'Water Sports', 'Outdoor']",Student,1
+26,Mixed,Non-Binary,San Francisco,Ambitious,"['Water Sports', 'Strength Training']",Technology,2
+28,Hispanic,Male,Austin,Relaxed,['Strength Training'],Media,2
+39,Asian,Female,Phoenix,Ambitious,"['Indoor Activites', 'Team Sports', 'Creative', 'Video Games']",Legal Work,5
+22,Black,Female,Chicago,Extroverted,"['Mind-Body', 'Strength Training', 'Creative']",Student,5
+24,Middle Eastern,Non-Binary,Los Angeles,Extroverted,"['Outdoor', 'Team Sports', 'Strength Training']",Healthcare,3
+30,Middle Eastern,Non-Binary,San Francisco,Relaxed,"['Creative', 'Dance']",Media,3
+26,Middle Eastern,Non-Binary,San Francisco,Relaxed,['Indoor Activites'],Creative,1
+28,Middle Eastern,Female,Los Angeles,Extroverted,"['Video Games', 'Strength Training']",Production,4
+39,Black,Female,Los Angeles,Social,"['Individual Sports', 'Outdoor']",Office/Admin,4
+28,Hispanic,Female,New York,Introverted,['Strength Training'],Legal Work,5

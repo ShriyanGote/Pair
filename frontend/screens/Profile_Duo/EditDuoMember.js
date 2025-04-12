@@ -19,6 +19,7 @@ import {
   getGroupMemberPhotos,
   uploadGroupMemberPhoto,
   deleteGroupMemberPhoto,
+  updateGroupMember,
 } from '../../utils/api'; // you'll define these
 
 const EditDuoMember = ({ route, navigation }) => {
@@ -105,16 +106,20 @@ const EditDuoMember = ({ route, navigation }) => {
     }
   };
 
-  // Save changes for name/age/height
   const handleSave = async () => {
     if (!name || !age || !height) {
       Alert.alert('Missing Fields', 'Please fill out all fields.');
       return;
     }
+  
     try {
       const token = await AsyncStorage.getItem('token');
-      // normal update call
-      // ...
+      await updateGroupMember(member.id, {
+        name,
+        age: parseInt(age),
+        height,
+      }, token);
+  
       Alert.alert('Updated', 'Member info saved.');
       navigation.goBack();
     } catch (error) {
@@ -237,7 +242,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   addPhotoText: {
-    color: '#fff',
+    color: '#aaa',
     fontWeight: '600',
   },
   input: {

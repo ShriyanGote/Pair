@@ -33,52 +33,62 @@ def get_current_user(authorization: str = Header(...), db: Session = Depends(get
 
 @router.post("/swipe")
 def swipe(swipee_id: int, direction: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    logger.info(f"[SWIPE] User {current_user.id} swiped {direction} on {swipee_id}")
-    
-    if direction not in ["left", "right"]:
-        logger.warning("[SWIPE] Invalid direction received:", direction)
-        raise HTTPException(status_code=400, detail="Invalid direction")
-    
+    logger.info(f"[SWIPE RECEIVED] swiper={current_user.id} swipee={swipee_id} direction={direction}")
 
-    # Prevent duplicate swipes
+    if direction not in ["left", "right"]:
+        raise HTTPException(status_code=400, detail="Invalid direction")
+
+    if swipee_id == current_user.id:
+        raise HTTPException(status_code=400, detail="Cannot swipe on yourself")
+
     existing = db.query(Swipe).filter_by(swiper_id=current_user.id, swipee_id=swipee_id).first()
     if existing:
-        return {"message": "Swipe already recorded"}
+        if existing.direction != direction:
+            existing.direction = direction
+            logger.info(f"[UPDATE] Changed swipe from {existing.direction} to {direction}")
+        else:
+            logger.info("[SKIP] Swipe already exists with same direction")
+            return {"message": "Swipe already recorded"}
 
-    # Record swipe
     swipe = Swipe(swiper_id=current_user.id, swipee_id=swipee_id, direction=direction)
     db.add(swipe)
 
-    if direction == "right":
-        # Check for a match
-        mutual = db.query(Swipe).filter_by(swiper_id=swipee_id, swipee_id=current_user.id, direction="right").first()
-        if mutual:
-            logger.info('this is a match')
-            match = Match(user1_id=min(current_user.id, swipee_id), user2_id=max(current_user.id, swipee_id))
-            db.add(match)
-        else:
-            logger.info('not a match')
+    try:
+        if direction == "right":
+            reverse = db.query(Swipe).filter_by(swiper_id=swipee_id, swipee_id=current_user.id, direction="right").first()
+            if reverse:
+                logger.info(f"[MATCH FOUND] {current_user.id} <-> {swipee_id}")
+                user1_id = min(current_user.id, swipee_id)
+                user2_id = max(current_user.id, swipee_id)
 
-    db.commit()
-    logger.info('swipe recorded')
+                existing_match = db.query(Match).filter_by(user1_id=user1_id, user2_id=user2_id).first()
+                if not existing_match:
+                    db.add(Match(user1_id=user1_id, user2_id=user2_id))
+
+        db.commit()
+        logger.info("[DB] Swipe committed")
+    except Exception as e:
+        logger.error(f"[DB COMMIT ERROR] {e}")
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Could not save swipe")
+
     return {"message": "Swipe recorded"}
 
 @router.get("/recommendations")
 def get_recommendations(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    # Subquery: who the current user has right-swiped (matches)
     right_swipes = db.query(Swipe.swipee_id).filter(
         Swipe.swiper_id == current_user.id,
         Swipe.direction == 'right'
     )
 
-    # Exclude: self and right-swiped users
     recommendations = db.query(User).filter(
         User.id != current_user.id,
         ~User.id.in_(right_swipes)
     ).all()
 
-    return [
-        {
+    results = []
+    for u in recommendations:
+        base_info = {
             "id": u.id,
             "name": u.name,
             "age": u.age,
@@ -86,10 +96,28 @@ def get_recommendations(current_user: User = Depends(get_current_user), db: Sess
             "bio": u.bio,
             "height": u.height,
             "gender": u.gender,
-            "profile_photo": None,  # Add if you have
+            "profile_photo": u.profile_photo,
+            "profile_type": u.profile_type,
+            "interests": u.interests,
+            "looking_for": u.looking_for,
         }
-        for u in recommendations
-    ]
+
+        if u.profile_type in ("duo", "group"):
+            base_info["members"] = [
+                {
+                    "id": m.id,
+                    "name": m.name,
+                    "age": m.age,
+                    "height": m.height,
+                    "profile_photo": m.profile_photo
+                } for m in u.members
+            ]
+        else:
+            base_info["members"] = None
+
+        results.append(base_info)
+
+    return results
 
 
 
@@ -97,20 +125,19 @@ def get_recommendations(current_user: User = Depends(get_current_user), db: Sess
 
 @router.get("/matches")
 def get_matches(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    liked_me = db.query(Swipe.swiper_id).filter(
-        Swipe.swipee_id == current_user.id,
-        Swipe.direction == "right"
-    ).subquery()
-
-    i_liked = db.query(Swipe.swipee_id).filter(
-        Swipe.swiper_id == current_user.id,
-        Swipe.direction == "right"
-    ).subquery()
-
-    matches = db.query(User).filter(
-        User.id.in_(liked_me),
-        User.id.in_(i_liked)
+    match_rows = db.query(Match).filter(
+        or_(
+            Match.user1_id == current_user.id,
+            Match.user2_id == current_user.id
+        )
     ).all()
+
+    matched_user_ids = [
+        m.user2_id if m.user1_id == current_user.id else m.user1_id
+        for m in match_rows
+    ]
+
+    users = db.query(User).filter(User.id.in_(matched_user_ids)).all()
 
     return [
         {
@@ -122,9 +149,9 @@ def get_matches(current_user: User = Depends(get_current_user), db: Session = De
             "bio": u.bio,
             "height": u.height,
             "gender": u.gender,
-            "profile_photo": None,
+            "profile_photo": u.profile_photo,
         }
-        for u in matches
+        for u in users
     ]
 
 
