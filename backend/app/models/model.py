@@ -1,6 +1,3 @@
-
-# model.py
-
 from sqlalchemy import Column, Integer, String, DateTime, func, UniqueConstraint, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -67,14 +64,20 @@ class User(Base):
     # NEW FIELDS
     bio: Mapped[Optional[str]] = mapped_column(nullable=True)
     interests: Mapped[Optional[str]] = mapped_column(nullable=True)
-    looking_for: Mapped[Optional[str]] = mapped_column(nullable=True)  # ← Add this line!
+    looking_for: Mapped[Optional[str]] = mapped_column(nullable=True)
     age: Mapped[Optional[int]] = mapped_column(nullable=True)
     gender: Mapped[Optional[str]] = mapped_column(nullable=True)
     location: Mapped[Optional[str]] = mapped_column(nullable=True)
     profile_photo: Mapped[Optional[str]] = mapped_column(nullable=True)
-    height: Mapped[Optional[float]] = mapped_column(nullable=True)
     profile_type: Mapped[str] = mapped_column(default="uno")
-    
+
+    # ADDED FIELDS
+    ethnicity: Mapped[Optional[str]] = mapped_column(nullable=True)
+    social_media_use: Mapped[Optional[int]] = mapped_column(nullable=True)
+    past_activities: Mapped[Optional[str]] = mapped_column(nullable=True)
+    personality: Mapped[Optional[str]] = mapped_column(nullable=True)
+    occupation: Mapped[Optional[str]] = mapped_column(nullable=True)
+
     is_verified: Mapped[bool] = mapped_column(default=False)
     verification_code: Mapped[Optional[str]] = mapped_column(nullable=True)
 
@@ -100,8 +103,6 @@ class GroupMemberInput(BaseModel):
     height: Optional[float] = None
     profile_photo: Optional[str] = None
 
-# models.py
-
 class GroupMemberPhoto(Base):
     __tablename__ = "group_member_photos"
 
@@ -112,14 +113,11 @@ class GroupMemberPhoto(Base):
 
     group_member = relationship("GroupMember", back_populates="photos")
 
-
 class DuoProfileInput(BaseModel):
     location: Optional[str] = None
     interests: Optional[str] = None
     looking_for: Optional[str] = None
     members: List[GroupMemberInput]
-
-
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -127,18 +125,32 @@ class UserLogin(BaseModel):
 
 class UserCreate(BaseModel):
     name: str
-    email: str
+    email: EmailStr
     password: str
     profile_type: str = "uno"
+    
+    # Add the optional fields
+    age: Optional[int] = None
+    gender: Optional[str] = None
+    location: Optional[str] = None
+    ethnicity: Optional[str] = None
+    social_media_use: Optional[int] = None
+    personality: Optional[str] = None
+    occupation: Optional[str] = None
+    interests: Optional[str] = None
+    past_activities: Optional[str] = None
+    looking_for: Optional[str] = None
+
     @validator('email')
     def validate_email(cls, v):
         if not re.match(r"[^@]+@[^@]+\.[^@]+", v):
             raise ValueError('Please provide a valid email')
         return v
 
+
 class UserUpdate(BaseModel):
-    name: str
-    email: EmailStr
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
     password: Optional[str] = None
     bio: Optional[str] = None
     interests: Optional[str] = None
@@ -146,15 +158,15 @@ class UserUpdate(BaseModel):
     gender: Optional[str] = None
     location: Optional[str] = None
     profile_photo: Optional[str] = None
-    height: Optional[float] = None
     profile_type: Optional[str] = None
-
-
+    ethnicity: Optional[str] = None
+    social_media_use: Optional[int] = None
+    past_activities: Optional[str] = None
+    personality: Optional[str] = None
+    occupation: Optional[str] = None
 
 class EmailRequest(BaseModel):
     email: str
-
-
 
 class UserPhoto(Base):
     __tablename__ = "user_photos"
@@ -164,5 +176,4 @@ class UserPhoto(Base):
     photo_url = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    # relationship back to user
     user = relationship("User", backref="user_photos")

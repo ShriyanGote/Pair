@@ -46,12 +46,12 @@ const MatchesScreen = () => {
   
   const handleUnmatch = (userId, name) => {
     Alert.alert(
-      `Unmatch ${name}?`,
-      "Are you sure you want to remove this match?",
+      `Unconnect ${name}?`,
+      "Are you sure you want to remove this connection?",
       [
         { text: "Cancel", style: "cancel" },
         {
-          text: "Unmatch",
+          text: "Unconnect",
           style: "destructive",
           onPress: async () => {
             try {
@@ -93,7 +93,7 @@ const MatchesScreen = () => {
       </View>
   
       <TouchableOpacity onPress={() => handleUnmatch(item.id, item.name)}>
-        <Text style={styles.unmatchText}>Unmatch</Text>
+        <Text style={styles.unmatchText}>Unconnect</Text>
       </TouchableOpacity>
     </View>
   );

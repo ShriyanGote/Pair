@@ -1,5 +1,3 @@
-#user_routes.py
-
 from fastapi import APIRouter, Depends, HTTPException, Body, Header
 from sqlalchemy.orm import Session
 from app.db.database import SessionLocal
@@ -9,7 +7,6 @@ from app.core.auth import create_access_token, decode_access_token
 from app.core.email_util import send_verification_email
 from datetime import timedelta
 import random
-
 
 router = APIRouter()
 
@@ -37,7 +34,24 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     existing = get_user_by_email(db, user.email)
     if existing:
         return {"error": "User already exists"}
-    new_user = create_user(db, name=user.name, email=user.email, password=user.password, profile_type=user.profile_type)
+
+    new_user = create_user(
+        db,
+        name=user.name,
+        email=user.email,
+        password=user.password,
+        profile_type=user.profile_type,
+        age=user.age,
+        gender=user.gender,
+        location=user.location,
+        ethnicity=user.ethnicity,
+        social_media_use=user.social_media_use,
+        personality=user.personality,
+        occupation=user.occupation,
+        interests=user.interests,
+        past_activities=user.past_activities,
+        looking_for=user.looking_for,
+    )
     return {"message": f"User {new_user.name} registered!"}
 
 @router.post("/login")
@@ -60,16 +74,36 @@ def update_user_profile(user_id: int, updated_data: UserUpdate, db: Session = De
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    user.name = updated_data.name
-    user.email = updated_data.email
+
+    # Only update fields that are actually provided
+    if updated_data.name is not None:
+        user.name = updated_data.name
+    if updated_data.email is not None:
+        user.email = updated_data.email
     if updated_data.password:
         user.hashed_password = updated_data.password
-    user.bio = updated_data.bio
-    user.age = updated_data.age
-    user.gender = updated_data.gender
-    user.location = updated_data.location
-    user.height = updated_data.height
-    user.profile_type = updated_data.profile_type
+    
+    if updated_data.bio is not None:
+        user.bio = updated_data.bio
+    if updated_data.age is not None:
+        user.age = updated_data.age
+    if updated_data.gender is not None:
+        user.gender = updated_data.gender
+    if updated_data.location is not None:
+        user.location = updated_data.location
+    if updated_data.profile_type is not None:
+        user.profile_type = updated_data.profile_type
+    if updated_data.ethnicity is not None:
+        user.ethnicity = updated_data.ethnicity
+    if updated_data.social_media_use is not None:
+        user.social_media_use = updated_data.social_media_use
+    if updated_data.past_activities is not None:
+        user.past_activities = updated_data.past_activities
+    if updated_data.personality is not None:
+        user.personality = updated_data.personality
+    if updated_data.occupation is not None:
+        user.occupation = updated_data.occupation
+
     db.commit()
     db.refresh(user)
     return {"message": "User profile updated", "user": user}
@@ -94,7 +128,6 @@ def verify_code(email: str = Body(...), code: str = Body(...), db: Session = Dep
     token = create_access_token(data={"sub": user.email})
     return {"message": "Email verified", "access_token": token}
 
-
 @router.put("/profile-type")
 def update_profile_type(
     new_type: str = Body(..., embed=True),
@@ -113,7 +146,6 @@ def update_profile_type(
 
     # Update the profile type and any shared info if needed
     current_user.profile_type = new_type
-    # Optionally, reset shared info (location, interests, looking_for) too:
     current_user.location = None
     current_user.interests = None
     current_user.looking_for = None
@@ -122,9 +154,7 @@ def update_profile_type(
         current_user.name = None
         current_user.age = None
         current_user.gender = None
-        current_user.height = None
         current_user.bio = None
 
     db.commit()
-
     return {"message": f"Profile type updated to '{new_type}'."}

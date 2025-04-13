@@ -66,7 +66,7 @@ const ChatScreen = ({ route }) => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.backBtn}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.matchName}>{String(matchName || 'Match')}</Text>
+        <Text style={styles.matchName}>{String(matchName || 'Connection')}</Text>
         <View style={{ width: 60 }} />
       </View>
 
