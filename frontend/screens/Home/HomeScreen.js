@@ -1,9 +1,17 @@
 // screens/HomeScreen.js
 
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, {useEffect} from 'react';
+import { View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import { useRoute } from '@react-navigation/native';
 
 const HomeScreen = ({ navigation }) => {
+  const route = useRoute();
+
+  useEffect(() => {
+    if (route.params?.registered) {
+      Alert.alert('🎉 Success', 'User successfully registered!');
+    }
+  }, [route.params?.registered]);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to Pairs</Text>

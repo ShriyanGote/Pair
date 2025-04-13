@@ -76,7 +76,7 @@ const RegisterScreen = ({ navigation, route }) => {
   const handleGoHome = async () => {
     navigation.reset({
       index: 0,
-      routes: [{ name: 'Home' }],
+      routes: [{ name: 'Home', params: { registered: true } }],
     });
   };
 
