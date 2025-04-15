@@ -8,7 +8,6 @@ type RegistrationData = {
   interests?: string[]; 
   pastActivities?: string[];
   personality?: string | null;
-  experience?: number;
   socialMediaUse?: number;
   occupation?: string;
   name?: string;
@@ -38,7 +37,6 @@ export const RegistrationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     interests: [],
     pastActivities: [],
     personality: null,
-    experience: 5,
     socialMediaUse: 5,
     occupation: '',
     name: '',

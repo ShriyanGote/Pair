@@ -66,23 +66,25 @@ const RegistrationFlow = () => {
    */
   const dropdownProps = (fieldKey, items, multiple = false) => ({
     open: openDropdowns[fieldKey] || false,
-    value: formData[fieldKey],
+    value: multiple ? (formData[fieldKey] || []) : formData[fieldKey],
     items,
     setOpen: (open) => {
       setOpenDropdowns((prev) => ({ ...prev, [fieldKey]: open }));
     },
     setValue: (callback) => {
-      const value = callback();
-      setFormData((prev) => ({ ...prev, [fieldKey]: value }));
+      setFormData((prev) => ({
+        ...prev,
+        [fieldKey]: callback(prev[fieldKey])
+      }));
     },
     multiple,
-    min: multiple ? 1 : 0,  // require at least one selection for multiple
-    max: multiple ? 5 : 1,  // maximum 5 selections for multiple
-    mode: multiple ? 'CHECKBOX' : 'BADGE', 
+    mode: multiple ? 'BADGE' : 'SIMPLE',
+    min: multiple ? 0 : undefined,
+    max: multiple ? 5 : undefined,
     badgeDotColors: ["#e76f51", "#00b4d8", "#e9c46a", "#2a9d8f", "#e63946"],
     style: styles.dropdown,
     dropDownContainerStyle: styles.dropdownContainer,
-    listMode: "MODAL",
+    listMode: 'MODAL',
     searchable: true,
     placeholder: `Select ${fieldKey}...`
   });
@@ -274,18 +276,37 @@ const RegistrationFlow = () => {
             />
           </View>
         );
-
-      case 8:
+        case 8:
         return (
           <View style={styles.contentContainer}>
-            <Text style={styles.header}>Enter Occupation</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your occupation"
-              value={formData.occupation}
-              onChangeText={(text) =>
-                setFormData((prev) => ({ ...prev, occupation: text }))
-              }
+            <Text style={styles.header}>Input Occupation Field</Text>
+            <DropDownPicker
+              {...dropdownProps(
+                'Occupation',
+                [
+                  { label: 'Technology', value: 'technology' },
+                  { label: 'Healthcare & Medicine', value: 'healthcare_medicine' },
+                  { label: 'Education', value: 'education' },
+                  { label: 'Finance & Accounting', value: 'finance_accounting' },
+                  { label: 'Arts & Entertainment', value: 'arts_entertainment' },
+                  { label: 'Engineering', value: 'engineering' },
+                  { label: 'Law & Government', value: 'law_government' },
+                  { label: 'Marketing & Advertising', value: 'marketing_advertising' },
+                  { label: 'Retail & Sales', value: 'retail_sales' },
+                  { label: 'Science & Research', value: 'science_research' },
+                  { label: 'Hospitality & Tourism', value: 'hospitality_tourism' },
+                  { label: 'Construction & Trade', value: 'construction_trade' },
+                  { label: 'Transportation & Logistics', value: 'transportation_logistics' },
+                  { label: 'Non-Profit & Advocacy', value: 'nonprofit_advocacy' },
+                  { label: 'Media & Communication', value: 'media_communication' },
+                  { label: 'Real Estate', value: 'real_estate' },
+                  { label: 'Sports & Recreation', value: 'sports_recreation' },
+                  { label: 'Business & Entrepreneurship', value: 'business_entrepreneurship' },
+                  { label: 'Agriculture & Environment', value: 'agriculture_environment' },
+                  { label: 'Other', value: 'other' },
+                ],
+                true  // multiple selection
+              )}
             />
           </View>
         );
