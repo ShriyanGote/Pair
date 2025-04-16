@@ -1,12 +1,8 @@
 // RegisterScreen.js
 import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Linking,
-  Alert,
+  View, Text, TouchableOpacity,
+  StyleSheet, Linking, Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_BASE_URL } from '@env';
@@ -17,77 +13,51 @@ const RegisterScreen = ({ navigation, route }) => {
   useEffect(() => {
     navigation.setOptions({ headerLeft: () => null });
     if (route.params?.allFields) {
-      // Store it in local state
       setAllFields(route.params.allFields);
     }
   }, [navigation, route.params?.allFields]);
 
   const handleGoogleLogin = async () => {
-    console.log('Google login pressed');
+    if (!allFields) {
+      Alert.alert('Error', 'No registration data found');
+      return;
+    }
+
+    // build the exact same shape your FastAPI expects:
+    const profileData = {
+      profile_type: allFields.profile_type,               // snake_case!
+      ethnicity:     allFields.ethnicity,
+      gender:        allFields.gender,
+      interests:     allFields.interests,
+      past_activities: allFields.past_activities,
+      personality:   allFields.personality,
+      social_media_use: allFields.social_media_use,
+      occupation:      allFields.occupation,
+      bio:             allFields.bio,        // if you added bio
+      location:        allFields.location,   // from duo/group step
+      looking_for:     allFields.looking_for // from duo/group step
+    };
+
     try {
-      // If we have an object with the user’s entire data
-      // e.g. { profileType, ethnicity, gender, interests, ... }
-      // We pass that as a JSON string in profile_data
-      let profileData = { profile_type: 'uno' }; // fallback
-
-      if (allFields) {
-        // e.g. allFields = {
-        //   profileType: 'uno',
-        //   ethnicity: 'asian',
-        //   gender: 'female',
-        //   interests: [...],
-        //   pastActivities: [...],
-        //   personality: 'Introverted',
-        //   socialMediaUse: 5,
-        //   occupation: 'Engineer',
-        // }
-        // We'll rename keys for the back-end if needed.
-        profileData = {
-          profile_type: allFields.profileType,
-          ethnicity: allFields.ethnicity,
-          gender: allFields.gender,
-          interests: allFields.interests, // array is fine
-          past_activities: allFields.pastActivities, // note the snake_case if your callback expects that
-          personality: allFields.personality,
-          social_media_use: allFields.socialMediaUse,
-          occupation: allFields.occupation,
-        };
-      }
-
-      // Encode as JSON
       const jsonStr = JSON.stringify(profileData);
       const encoded = encodeURIComponent(jsonStr);
-
       const url = `${API_BASE_URL}/auth/google/login?profile_data=${encoded}`;
-      console.log('Opening URL:', url);
 
       const supported = await Linking.canOpenURL(url);
-      if (supported) {
-        await Linking.openURL(url);
-      } else {
-        Alert.alert('Error', 'Cannot open login URL');
-      }
-    } catch (error) {
-      console.error('Google login error:', error);
-      Alert.alert('Error', 'Failed to open Google login');
+      if (!supported) throw new Error('Cannot open login URL');
+      await Linking.openURL(url);
+    } catch (err) {
+      console.error(err);
+      Alert.alert('Error', err.message || 'Failed to open Google login');
     }
   };
 
-  const handleGoHome = async () => {
+  const handleGoHome = () => {
     navigation.reset({
       index: 0,
       routes: [{ name: 'Home', params: { registered: true } }],
     });
   };
-
-  useEffect(() => {
-    // For debugging: listen to any deep link events
-    const handleDeepLink = (event) => {
-      console.log('Deep link event:', event.url);
-    };
-    const subscription = Linking.addEventListener('url', handleDeepLink);
-    return () => subscription.remove();
-  }, []);
 
   return (
     <View style={styles.container}>
@@ -104,6 +74,7 @@ const RegisterScreen = ({ navigation, route }) => {
 
 export default RegisterScreen;
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -118,7 +89,7 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   button: {
-    backgroundColor: '#DB4437', // Google Red
+    backgroundColor: '#DB4437',
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 8,

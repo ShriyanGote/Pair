@@ -9,24 +9,28 @@ const SwipeScreen = () => {
   const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
+  const [page, setPage] = useState(0);
 
-
-  
-  // Load recommendations
-  const loadRecommendations = async () => {
+  const loadRecommendations = async (reset = false) => {
     try {
       const token = await AsyncStorage.getItem('token');
-      const res = await getPotentialMatches(token);
-      setDiscoverList(res.data);
+      const res = await getPotentialMatches(token, page); // 👈 pass page here
+  
+      if (reset) {
+        setDiscoverList(res.data);
+      } else {
+        setDiscoverList((prev) => [...prev, ...res.data]);
+      }
+  
+      setPage(prev => prev + 1);
       setIndex(0);
     } catch (err) {
       console.error('Failed to load matches:', err);
       Alert.alert('Error', 'Could not load matches.');
     } finally {
-      setLoading(false); // ✅ This was missing
+      setLoading(false);
     }
   };
-  
   
   // Handle swipe
   const handleSwipe = async (index, direction) => {
@@ -94,58 +98,42 @@ const SwipeScreen = () => {
     <View style={styles.container}>
       <Swiper
         cards={discoverList}
-        renderCard={(user) => (
-          <View style={styles.card}>
-            <Image
-              source={{ uri: user.profile_photo || 'https://placekitten.com/300/300' }}
-              style={styles.photo}
-            />
-            <Text style={styles.profileType}>
-              {user.profile_type === 'uno' && '🧍 Uno'}
-              {user.profile_type === 'duo' && '🧑‍🤝‍🧑 Duo'}
-              {user.profile_type === 'group' && '👯 Group'}
-            </Text>
+        renderCard={(user) => {
+          if (!user) return null;
         
-            {user.profile_type === 'uno' && (
-              <>
-                <Text style={styles.name}>{user.name}, {user.age}</Text>
-                {user.height && <Text style={styles.meta}>Height: {user.height}'</Text>}
-                <Text style={styles.meta}>📍 {user.location}</Text>
-                <Text style={styles.bio}>{user.bio}</Text>
-              </>
-            )}
+          return (
+            <View style={styles.card}>
+              <Image
+                source={{ uri: user.profile_photo || 'https://placekitten.com/300/300' }}
+                style={styles.photo}
+              />
         
-            {user.profile_type === 'duo' && (
-              <>
-                <Text style={styles.shared}>📍 {user.location}</Text>
-                <Text style={styles.shared}>🎯 {user.looking_for}</Text>
-                <Text style={styles.shared}>🎨 {user.interests}</Text>
+              <Text style={styles.profileType}>
+                {user.profile_type === 'uno' && '🧍 Uno'}
+                {user.profile_type === 'duo' && '🧑‍🤝‍🧑 Duo'}
+                {user.profile_type === 'group' && '👯 Group'}
+              </Text>
+
+              <Text style={styles.name}>{user.name ?? 'Anonymous'}, {user.age ?? 'NULL Age'}</Text>
+              <Text style={styles.name}>{user.ethnicity ?? 'No Ethnicity'}</Text>
+              <Text style={styles.meta}>📍 {user.location ?? 'Unknown'}</Text>
+              <Text style={styles.meta}>🎯 {user.looking_for ?? 'Open to possibilities'}</Text>
+              <Text style={styles.meta}>🎨 {user.interests ?? 'No interests listed'}</Text>
+              <Text style={styles.bio}>{user.bio ?? 'No bio yet.'}</Text>
         
-                <Text style={styles.name}>Members</Text>
-                {user.members?.map((m, i) => (
-                  <Text key={m.id || i} style={styles.meta}>
-                    {m.name} {m.height ? `- ${m.height}'` : ''}
-                  </Text>
-                ))}
-              </>
-            )}
-        
-            {user.profile_type === 'group' && (
-              <>
-                <Text style={styles.shared}>📍 {user.location}</Text>
-                <Text style={styles.shared}>🎯 {user.looking_for}</Text>
-                <Text style={styles.shared}>🎨 {user.interests}</Text>
-        
-                <Text style={styles.name}>Group Members</Text>
-                {user.members?.map((m, i) => (
-                  <Text key={m.id || i} style={styles.meta}>
-                    {m.name}
-                  </Text>
-                ))}
-              </>
-            )}
-          </View>
-        )}
+              {user.profile_type !== 'uno' && (
+                <>
+                  <Text style={styles.name}>Members</Text>
+                  {(user.members ?? []).map((m, i) => (
+                    <Text key={m.id || i} style={styles.meta}>
+                      {m.name} {m.height ? `- ${m.height}'` : ''}
+                    </Text>
+                  ))}
+                </>
+              )}
+            </View>
+          );
+        }}
         onSwipedLeft={(index) => handleSwipe(index, 'left')}
         onSwipedRight={(index) => handleSwipe(index, 'right')}
         cardIndex={0}
@@ -168,7 +156,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#e8e8e8',
-    backgroundColor: 'white',
+    backgroundColor: '#f9f9f9', // or gray
     padding: 20,
     alignItems: 'center',
   },

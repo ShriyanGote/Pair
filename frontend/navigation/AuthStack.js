@@ -10,6 +10,7 @@ import ProfileScreen from '../screens/Profile_Uno/ProfileScreen';
 // import ProfileTypeScreen from '../screens/Auth/ProfileTypeScreen';
 import EditProfileType from '../screens/Profile_Uno/EditProfileType'; // update path if needed
 import RegistrationFlow from '../screens/Auth/RegistrationFlow';
+import EditProfileDetails from '../screens/Profile_Uno/EditProfileDetails';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +26,7 @@ const AuthStack = () => {
       <Stack.Screen name="MainTabs" component={MainStackNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="EditProfile" component={ProfileScreen}options={{ headerShown: false }}  />
       <Stack.Screen name="EditProfileType" component={EditProfileType}options={{ headerShown: false }}  />
+      <Stack.Screen name="EditProfileDetails" component={EditProfileDetails} />
       
     </Stack.Navigator>
   );

@@ -19,7 +19,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-
+import EditProfileDetails from './EditProfileDetails.js';
 import { GOOGLE_API_KEY } from '@env';
 import {
   getCurrentUser,
@@ -166,7 +166,7 @@ const ProfileScreen = () => {
   const handleDeletePhoto = async (photoId) => {
     try {
       const token = await AsyncStorage.getItem('token');
-      // userInfo.id is the current user’s ID
+      // userInfo.id is the current user's ID
       await deleteUserPhoto(userInfo.id, photoId, token);
 
       // Remove the photo locally
@@ -197,6 +197,32 @@ const ProfileScreen = () => {
   // update userInfo
   const handleChange = (field, value) => {
     setUserInfo((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // Add this function to handle edit and backend update
+  const handleEditProfileDetails = () => {
+    navigation.navigate('EditProfileDetails', {
+      ethnicity: userInfo.ethnicity,
+      socialMediaUse: userInfo.social_media_use,
+      pastActivities: userInfo.past_activities || [],
+      occupation: userInfo.occupation,
+      onSave: async (updatedFields) => {
+        try {
+          const token = await AsyncStorage.getItem('token');
+          await updateUser(userInfo.id, {
+            ...userInfo,
+            ethnicity: updatedFields.ethnicity,
+            social_media_use: updatedFields.socialMediaUse,
+            past_activities: updatedFields.pastActivities,
+            occupation: updatedFields.occupation,
+          }, token);
+          Alert.alert('Success', 'Profile details updated!');
+          fetchUser(); // Refresh profile
+        } catch (err) {
+          Alert.alert('Error', 'Failed to update profile details.');
+        }
+      },
+    });
   };
 
   // If user info not loaded, show spinner
@@ -355,6 +381,11 @@ const ProfileScreen = () => {
           }
         >
           <Text style={styles.link}>Change Profile Type</Text>
+        </TouchableOpacity>
+
+        {/* Edit Profile Details Button */}
+        <TouchableOpacity onPress={handleEditProfileDetails}>
+          <Text style={styles.link}>Edit Profile Details</Text>
         </TouchableOpacity>
 
         {/* Logout */}

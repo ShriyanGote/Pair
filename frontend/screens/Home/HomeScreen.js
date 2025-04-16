@@ -3,6 +3,7 @@
 import React, {useEffect} from 'react';
 import { View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import { useRoute } from '@react-navigation/native';
+import { Alert } from 'react-native';
 
 const HomeScreen = ({ navigation }) => {
   const route = useRoute();

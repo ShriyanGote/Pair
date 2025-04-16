@@ -336,6 +336,5 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     flex: 1, 
-    // so text can flow, giving it as much horizontal space as needed
   },
 });

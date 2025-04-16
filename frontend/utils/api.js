@@ -21,8 +21,8 @@ export const updateUser = (id, data, token) =>
   });
 
 //--------------------- Matching & Swiping ---------------------
-export const getPotentialMatches = (token) =>
-  axios.get(`${API_URL}/recommendations`, {
+export const getPotentialMatches = (token, page = 0) =>
+  axios.get(`${API_URL}/recommendations?skip=${page * 30}&limit=30`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 
@@ -107,5 +107,27 @@ export const deleteGroupMemberPhoto = (memberId, photoId, token) =>
 
 export const updateGroupMember = (memberId, data, token) =>
   axios.put(`${API_URL}/group-members/${memberId}`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+
+export const createDuoProfile = (data, token) =>
+  axios.post(`${API_URL}/duo-profile`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const updateDuoSharedProfile = (data, token) =>
+  axios.put(`${API_URL}/me`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+
+export const createGroupProfile = (data, token) =>
+  axios.post(`${API_URL}/group-profile`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const switchProfileType = (newType, token) =>
+  axios.put(`${API_URL}/profile-type`, { new_type: newType }, {
     headers: { Authorization: `Bearer ${token}` },
   });

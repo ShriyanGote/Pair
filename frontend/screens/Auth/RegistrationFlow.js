@@ -1,19 +1,14 @@
-import React, { useState, useContext } from 'react';
+// RegistrationFlow.js
+
+import React, { useState, useContext, useEffect } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Alert,
-  SafeAreaView,
-  Platform,
-  KeyboardAvoidingView,
+  View, Text, TextInput, TouchableOpacity,
+  StyleSheet, ScrollView, SafeAreaView,
+  Platform, KeyboardAvoidingView
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import Slider from '@react-native-community/slider';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { useNavigation } from '@react-navigation/native';
 import { RegistrationContext } from '../Auth/RegistrationContext';
 
 const RegistrationFlow = () => {
@@ -26,70 +21,130 @@ const RegistrationFlow = () => {
     profileType: '',
     ethnicity: null,
     gender: null,
-    interests: [],        // array for multiple selection
-    pastActivities: [],   // array for multiple selection
-    personality: [],      // array for multiple selection
+    interests: [],
+    pastActivities: [],
+    personality: [],
     socialMediaUse: 5,
     occupation: '',
+    shared: { bio: '', location: '', lookingFor: '', interests: [], pastActivities: [] },
   });
 
-  // Quick way to exit
+  const isUno = formData.profileType === 'uno';
+  const isShared = formData.profileType === 'duo' || formData.profileType === 'group';
+  const totalSteps = isUno ? 8 : 13;
+
+  useEffect(() => {
+    if (formData.profileType) {
+      setCurrentStep(2);
+      handleNext();
+    }
+  }, [formData.profileType]);
+
+  const handleSelect = (type) => {
+    setFormData((prev) => ({ ...prev, profileType: type }));
+  };
+
   const handleGoHome = () => {
     navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
   };
 
-  // Choose "uno", "duo", or "group" on Step 1
-  const handleSelect = (type) => {
-    setFormData((prev) => ({ ...prev, profileType: type }));
-    setCurrentStep(2);
-  };
-
   const handleNext = () => {
-    if (currentStep < 8) {
-      setCurrentStep(currentStep + 1);
+    const skipSteps = {
+      2: !isUno,
+      3: !isUno,
+      4: !isUno,
+      5: !isUno,
+      6: !isUno,
+      7: !isUno,
+      8: !isUno,
+      9: !isShared,
+      10: !isShared,
+      11: !isShared,
+      12: !isShared,
+      13: !isShared,
+    };
+
+    let nextStep = currentStep + 1;
+    while (skipSteps[nextStep]) nextStep++;
+
+    if (nextStep <= totalSteps) {
+      setCurrentStep(nextStep);
     } else {
-      // Final step: store data & navigate
+      let payload = {
+        profile_type: formData.profileType,
+        ethnicity: formData.ethnicity,
+        gender: formData.gender,
+        interests: formData.interests,
+        past_activities: formData.pastActivities,
+        personality: formData.personality,
+        social_media_use: formData.socialMediaUse,
+        occupation: formData.occupation,
+        ...(isShared && formData.shared),
+      };
       setRegistrationData(formData);
-      navigation.navigate('Register', { allFields: formData });
+      navigation.navigate('Register', { allFields: payload });
     }
   };
 
   const handleBack = () => {
-    if (currentStep > 1) setCurrentStep(currentStep - 1);
+    const skipSteps = {
+      2: !isUno,
+      3: !isUno,
+      4: !isUno,
+      5: !isUno,
+      6: !isUno,
+      7: !isUno,
+      8: !isUno,
+      9: !isShared,
+      10: !isShared,
+      11: !isShared,
+      12: !isShared,
+      13: !isShared,
+    };
+
+    let prevStep = currentStep - 1;
+    while (skipSteps[prevStep] && prevStep > 1) prevStep--;
+    if (prevStep >= 1) setCurrentStep(prevStep);
   };
 
-  /**
-   * DropDownPicker configuration helper
-   * fieldKey: the key in our formData
-   * items: the array of {label, value}
-   * multiple: whether we want multiple selection
-   */
-  const dropdownProps = (fieldKey, items, multiple = false) => ({
-    open: openDropdowns[fieldKey] || false,
-    value: multiple ? (formData[fieldKey] || []) : formData[fieldKey],
-    items,
-    setOpen: (open) => {
-      setOpenDropdowns((prev) => ({ ...prev, [fieldKey]: open }));
-    },
-    setValue: (callback) => {
-      setFormData((prev) => ({
-        ...prev,
-        [fieldKey]: callback(prev[fieldKey])
-      }));
-    },
-    multiple,
-    mode: multiple ? 'BADGE' : 'SIMPLE',
-    min: multiple ? 0 : undefined,
-    max: multiple ? 5 : undefined,
-    badgeDotColors: ["#e76f51", "#00b4d8", "#e9c46a", "#2a9d8f", "#e63946"],
-    style: styles.dropdown,
-    dropDownContainerStyle: styles.dropdownContainer,
-    listMode: 'MODAL',
-    searchable: true,
-    placeholder: `Select ${fieldKey}...`
-  });
+  const dropdownProps = (fieldKey, items, multiple = false, isSharedField = false) => {
+    const value = isSharedField ? formData.shared[fieldKey] : formData[fieldKey];
+    return {
+      open: openDropdowns[fieldKey] || false,
+      value,
+      items,
+      setOpen: (open) => setOpenDropdowns((prev) => ({ ...prev, [fieldKey]: open })),
+      setValue: (callback) => {
+        if (isSharedField) {
+          setFormData((prev) => ({
+            ...prev,
+            shared: { ...prev.shared, [fieldKey]: callback(prev.shared[fieldKey]) },
+          }));
+        } else {
+          setFormData((prev) => ({ ...prev, [fieldKey]: callback(prev[fieldKey]) }));
+        }
+      },
+      multiple,
+      mode: multiple ? 'BADGE' : 'SIMPLE',
+      style: styles.dropdown,
+      dropDownContainerStyle: styles.dropdownContainer,
+      listMode: 'MODAL',
+      searchable: true,
+      placeholder: `Select ${fieldKey}...`,
+    };
+  };
 
   const renderStep = () => {
+    const sharedInput = (key, placeholder) => (
+      <TextInput
+        style={styles.input}
+        value={formData.shared[key]}
+        onChangeText={(text) =>
+          setFormData((prev) => ({ ...prev, shared: { ...prev.shared, [key]: text } }))
+        }
+        placeholder={placeholder}
+      />
+    );
     switch (currentStep) {
       case 1:
         return (
@@ -101,16 +156,11 @@ const RegistrationFlow = () => {
             {['uno', 'duo', 'group'].map((type, i) => (
               <TouchableOpacity
                 key={i}
-                style={[
-                  styles.card,
-                  formData.profileType === type && styles.selectedCard,
-                ]}
+                style={[styles.card, formData.profileType === type && styles.selectedCard]}
                 onPress={() => handleSelect(type)}
               >
                 <Text style={styles.emoji}>{['🧍', '🧑‍🤝‍🧑', '👯'][i]}</Text>
-                <Text style={styles.text}>
-                  {['Uno (Solo)', 'Duo (Couple/Friends)', 'Group (3+ People)'][i]}
-                </Text>
+                <Text style={styles.text}>{['Uno (Solo)', 'Duo (Couple)', 'Group (3+ People)'][i]}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -282,7 +332,7 @@ const RegistrationFlow = () => {
             <Text style={styles.header}>Input Occupation Field</Text>
             <DropDownPicker
               {...dropdownProps(
-                'Occupation',
+                'occupation',
                 [
                   { label: 'Technology', value: 'technology' },
                   { label: 'Healthcare & Medicine', value: 'healthcare_medicine' },
@@ -310,144 +360,124 @@ const RegistrationFlow = () => {
             />
           </View>
         );
+        case 9:
+          return <View style={styles.contentContainer}><Text style={styles.header}>Shared Bio</Text>{sharedInput('bio', 'Enter bio')}</View>;
+        case 10:
+          return <View style={styles.contentContainer}><Text style={styles.header}>Shared Location</Text>{sharedInput('location', 'Enter location')}</View>;
+        case 11:
+          return <View style={styles.contentContainer}><Text style={styles.header}>Shared Looking For</Text>{sharedInput('lookingFor', 'Enter preference')}</View>;
+        case 12:
+          return (
+            <View style={styles.contentContainer}>
+              <Text style={styles.header}>Shared Interests</Text>
+              <DropDownPicker {...dropdownProps('interests',
+                [
+                  { label: 'Movies & TV', value: 'movies_tv' },
+                  { label: 'Gaming', value: 'gaming' },
+                  { label: 'Photography', value: 'photography' },
+                  { label: 'Fashion', value: 'fashion' },
+                  { label: 'Writing', value: 'writing' },
+                  { label: 'Nature', value: 'nature' },
+                  { label: 'Animals', value: 'animals' },
+                  { label: 'Volunteering', value: 'volunteering' },
+                  { label: 'History', value: 'history' },
+                  { label: 'Science', value: 'science' },
+                  { label: 'Cars & Motorcycles', value: 'cars_motorcycles' },
+                  { label: 'Podcasts', value: 'podcasts' },
+                  { label: 'Crafts & DIY', value: 'crafts_diy' },
+                  { label: 'Spirituality', value: 'spirituality' },
+                  { label: 'Board Games', value: 'board_games' },
+                  { label: 'Languages', value: 'languages' },
+                  { label: 'Politics', value: 'politics' },
+                  { label: 'Comedy', value: 'comedy' },
+                  { label: 'Entrepreneurship', value: 'entrepreneurship' },
+                  { label: 'Collecting', value: 'collecting' },
+                ], true, true)} />
+            </View>
+          );
+        case 13:
+          return (
+            <View style={styles.contentContainer}>
+              <Text style={styles.header}>Shared Past Activities</Text>
+              <DropDownPicker {...dropdownProps('pastActivities',
+                [
+                  { label: 'Cardio', value: 'Cardio' },
+                  { label: 'Board Games', value: 'Board Games' },
+                  { label: 'Martial Arts', value: 'Martial Arts' },
+                  { label: 'Climbing', value: 'Climbing' },
+                  { label: 'Skating', value: 'Skating' },
+                  { label: 'Winter Sports', value: 'Winter Sports' },
+                  { label: 'Running', value: 'Running' },
+                  { label: 'Cycling', value: 'Cycling' },
+                  { label: 'Yoga', value: 'Yoga' },
+                  { label: 'Pilates', value: 'Pilates' },
+                  { label: 'Hiking', value: 'Hiking' },
+                  { label: 'Fishing', value: 'Fishing' },
+                  { label: 'Camping', value: 'Camping' },
+                  { label: 'Traveling', value: 'Traveling' },
+                  { label: 'DIY Projects', value: 'DIY Projects' },
+                  { label: 'Esports', value: 'Esports' },
+                  { label: 'Parkour', value: 'Parkour' },
+                  { label: 'Archery', value: 'Archery' },
+                  { label: 'Surfing', value: 'Surfing' },
+                  { label: 'Horseback Riding', value: 'Horseback Riding' },
+                ], true, true)} />
+            </View>
+          );
 
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContentContainer}
-          bounces={false}
+        default:
+          return <Text style={styles.text}>Add other steps here...</Text>;
+      }
+    };
+  
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-          {renderStep()}
-        </ScrollView>
-
-        <View style={styles.buttonContainer}>
-          {currentStep > 1 && (
-            <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-              <Text style={styles.buttonText}>Back</Text>
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContentContainer}
+            bounces={false}
+          >
+            {renderStep()}
+          </ScrollView>
+  
+          <View style={styles.buttonContainer}>
+            {currentStep > 1 && (
+              <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+                <Text style={styles.buttonText}>Back</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+              <Text style={styles.buttonText}>Next</Text>
             </TouchableOpacity>
-          )}
-          <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-            <Text style={styles.buttonText}>
-              {currentStep === 8 ? 'Complete' : 'Next'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
-  );
-};
-
-export default RegistrationFlow;
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  scrollView: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  scrollContentContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 50, // space so bottom buttons don't overlap
-  },
-  contentContainer: {
-    marginTop: 20,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: '600',
-    textAlign: 'center',
-    marginBottom: 30,
-  },
-  card: {
-    padding: 20,
-    borderRadius: 10,
-    backgroundColor: '#f2f2f2',
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  selectedCard: {
-    backgroundColor: '#DB4437',
-  },
-  emoji: {
-    fontSize: 40,
-    marginBottom: 10,
-  },
-  text: {
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  link: {
-    color: 'gray',
-    fontSize: 14,
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  slider: {
-    width: '100%',
-    height: 40,
-  },
-  sliderValue: {
-    textAlign: 'center',
-    fontSize: 18,
-    marginBottom: 10,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 15,
-    marginBottom: 20,
-    fontSize: 16,
-  },
-  dropdown: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-  },
-  dropdownContainer: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingBottom: 30,
-    paddingTop: 10,
-    backgroundColor: '#fff',
-  },
-  backButton: {
-    flex: 1,
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 8,
-    marginRight: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  nextButton: {
-    flex: 1,
-    backgroundColor: '#DB4437',
-    padding: 15,
-    borderRadius: 8,
-    marginLeft: 10,
-  },
-  buttonText: {
-    textAlign: 'center',
-    color: '#000',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-});
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    );
+  };
+  
+  export default RegistrationFlow;
+  
+  const styles = StyleSheet.create({
+    safeArea: { flex: 1, backgroundColor: '#fff' },
+    scrollView: { flex: 1, backgroundColor: '#fff' },
+    scrollContentContainer: { paddingHorizontal: 20, paddingBottom: 50 },
+    contentContainer: { marginTop: 20 },
+    header: { fontSize: 24, fontWeight: '600', textAlign: 'center', marginBottom: 30 },
+    card: { padding: 20, borderRadius: 10, backgroundColor: '#f2f2f2', marginBottom: 20, alignItems: 'center' },
+    selectedCard: { backgroundColor: '#DB4437' },
+    emoji: { fontSize: 40, marginBottom: 10 },
+    text: { fontSize: 16, fontWeight: '500' },
+    input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 15, fontSize: 16, marginBottom: 20 },
+    link: { color: 'gray', fontSize: 14, textAlign: 'center', marginBottom: 20 },
+    dropdown: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8 },
+    dropdownContainer: { borderWidth: 1, borderColor: '#ddd' },
+    buttonContainer: { flexDirection: 'row', paddingHorizontal: 20, paddingBottom: 30, paddingTop: 10, backgroundColor: '#fff' },
+    backButton: { flex: 1, backgroundColor: '#fff', padding: 15, borderRadius: 8, marginRight: 10, borderWidth: 1, borderColor: '#ddd' },
+    nextButton: { flex: 1, backgroundColor: '#DB4437', padding: 15, borderRadius: 8, marginLeft: 10 },
+    buttonText: { textAlign: 'center', color: '#000', fontSize: 16, fontWeight: '500' },
+  });
+  
