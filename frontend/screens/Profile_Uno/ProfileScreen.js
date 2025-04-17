@@ -30,6 +30,8 @@ import {
   deleteUserPhoto,
   deleteUserPhotoByUrl,  // <-- import the delete function
 } from '../../utils/api';
+import axios from 'axios';
+import { API_URL } from '../../utils/api';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -88,7 +90,18 @@ const ProfileScreen = () => {
   const handleSave = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      await updateUser(userInfo.id, userInfo, token);
+      await axios.post(`${API_URL}/uno-profile`, {
+        age: userInfo.age,
+        gender: userInfo.gender,
+        bio: userInfo.bio,
+        occupation: userInfo.occupation,
+        ethnicity: userInfo.ethnicity,
+        personality: userInfo.personality,
+        past_activities: userInfo.past_activities,
+        social_media_use: userInfo.social_media_use,
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       Alert.alert('Success', 'Profile updated successfully!');
       setEditing(false);
     } catch (err) {

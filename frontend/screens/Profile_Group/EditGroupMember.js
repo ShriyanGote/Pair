@@ -26,24 +26,65 @@ const EditGroupMember = ({ route, navigation }) => {
 
   const [name, setName] = useState(member.name || '');
   const [age, setAge] = useState(String(member.age || ''));
-  const [height, setHeight] = useState(member.height || null);
-  const [heightOpen, setHeightOpen] = useState(false);
-  const [heightItems, setHeightItems] = useState([]);
   const [photos, setPhotos] = useState([]);
+  const [gender, setGender] = useState(member.gender || '');
+  const [ethnicity, setEthnicity] = useState(member.ethnicity || '');
+  const [personality, setPersonality] = useState(
+    Array.isArray(member.personality) ? member.personality : (member.personality?.split(',') || [])
+  );
+  
+  const [gOpen, setGOpen] = useState(false);
+  const [eOpen, setEOpen] = useState(false);
+  const [pOpen, setPOpen] = useState(false);
+  
+  const genderItems = [
+    { label: 'Male', value: 'male' },
+    { label: 'Female', value: 'female' },
+    { label: 'Non-binary', value: 'non-binary' },
+    { label: 'Other', value: 'other' },
+  ];
+  
+  const ethnicityItems = [
+    { label: 'Middle Eastern', value: 'middle_eastern' },
+    { label: 'Native American', value: 'native_american' },
+    { label: 'Pacific Islander', value: 'pacific_islander' },
+    { label: 'South Asian', value: 'south_asian' },
+    { label: 'Southeast Asian', value: 'southeast_asian' },
+    { label: 'East Asian', value: 'east_asian' },
+    { label: 'Central Asian', value: 'central_asian' },
+    { label: 'North African', value: 'north_african' },
+    { label: 'Afro-Caribbean', value: 'afro_caribbean' },
+    { label: 'Latinx', value: 'latinx' },
+    { label: 'Multiracial', value: 'multiracial' },
+    { label: 'Prefer Not to Say', value: 'prefer_not_to_say' },
+  ];
+  
+  const personalityItems = [
+    { label: 'Curious', value: 'Curious' },
+    { label: 'Empathetic', value: 'Empathetic' },
+    { label: 'Adventurous', value: 'Adventurous' },
+    { label: 'Thoughtful', value: 'Thoughtful' },
+    { label: 'Creative', value: 'Creative' },
+    { label: 'Analytical', value: 'Analytical' },
+    { label: 'Spontaneous', value: 'Spontaneous' },
+    { label: 'Organized', value: 'Organized' },
+    { label: 'Playful', value: 'Playful' },
+    { label: 'Calm', value: 'Calm' },
+    { label: 'Driven', value: 'Driven' },
+    { label: 'Loyal', value: 'Loyal' },
+    { label: 'Independent', value: 'Independent' },
+    { label: 'Funny', value: 'Funny' },
+    { label: 'Romantic', value: 'Romantic' },
+    { label: 'Open-Minded', value: 'Open-Minded' },
+    { label: 'Optimistic', value: 'Optimistic' },
+    { label: 'Realistic', value: 'Realistic' },
+    { label: 'Cautious', value: 'Cautious' },
+    { label: 'Chill', value: 'Chill' },
+  ];
 
 
   useEffect(() => {
     fetchMemberPhotos();
-    const options = [];
-    for (let feet = 4; feet <= 7; feet++) {
-      for (let inches = 0; inches <= 11; inches++) {
-        const total = (feet + inches / 12).toFixed(2);
-        if (total >= 4.5 && total <= 7.0) {
-          options.push({ label: `${feet}'${inches}"`, value: parseFloat(total) });
-        }
-      }
-    }
-    setHeightItems(options);
   }, []);
 
   const fetchMemberPhotos = async () => {
@@ -94,13 +135,12 @@ const EditGroupMember = ({ route, navigation }) => {
       Alert.alert('Error', 'Failed to delete');
     }
   };
-  
   const handleSave = async () => {
-    if (!name || !age || !height) {
+    if (!name || !age || !gender || !ethnicity || personality.length === 0) {
       Alert.alert('Missing Fields', 'Please fill out all fields.');
       return;
     }
-
+  
     try {
       const token = await AsyncStorage.getItem('token');
       await axios.put(
@@ -108,7 +148,9 @@ const EditGroupMember = ({ route, navigation }) => {
         {
           name,
           age: parseInt(age),
-          height,
+          gender,
+          ethnicity,
+          personality,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -163,16 +205,44 @@ const EditGroupMember = ({ route, navigation }) => {
         onChangeText={setAge}
       />
 
+      <Text style={styles.label}>Gender</Text>
       <DropDownPicker
-        open={heightOpen}
-        setOpen={setHeightOpen}
-        items={heightItems}
-        setItems={setHeightItems}
-        value={height}
-        setValue={setHeight}
-        placeholder="Select Height"
+        open={gOpen}
+        value={gender}
+        items={genderItems}
+        setOpen={setGOpen}
+        setValue={setGender}
+        placeholder="Select gender"
         style={styles.dropdown}
         dropDownContainerStyle={styles.dropdownContainer}
+      />
+
+      <Text style={styles.label}>Ethnicity</Text>
+      <DropDownPicker
+        open={eOpen}
+        value={ethnicity}
+        items={ethnicityItems}
+        setOpen={setEOpen}
+        setValue={setEthnicity}
+        placeholder="Select ethnicity"
+        style={styles.dropdown}
+        dropDownContainerStyle={styles.dropdownContainer}
+      />
+
+      <Text style={styles.label}>Personality Traits</Text>
+      <DropDownPicker
+        open={pOpen}
+        value={personality}
+        items={personalityItems}
+        setOpen={setPOpen}
+        setValue={setPersonality}
+        multiple={true}
+        mode="BADGE"
+        listMode="MODAL"
+        placeholder="Select traits"
+        style={styles.dropdown}
+        dropDownContainerStyle={styles.dropdownContainer}
+        searchable={true}
       />
 
       <TouchableOpacity style={styles.button} onPress={handleSave}>

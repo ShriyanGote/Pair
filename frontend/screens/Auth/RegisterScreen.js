@@ -29,13 +29,13 @@ const RegisterScreen = ({ navigation, route }) => {
       ethnicity:     allFields.ethnicity,
       gender:        allFields.gender,
       interests:     allFields.interests,
-      past_activities: allFields.past_activities,
+      past_activities: allFields.pastActivities,
+      looking_for:     allFields.lookingFor,
       personality:   allFields.personality,
       social_media_use: allFields.social_media_use,
       occupation:      allFields.occupation,
       bio:             allFields.bio,        // if you added bio
       location:        allFields.location,   // from duo/group step
-      looking_for:     allFields.looking_for // from duo/group step
     };
 
     try {

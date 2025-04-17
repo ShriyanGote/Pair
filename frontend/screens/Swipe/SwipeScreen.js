@@ -101,6 +101,8 @@ const SwipeScreen = () => {
         renderCard={(user) => {
           if (!user) return null;
         
+          const isMulti = user.profile_type === 'duo' || user.profile_type === 'group';
+        
           return (
             <View style={styles.card}>
               <Image
@@ -113,20 +115,33 @@ const SwipeScreen = () => {
                 {user.profile_type === 'duo' && '🧑‍🤝‍🧑 Duo'}
                 {user.profile_type === 'group' && '👯 Group'}
               </Text>
-
-              <Text style={styles.name}>{user.name ?? 'Anonymous'}, {user.age ?? 'NULL Age'}</Text>
-              <Text style={styles.name}>{user.ethnicity ?? 'No Ethnicity'}</Text>
-              <Text style={styles.meta}>📍 {user.location ?? 'Unknown'}</Text>
-              <Text style={styles.meta}>🎯 {user.looking_for ?? 'Open to possibilities'}</Text>
-              <Text style={styles.meta}>🎨 {user.interests ?? 'No interests listed'}</Text>
+        
+              {/* Primary Info – ONLY FOR SOLO */}
+              {!isMulti && (
+                <>
+                  <Text style={styles.name}>
+                    {user.name ?? 'Anonymous'}, {user.age ?? 'Unknown Age'}
+                  </Text>
+                  <Text style={styles.meta}>{user.ethnicity ?? 'No Ethnicity'}</Text>
+                </>
+              )}
+        
+              {/* Shared Info for Duo/Group */}
+              <Text style={styles.meta}>📍 {user.location ?? 'Unknown location'}</Text>
+              <Text style={styles.meta}>🎯 {user.looking_for ?? 'Not specified'}</Text>
+              <Text style={styles.meta}>
+                🎨 {Array.isArray(user.interests) ? user.interests.join(', ') : user.interests ?? 'None'}
+              </Text>
+        
               <Text style={styles.bio}>{user.bio ?? 'No bio yet.'}</Text>
         
-              {user.profile_type !== 'uno' && (
+              {/* Members */}
+              {isMulti && (
                 <>
                   <Text style={styles.name}>Members</Text>
                   {(user.members ?? []).map((m, i) => (
                     <Text key={m.id || i} style={styles.meta}>
-                      {m.name} {m.height ? `- ${m.height}'` : ''}
+                      {m.name ?? 'Unknown'}, {m.age ?? 'Unknown Age'}, {m.ethnicity ?? 'No Ethnicity'}
                     </Text>
                   ))}
                 </>
