@@ -149,6 +149,6 @@ const styles = StyleSheet.create({
               },
   pass:       { backgroundColor: '#f2f2f2' },
   passText:   { color: '#444' },
-  accept:     { backgroundColor: '#007AFF' },
+  accept:     { backgroundColor: '#B76EFF' },
   acceptText: { color: '#fff' },
 });

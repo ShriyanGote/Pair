@@ -24,6 +24,7 @@ import {
   ethnicityOptions,
   personalityOptions,
 } from '../constants/Dropdowns';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function SwipeScreen({ navigation }) {
   // full vs filtered
@@ -58,7 +59,11 @@ export default function SwipeScreen({ navigation }) {
           onPress={() => setFiltersVisible(true)}
           style={{ marginRight: 16 }}
         >
-          <Text style={{ color: '#007AFF', fontSize: 16 }}>Filters</Text>
+          <Ionicons 
+            name="filter-outline" 
+            size={24} 
+            color="#B76EFF" 
+          />
         </TouchableOpacity>
       ),
     });
@@ -122,7 +127,7 @@ export default function SwipeScreen({ navigation }) {
       if (dir === 'right') {
         const m = await getMatches(token);
         if (m.data.find((x) => x.id === user.id)) {
-          Alert.alert('🎉 It’s a match!', `You matched with ${user.name}`);
+          Alert.alert('🎉 It is a match!', `You matched with ${user.name}`);
         }
       }
       setCards((cs) => cs.filter((_, i) => i !== idx));
@@ -172,7 +177,7 @@ const clearFilters = () => {
 
   return (
     <View style={styles.container}>
-      {/* ───────────── 𝟙. Filters Modal ───────────── */}
+      {/* ───────────── 𝟙. Filters Modal ───────────── */}
       <Modal
         key={String(filtersVisible)}
         visible={filtersVisible}
@@ -281,7 +286,7 @@ const clearFilters = () => {
         </View>
       </Modal>
   
-      {/* ───────────── 𝟚. Main Body ───────────── */}
+      {/* ───────────── 𝟚. Main Body ───────────── */}
       {loading ? (
         /* Loading state */
         <View style={styles.center}>
@@ -321,7 +326,7 @@ const clearFilters = () => {
         <View style={styles.center}>
           <Text style={styles.noMore}>No users match your filters 😢</Text>
           <TouchableOpacity onPress={clearFilters} style={{ marginTop: 8 }}>
-            <Text style={{ color: '#007AFF' }}>Clear filters</Text>
+            <Text style={{ color: '#B76EFF' }}>Clear filters</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -332,7 +337,7 @@ const clearFilters = () => {
 const styles = StyleSheet.create({
   container:        { flex: 1, backgroundColor: '#fff' },
   center:           { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  noMore:           { fontSize: 18, color: 'gray' },
+  noMore:           { fontSize: 18, color: 'black' },
   card:             {
                       flex: 0.7,
                       borderRadius: 10,
@@ -357,6 +362,6 @@ const styles = StyleSheet.create({
   modalButtons:     { flexDirection: 'row', justifyContent: 'space-between', marginTop: 12 },
   clearBtn:         { padding: 10 },
   clearText:        { color: 'red' },
-  applyBtn:         { backgroundColor: '#007AFF', padding: 10, borderRadius: 6 },
+  applyBtn:         { backgroundColor: '#B76EFF', padding: 10, borderRadius: 6 },
   applyText:        { color: '#fff' },
 });

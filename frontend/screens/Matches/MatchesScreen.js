@@ -120,7 +120,7 @@ export default MatchesScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20 },
-  empty: { textAlign: 'center', marginTop: 30, color: 'gray' },
+  empty: { textAlign: 'center', marginTop: 30, color: 'black' },
   card: {
     flexDirection: 'row',
     padding: 12,

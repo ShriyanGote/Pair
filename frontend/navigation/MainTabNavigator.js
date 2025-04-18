@@ -10,6 +10,7 @@ import { getCurrentUser } from '../utils/api';
 import DuoStack from './DuoStack';
 import GroupStack from './GroupStack';
 import { useFocusEffect } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
@@ -48,13 +49,71 @@ const MainTabNavigator = () => {
   };
 
   return (
-    <Tab.Navigator>
-      <Tab.Screen name="Discover" component={SwipeScreen} options={{ headerShown: true }} />
-      <Tab.Screen name="Requests" component={RequestScreen} options={{ headerShown: true }} />
-      <Tab.Screen name="Connections" component={MatchesScreen} options={{ headerShown: true }}/>
-      <Tab.Screen name="Profile" options={{ headerShown: true }}>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: true,
+        tabBarStyle: {
+          backgroundColor: 'black',
+          borderTopColor: 'black',
+          height: 90,
+          paddingBottom: 5,
+          paddingTop: 5,
+        },
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontWeight: '600',
+        },
+        tabBarActiveTintColor: '#B76EFF',   // purple for active
+        tabBarInactiveTintColor: 'white',   // white for others
+        tabBarIconStyle: {
+          marginBottom: 0,
+        },
+        tabBarItemStyle: {
+          paddingVertical: 6,
+        },
+      })}
+    >
+      <Tab.Screen
+        name="Discover"
+        component={SwipeScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="globe-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Requests"
+        component={RequestScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="people-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Connections"
+        component={MatchesScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="chatbubble-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      {/* <Tab.Screen name="Requests" component={RequestScreen} />
+      <Tab.Screen name="Connections" component={MatchesScreen} /> */}
+      <Tab.Screen
+        name="Profile"
+        component={renderProfileTab}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      {/* <Tab.Screen name="Profile">
         {renderProfileTab}
-      </Tab.Screen>
+      </Tab.Screen> */}
     </Tab.Navigator>
   );
 };

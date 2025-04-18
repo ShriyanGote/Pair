@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   label: { fontSize: 16, marginBottom: 8 },
   input: {
     borderWidth: 1,
-    borderColor: '#aaa',
+    borderColor: '#B76EFF',
     borderRadius: 8,
     padding: 10,
     marginBottom: 16,

@@ -376,47 +376,49 @@ const ProfileScreen = () => {
 };
 
 export default ProfileScreen;
-
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: 30,
-    backgroundColor: '#f2f2f2',
+    padding: 24,
+    backgroundColor: '#fdf9ff', // light lavender background
   },
   profileType: {
-    fontSize: 18,
+    fontSize: 20,
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: 12,
     fontWeight: '600',
+    color: '#6c2bb9',
   },
   noPhotosText: {
     textAlign: 'center',
     marginBottom: 10,
-    color: '#555',
+    color: '#666',
   },
   photoGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    marginBottom: 10,
+    marginBottom: 12,
   },
   photoWrapper: {
     width: 90,
     height: 90,
-    margin: 5,
+    margin: 6,
     position: 'relative',
   },
   photoImage: {
     width: '100%',
     height: '100%',
     borderRadius: 10,
+    borderColor: '#ccc',
+    borderWidth: 1,
   },
   deleteBtn: {
     position: 'absolute',
-    top: 2,
-    right: 2,
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    top: 3,
+    right: 3,
+    backgroundColor: 'rgba(183, 110, 255, 0.8)',
     width: 24,
     height: 24,
     borderRadius: 12,
@@ -425,38 +427,38 @@ const styles = StyleSheet.create({
   },
   deleteBtnText: {
     color: '#fff',
-    fontSize: 14,
     fontWeight: 'bold',
-  },
-  link: {
-    color: 'blue',
-    fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  logout: {
-    color: 'gray',
-    fontSize: 14,
-    textAlign: 'center',
-    marginTop: 20,
   },
   input: {
     backgroundColor: '#fff',
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 10,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#ddd',
   },
   dropdown: {
     marginBottom: 15,
-    borderRadius: 8,
-    borderColor: '#ccc',
+    borderRadius: 10,
+    borderColor: '#ddd',
     zIndex: 1000,
   },
   dropdownContainer: {
-    borderRadius: 8,
-    borderColor: '#ccc',
+    borderRadius: 10,
+    borderColor: '#ddd',
     zIndex: 1000,
+  },
+  link: {
+    color: '#B76EFF',
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 16,
+    fontWeight: '500',
+  },
+  logout: {
+    color: '#999',
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 24,
   },
 });

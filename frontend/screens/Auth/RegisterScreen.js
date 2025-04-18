@@ -32,13 +32,10 @@ const RegisterScreen = ({ navigation, route }) => {
       personality,
       social_media_use,
       occupation,
-      // remove shared default since we're flattening
-      // shared = {},
       bio: topBio,
       location: topLocation,
     } = allFields;
 
-    // also pull any shared if still using it
     const shared = allFields.shared || {};
 
     const profileData = {
@@ -78,12 +75,15 @@ const RegisterScreen = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Register with Google</Text>
+      <Text style={styles.title}>Create Your Account</Text>
+      <Text style={styles.subtitle}>We’ll link your profile with Google</Text>
+
       <TouchableOpacity style={styles.button} onPress={handleGoogleLogin}>
         <Text style={styles.buttonText}>Continue with Google</Text>
       </TouchableOpacity>
+
       <TouchableOpacity onPress={handleGoHome}>
-        <Text style={styles.link}>Go Home</Text>
+        <Text style={styles.link}>← Back to Home</Text>
       </TouchableOpacity>
     </View>
   );
@@ -96,29 +96,43 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 30,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#f4f0fc',
   },
-  header: {
-    fontSize: 26,
-    fontWeight: 'bold',
+  title: {
+    fontSize: 28,
+    fontWeight: '700',
     textAlign: 'center',
-    marginBottom: 32,
+    marginBottom: 8,
+    color: '#5E3C9B',
+  },
+  subtitle: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 36,
+    color: '#777',
   },
   button: {
-    backgroundColor: '#DB4437',
+    backgroundColor: 'black',
     paddingVertical: 14,
     paddingHorizontal: 20,
-    borderRadius: 8,
+    borderRadius: 10,
     marginBottom: 25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   buttonText: {
     color: '#fff',
     fontSize: 16,
+    fontWeight: '600',
     textAlign: 'center',
   },
   link: {
-    color: 'gray',
+    color: '#5E3C9B',
     fontSize: 14,
     textAlign: 'center',
+    textDecorationLine: 'underline',
   },
 });
