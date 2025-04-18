@@ -1,221 +1,362 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Alert, StyleSheet, ActivityIndicator, Image } from 'react-native';
+// screens/SwipeScreen.js
+
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import {
+  View,
+  Text,
+  Alert,
+  StyleSheet,
+  ActivityIndicator,
+  Image,
+  TouchableOpacity,
+  TextInput,
+  Modal,
+  ScrollView,
+  Platform,
+  InteractionManager,
+} from 'react-native';
 import Swiper from 'react-native-deck-swiper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { getPotentialMatches, sendSwipe, getMatches } from '../../utils/api';
+import {
+  interestsOptions,
+  ethnicityOptions,
+  personalityOptions,
+} from '../constants/Dropdowns';
 
-const SwipeScreen = () => {
-  const [discoverList, setDiscoverList] = useState([]);
-  const [index, setIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [users, setUsers] = useState([]);
+export default function SwipeScreen({ navigation }) {
+  // full vs filtered
+  const [allCards, setAllCards] = useState([]);
+  const [cards, setCards] = useState([]);
   const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  const loadRecommendations = async (reset = false) => {
+  // filters
+  const [filtersVisible, setFiltersVisible] = useState(false);
+  const [locationFilter, setLocationFilter] = useState('');
+  const [genderFilter, setGenderFilter] = useState(null);
+  const [ethnicityFilter, setEthnicityFilter] = useState([]);
+  const [personalityFilter, setPersonalityFilter] = useState([]);
+  const [interestsFilter, setInterestsFilter] = useState([]);
+
+  // dropdown opens
+  const [gOpen, setGOpen] = useState(false);
+  const [eOpen, setEOpen] = useState(false);
+  const [pOpen, setPOpen] = useState(false);
+  const [iOpen, setIOpen] = useState(false);
+
+  // derived interests dropdown
+  const [interestsItems, setInterestsItems] = useState([]);
+
+  // header button
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Discover',
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => setFiltersVisible(true)}
+          style={{ marginRight: 16 }}
+        >
+          <Text style={{ color: '#007AFF', fontSize: 16 }}>Filters</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }); // no deps so always up to date
+
+  // clear any open pickers whenever modal finally closes
+  useEffect(() => {
+    if (!filtersVisible) {
+      setGOpen(false);
+      setEOpen(false);
+      setPOpen(false);
+      setIOpen(false);
+    }
+  }, [filtersVisible]);
+
+  // load pages
+
+  const hideFiltersModal = () => {
+    // close pickers
+    setGOpen(false);
+    setEOpen(false);
+    setPOpen(false);
+    setIOpen(false);
+
+    setTimeout(() => setFiltersVisible(false), 0);
+  };
+
+  const loadRecommendations = async () => {
+    setLoading(true);
     try {
       const token = await AsyncStorage.getItem('token');
-      const res = await getPotentialMatches(token, page); // 👈 pass page here
-  
-      if (reset) {
-        setDiscoverList(res.data);
-      } else {
-        setDiscoverList((prev) => [...prev, ...res.data]);
-      }
-  
-      setPage(prev => prev + 1);
-      setIndex(0);
+      const res = await getPotentialMatches(token, page);
+      const next = page === 0 ? res.data : [...allCards, ...res.data];
+      setAllCards(next);
+      setCards(next);
+      setPage((p) => p + 1);
+
+      // build interest options
+      const allI = new Set();
+      next.forEach((u) =>
+        Array.isArray(u.interests) && u.interests.forEach((i) => allI.add(i))
+      );
+      setInterestsItems([...allI].map((i) => ({ label: i, value: i })));
     } catch (err) {
-      console.error('Failed to load matches:', err);
+      console.error(err);
       Alert.alert('Error', 'Could not load matches.');
     } finally {
       setLoading(false);
     }
   };
-  
-  // Handle swipe
-  const handleSwipe = async (index, direction) => {
-    const token = await AsyncStorage.getItem('token');
-    const user = discoverList[index];
-  
-    console.log(`[SWIPE] User: ${user?.name}, ID: ${user?.id}, Direction: ${direction}`);
-  
-    try {
-      await sendSwipe(user.id, direction, token);
-  
-      if (direction === 'right') {
-        // Check for match
-        const res = await getMatches(token);
-        const match = res.data.find((m) => m.id === user.id);
-        if (match) {
-          Alert.alert('✨ It’s a Match!', `You and ${user.name} have matched!`);
-        }
-  
-        const newList = discoverList.filter((u) => u.id !== user.id);
-        setDiscoverList(newList);
-        setIndex(0);
-      } else {
-        const nextIndex = index + 1;
-        if (nextIndex >= discoverList.length) {
-          setIndex(0);
-        } else {
-          setIndex(nextIndex);
-        }
-      }
-    } catch (err) {
-      console.error('[SWIPE ERROR]', err);
-      Alert.alert('Swipe failed', 'Something went wrong');
-    }
-  };
-  
-  
-  
-  
-  
-  
   useEffect(() => {
     loadRecommendations();
   }, []);
-  
 
-  if (loading) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" />
-        <Text>Loading potential matches...</Text>
-      </View>
-    );
-  }
+  // swipe handler
+  const handleSwipe = async (idx, dir) => {
+    const user = cards[idx];
+    try {
+      const token = await AsyncStorage.getItem('token');
+      await sendSwipe(user.id, dir, token);
+      if (dir === 'right') {
+        const m = await getMatches(token);
+        if (m.data.find((x) => x.id === user.id)) {
+          Alert.alert('🎉 It’s a match!', `You matched with ${user.name}`);
+        }
+      }
+      setCards((cs) => cs.filter((_, i) => i !== idx));
+    } catch {
+      Alert.alert('Error', 'Swipe failed.');
+    }
+  };
 
-  if (discoverList.length === 0) {
-    return (
-      <View style={styles.center}>
-        <Text style={styles.noMoreText}>No more users to swipe on 😢</Text>
-      </View>
-    );
-  }
+  // apply / clear
+  const applyFilters = () => {
+  const filtered = allCards.filter((u) => {
+    if (locationFilter && u.location !== locationFilter) return false;
+    if (genderFilter   && u.gender   !== genderFilter)   return false;
+
+    if (
+      ethnicityFilter.length &&
+      !ethnicityFilter.some((e) => (u.ethnicity || []).includes(e))
+    ) return false;
+
+    if (
+      personalityFilter.length &&
+      !personalityFilter.some((p) => (u.personality || []).includes(p))
+    ) return false;
+
+    if (
+      interestsFilter.length &&
+      !interestsFilter.some((i) => (u.interests || []).includes(i))
+    ) return false;
+
+    return true;
+  });
+
+  setCards(filtered);
+  hideFiltersModal();        // <<—
+};
+
+const clearFilters = () => {
+  setLocationFilter('');
+  setGenderFilter(null);
+  setEthnicityFilter([]);
+  setPersonalityFilter([]);
+  setInterestsFilter([]);
+
+  setCards(allCards);
+  hideFiltersModal();        // <<—
+};
 
   return (
     <View style={styles.container}>
-      <Swiper
-        cards={discoverList}
-        renderCard={(user) => {
-          if (!user) return null;
-        
-          const isMulti = user.profile_type === 'duo' || user.profile_type === 'group';
-        
-          return (
+      {/* ───────────── 𝟙. Filters Modal ───────────── */}
+      <Modal
+        key={String(filtersVisible)}
+        visible={filtersVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setFiltersVisible(false)}
+        onDismiss={() => {
+          setGOpen(false);
+          setEOpen(false);
+          setPOpen(false);
+          setIOpen(false);
+        }}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <ScrollView keyboardShouldPersistTaps="handled">
+              <Text style={styles.filterHeader}>Filters</Text>
+  
+              {/* Location */}
+              <Text style={styles.label}>Location (city)</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Exact city"
+                value={locationFilter}
+                onChangeText={setLocationFilter}
+              />
+  
+              {/* Gender */}
+              <Text style={styles.label}>Gender</Text>
+              <DropDownPicker
+                open={gOpen}
+                value={genderFilter}
+                items={[
+                  { label: 'Male',        value: 'male' },
+                  { label: 'Female',      value: 'female' },
+                  { label: 'Non‑binary',  value: 'non-binary' },
+                  { label: 'Other',       value: 'other' },
+                ]}
+                setOpen={setGOpen}
+                setValue={setGenderFilter}
+                placeholder="Any"
+                style={styles.dropdown}
+                dropDownContainerStyle={styles.dropdownContainer}
+              />
+  
+              {/* Ethnicity */}
+              <Text style={styles.label}>Ethnicity</Text>
+              <DropDownPicker
+                open={eOpen}
+                value={ethnicityFilter}
+                items={ethnicityOptions}
+                setOpen={setEOpen}
+                setValue={setEthnicityFilter}
+                multiple
+                mode="BADGE"
+                listMode="MODAL"
+                placeholder="Any"
+                style={styles.dropdown}
+                dropDownContainerStyle={styles.dropdownContainer}
+              />
+  
+              {/* Personality */}
+              <Text style={styles.label}>Personality</Text>
+              <DropDownPicker
+                open={pOpen}
+                value={personalityFilter}
+                items={personalityOptions}
+                setOpen={setPOpen}
+                setValue={setPersonalityFilter}
+                multiple
+                mode="BADGE"
+                listMode="MODAL"
+                placeholder="Any"
+                style={styles.dropdown}
+                dropDownContainerStyle={styles.dropdownContainer}
+              />
+  
+              {/* Interests */}
+              <Text style={styles.label}>Interests</Text>
+              <DropDownPicker
+                open={iOpen}
+                value={interestsFilter}
+                items={interestsItems}
+                setOpen={setIOpen}
+                setValue={setInterestsFilter}
+                multiple
+                mode="BADGE"
+                listMode="MODAL"
+                searchable
+                placeholder="Any"
+                style={styles.dropdown}
+                dropDownContainerStyle={styles.dropdownContainer}
+              />
+  
+              {/* Buttons */}
+              <View style={styles.modalButtons}>
+                <TouchableOpacity style={styles.clearBtn} onPress={clearFilters}>
+                  <Text style={styles.clearText}>Turn Off All Filters</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.applyBtn} onPress={applyFilters}>
+                  <Text style={styles.applyText}>Apply Filters</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+  
+      {/* ───────────── 𝟚. Main Body ───────────── */}
+      {loading ? (
+        /* Loading state */
+        <View style={styles.center}>
+          <ActivityIndicator size="large" />
+          <Text>Loading…</Text>
+        </View>
+      ) : cards.length ? (
+        /* Swiper state */
+        <Swiper
+          cards={cards}
+          renderCard={(u) => (
             <View style={styles.card}>
               <Image
-                source={{ uri: user.profile_photo || 'https://placekitten.com/300/300' }}
+                source={{
+                  uri: u.profile_photo || 'https://placekitten.com/300/300',
+                }}
                 style={styles.photo}
               />
-        
-              <Text style={styles.profileType}>
-                {user.profile_type === 'uno' && '🧍 Uno'}
-                {user.profile_type === 'duo' && '🧑‍🤝‍🧑 Duo'}
-                {user.profile_type === 'group' && '👯 Group'}
+              <Text style={styles.name}>
+                {u.name}
+                {u.age ? `, ${u.age}` : ''}
               </Text>
-        
-              {/* Primary Info – ONLY FOR SOLO */}
-              {!isMulti && (
-                <>
-                  <Text style={styles.name}>
-                    {user.name ?? 'Anonymous'}, {user.age ?? 'Unknown Age'}
-                  </Text>
-                  <Text style={styles.meta}>{user.ethnicity ?? 'No Ethnicity'}</Text>
-                </>
-              )}
-        
-              {/* Shared Info for Duo/Group */}
-              <Text style={styles.meta}>📍 {user.location ?? 'Unknown location'}</Text>
-              <Text style={styles.meta}>🎯 {user.looking_for ?? 'Not specified'}</Text>
+              <Text style={styles.meta}>📍 {u.location}</Text>
+              <Text style={styles.meta}>🎯 {u.looking_for}</Text>
               <Text style={styles.meta}>
-                🎨 {Array.isArray(user.interests) ? user.interests.join(', ') : user.interests ?? 'None'}
+                🎨 {(u.interests || []).join(', ')}
               </Text>
-        
-              <Text style={styles.bio}>{user.bio ?? 'No bio yet.'}</Text>
-        
-              {/* Members */}
-              {isMulti && (
-                <>
-                  <Text style={styles.name}>Members</Text>
-                  {(user.members ?? []).map((m, i) => (
-                    <Text key={m.id || i} style={styles.meta}>
-                      {m.name ?? 'Unknown'}, {m.age ?? 'Unknown Age'}, {m.ethnicity ?? 'No Ethnicity'}
-                    </Text>
-                  ))}
-                </>
-              )}
             </View>
-          );
-        }}
-        onSwipedLeft={(index) => handleSwipe(index, 'left')}
-        onSwipedRight={(index) => handleSwipe(index, 'right')}
-        cardIndex={0}
-        backgroundColor="white"
-        stackSize={3}
-      />
+          )}
+          onSwipedLeft={(i) => handleSwipe(i, 'left')}
+          onSwipedRight={(i) => handleSwipe(i, 'right')}
+          stackSize={3}
+          backgroundColor="#fff"
+        />
+      ) : (
+        /* Empty‑results state */
+        <View style={styles.center}>
+          <Text style={styles.noMore}>No users match your filters 😢</Text>
+          <TouchableOpacity onPress={clearFilters} style={{ marginTop: 8 }}>
+            <Text style={{ color: '#007AFF' }}>Clear filters</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
-};
-
-export default SwipeScreen;
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 40,
-  },
-  card: {
-    flex: 0.7,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#e8e8e8',
-    backgroundColor: '#f9f9f9', // or gray
-    padding: 20,
-    alignItems: 'center',
-  },
-  photo: {
-    width: 250,
-    height: 250,
-    borderRadius: 12,
-    marginBottom: 20,
-  },
-  name: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  bio: {
-    fontSize: 14,
-    color: 'gray',
-    textAlign: 'center',
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  noMoreText: {
-    fontSize: 18,
-    color: 'gray',
-  },
-  profileType: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#555',
-    marginBottom: 6,
-  },
-  shared: {
-    fontSize: 15,
-    color: '#333',
-    marginBottom: 4,
-    textAlign: 'center',
-  },
-  meta: {
-    fontSize: 14,
-    color: 'gray',
-    marginBottom: 3,
-    textAlign: 'center',
-  },
+  container:        { flex: 1, backgroundColor: '#fff' },
+  center:           { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  noMore:           { fontSize: 18, color: 'gray' },
+  card:             {
+                      flex: 0.7,
+                      borderRadius: 10,
+                      borderWidth: 1,
+                      borderColor: '#e8e8e8',
+                      backgroundColor: '#f9f9f9',
+                      padding: 20,
+                      alignItems: 'center',
+                    },
+  photo:            { width: 250, height: 250, borderRadius: 12, marginBottom: 20 },
+  name:             { fontSize: 22, fontWeight: 'bold', marginBottom: 6 },
+  meta:             { fontSize: 14, color: 'gray', marginBottom: 4, textAlign: 'center' },
+
+  modalOverlay:     { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center' },
+  modalContent:     { margin: 20, backgroundColor: '#fff', borderRadius: 10, padding: 16, maxHeight: '80%' },
+  filterHeader:     { fontSize: 20, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' },
+  label:            { fontWeight: '600', marginBottom: 4 },
+  input:            { backgroundColor: '#f2f2f2', padding: 8, borderRadius: 6, marginBottom: 12 },
+  dropdown:         { marginBottom: 12, borderColor: '#ccc' },
+  dropdownContainer:{ borderColor: '#ccc' },
+
+  modalButtons:     { flexDirection: 'row', justifyContent: 'space-between', marginTop: 12 },
+  clearBtn:         { padding: 10 },
+  clearText:        { color: 'red' },
+  applyBtn:         { backgroundColor: '#007AFF', padding: 10, borderRadius: 6 },
+  applyText:        { color: '#fff' },
 });

@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+// screens/Profile_Group/EditGroupShared.js
+
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -14,46 +16,38 @@ import TextInput from 'react-native/Libraries/Components/TextInput/TextInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API_BASE_URL } from '@env';
+import {
+  interestsOptions,
+  pastActivitiesOptions,
+} from '../constants/Dropdowns';
 
 export default function EditGroupShared({ route, navigation }) {
-  const { group } = route.params;
+  const { user: group } = route.params;
 
   const [location, setLocation] = useState(group?.location || '');
   const [lookingFor, setLookingFor] = useState(group?.looking_for || '');
   const [interests, setInterests] = useState(
     Array.isArray(group?.interests) ? group.interests : (group?.interests || '').split(',').filter(Boolean)
   );
+  const [pastActivities, setPastActivities] = useState(
+    Array.isArray(group?.past_activities) ? group.past_activities : (group?.past_activities || '').split(',').filter(Boolean)
+  );
 
-  const [open, setOpen] = useState(false);
-  const [items, setItems] = useState([
-    { label: 'Movies & TV', value: 'movies_tv' },
-    { label: 'Gaming', value: 'gaming' },
-    { label: 'Photography', value: 'photography' },
-    { label: 'Fashion', value: 'fashion' },
-    { label: 'Writing', value: 'writing' },
-    { label: 'Nature', value: 'nature' },
-    { label: 'Animals', value: 'animals' },
-    { label: 'Volunteering', value: 'volunteering' },
-    { label: 'History', value: 'history' },
-    { label: 'Science', value: 'science' },
-    { label: 'Cars & Motorcycles', value: 'cars_motorcycles' },
-    { label: 'Podcasts', value: 'podcasts' },
-    { label: 'Crafts & DIY', value: 'crafts_diy' },
-    { label: 'Spirituality', value: 'spirituality' },
-    { label: 'Board Games', value: 'board_games' },
-    { label: 'Languages', value: 'languages' },
-    { label: 'Politics', value: 'politics' },
-    { label: 'Comedy', value: 'comedy' },
-    { label: 'Entrepreneurship', value: 'entrepreneurship' },
-    { label: 'Collecting', value: 'collecting' },
-  ]);
+  // dropdown state
+  const [iOpen, setIOpen] = useState(false);
+  const [pOpen, setPOpen] = useState(false);
 
   const handleSave = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
       await axios.put(
         `${API_BASE_URL}/group-profile`,
-        { location, looking_for: lookingFor, interests },
+        {
+          location,
+          looking_for: lookingFor,
+          interests,
+          past_activities: pastActivities,
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       Alert.alert('Success', 'Group profile updated!');
@@ -72,6 +66,7 @@ export default function EditGroupShared({ route, navigation }) {
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.header}>Edit Group Profile</Text>
 
+        {/* Location */}
         <TextInput
           style={styles.input}
           placeholder="Location"
@@ -79,14 +74,14 @@ export default function EditGroupShared({ route, navigation }) {
           onChangeText={setLocation}
         />
 
+        {/* Interests */}
         <Text style={styles.label}>Select Interests</Text>
         <DropDownPicker
-          open={open}
+          open={iOpen}
           value={interests}
-          items={items}
-          setOpen={setOpen}
+          items={interestsOptions}
+          setOpen={setIOpen}
           setValue={setInterests}
-          setItems={setItems}
           multiple
           mode="BADGE"
           listMode="MODAL"
@@ -96,6 +91,24 @@ export default function EditGroupShared({ route, navigation }) {
           searchable
         />
 
+        {/* Past Activities */}
+        <Text style={styles.label}>Past Activities</Text>
+        <DropDownPicker
+          open={pOpen}
+          value={pastActivities}
+          items={pastActivitiesOptions}
+          setOpen={setPOpen}
+          setValue={setPastActivities}
+          multiple
+          mode="BADGE"
+          listMode="MODAL"
+          placeholder="Choose past activities..."
+          style={styles.dropdown}
+          dropDownContainerStyle={styles.dropdownContainer}
+          searchable
+        />
+
+        {/* Looking For */}
         <TextInput
           style={styles.input}
           placeholder="Looking For"
@@ -103,6 +116,7 @@ export default function EditGroupShared({ route, navigation }) {
           onChangeText={setLookingFor}
         />
 
+        {/* Save */}
         <TouchableOpacity style={styles.button} onPress={handleSave}>
           <Text style={styles.buttonText}>Save Changes</Text>
         </TouchableOpacity>

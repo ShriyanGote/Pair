@@ -22,10 +22,7 @@ export const getPotentialMatches = (token, page = 0) =>
   });
 export const sendSwipe = (swipeeId, direction, token) =>
   axios.post(
-    `${API_URL}/swipe`,
-    null,
-    { params: { swipee_id: swipeeId, direction }, headers: { Authorization: `Bearer ${token}` } }
-  );
+    `${API_URL}/swipe`,null, { params: { swipee_id: swipeeId, direction }, headers: { Authorization: `Bearer ${token}` } });
 export const getMatches = (token) =>
   axios.get(`${API_URL}/matches`, { headers: { Authorization: `Bearer ${token}` } });
 export const deleteMatch = (userId, token) =>
@@ -87,3 +84,11 @@ export const deleteGroupMember = (memberId, token) =>
 
 export const getGroupMemberPhotos = (memberId, token) =>
   axios.get(`${API_URL}/group-members/${memberId}/photos`, { headers: { Authorization: `Bearer ${token}` } });
+
+
+export const updateGroupMember = (memberId, data, token) =>
+  axios.put(
+    `${API_URL}/group-members/${memberId}`,
+    data,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );

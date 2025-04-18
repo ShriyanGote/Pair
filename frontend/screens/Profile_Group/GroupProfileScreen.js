@@ -85,7 +85,7 @@ export default function GroupProfileScreen() {
               await deleteGroupMember(id, token);
               setMembers(ms => ms.filter(m => m.id !== id));
               setPhotosMap(pm => {
-                const { [id]:_, ...rest } = pm;
+                const { [id]: _, ...rest } = pm;
                 return rest;
               });
             } catch (err) {
@@ -124,13 +124,35 @@ export default function GroupProfileScreen() {
             ? user.interests.join(', ')
             : user.interests || 'N/A'}
         </Text>
+
+        {/* Edit Shared Info */}
         <TouchableOpacity
           style={styles.editBtn}
           onPress={() => navigation.navigate('EditGroupShared', { user })}
         >
           <Text style={styles.editText}>Edit Shared Info</Text>
         </TouchableOpacity>
+
+       
       </View>
+
+       {/* Change Type / Logout */}
+       <TouchableOpacity
+          style={styles.changeTypeButton}
+          onPress={() =>
+            navigation.navigate('EditProfileType', { currentType: user.profile_type })
+          }
+        >
+          <Text style={styles.changeTypeText}>Change Profile Type</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={async () => {
+            await AsyncStorage.removeItem('token');
+            navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+          }}
+        >
+          <Text style={styles.logoutText}>Logout</Text>
+        </TouchableOpacity>
 
       {/* Members */}
       <Text style={styles.subHeader}>Members</Text>
@@ -209,23 +231,26 @@ export default function GroupProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container:       { padding: 24, backgroundColor: '#f7f7f7', flexGrow: 1 },
-  center:          { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  header:          { fontSize: 26, fontWeight: 'bold', textAlign: 'center', marginBottom: 20 },
-  card:            { backgroundColor: '#fff', borderRadius: 10, padding: 16, marginBottom: 20, borderColor:'#ddd', borderWidth:1 },
-  label:           { fontWeight: '600', marginTop: 12 },
-  value:           { marginBottom: 8 },
-  editBtn:         { marginTop: 10 },
-  editText:        { color: '#007AFF', fontSize: 14, fontWeight: '500' },
-  subHeader:       { fontSize: 20, fontWeight: '600', marginTop: 24, marginBottom: 12 },
-  addButton:       { backgroundColor: '#007AFF', padding: 12, borderRadius: 8, alignSelf: 'center', marginBottom: 12, width: '60%' },
-  addButtonText:   { color: 'white', textAlign: 'center', fontWeight: '600' },
-  noMembers:       { color: 'gray', fontStyle: 'italic', textAlign: 'center' },
-  memberCard:      { backgroundColor: '#fff', borderRadius: 10, padding: 12, marginBottom: 12 },
-  infoContainer:   { marginBottom: 10 },
-  memberName:      { fontWeight: 'bold', fontSize: 16 },
-  actions:         { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
-  deleteText:      { color: 'red', fontSize: 14, fontWeight: '500' },
-  miniPhotoGrid:   { flexDirection: 'row', flexWrap: 'wrap' },
-  miniPhoto:       { width: 60, height: 60, borderRadius: 8, marginRight: 8, marginBottom: 8 },
+  container:          { padding: 24, backgroundColor: '#f7f7f7', flexGrow: 1 },
+  center:             { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  header:             { fontSize: 26, fontWeight: 'bold', textAlign: 'center', marginBottom: 20 },
+  card:               { backgroundColor: '#fff', borderRadius: 10, padding: 16, marginBottom: 20, borderColor:'#ddd', borderWidth:1 },
+  label:              { fontWeight: '600', marginTop: 12 },
+  value:              { marginBottom: 8 },
+  editBtn:            { marginTop: 10 },
+  editText:           { color: '#007AFF', fontSize: 14, fontWeight: '500' },
+  changeTypeButton:   { marginTop: 16, alignSelf: 'center', padding: 10, backgroundColor: '#007AFF', borderRadius: 8 },
+  changeTypeText:     { color: 'white', fontWeight: '500' },
+  logoutText:         { color: 'gray', textAlign: 'center', marginTop: 12 },
+  subHeader:          { fontSize: 20, fontWeight: '600', marginTop: 24, marginBottom: 12 },
+  addButton:          { backgroundColor: '#007AFF', padding: 12, borderRadius: 8, alignSelf: 'center', marginBottom: 12, width: '60%' },
+  addButtonText:      { color: 'white', textAlign: 'center', fontWeight: '600' },
+  noMembers:          { color: 'gray', fontStyle: 'italic', textAlign: 'center' },
+  memberCard:         { backgroundColor: '#fff', borderRadius: 10, padding: 12, marginBottom: 12 },
+  infoContainer:      { marginBottom: 10 },
+  memberName:         { fontWeight: 'bold', fontSize: 16 },
+  actions:            { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
+  deleteText:         { color: 'red', fontSize: 14, fontWeight: '500' },
+  miniPhotoGrid:      { flexDirection: 'row', flexWrap: 'wrap' },
+  miniPhoto:          { width: 60, height: 60, borderRadius: 8, marginRight: 8, marginBottom: 8 },
 });

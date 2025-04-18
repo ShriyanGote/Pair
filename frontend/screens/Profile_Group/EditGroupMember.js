@@ -1,3 +1,4 @@
+// screens/EditGroupMember.js
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -19,32 +20,42 @@ import {
   uploadGroupMemberPhoto,
   deleteGroupMemberPhoto,
   updateGroupMember,
-} from '../../utils/api'; // you'll define these
+} from '../../utils/api';
 
-const EditGroupMember = ({ route, navigation }) => {
+export default function EditGroupMember({ route, navigation }) {
   const { member } = route.params;
 
+  // --- form state ---
   const [name, setName] = useState(member.name || '');
-  const [age, setAge] = useState(String(member.age || ''));
+  const [age, setAge]   = useState(String(member.age ?? ''));
   const [photos, setPhotos] = useState([]);
-  const [gender, setGender] = useState(member.gender || '');
-  const [ethnicity, setEthnicity] = useState(member.ethnicity || '');
-  const [personality, setPersonality] = useState(
-    Array.isArray(member.personality) ? member.personality : (member.personality?.split(',') || [])
+
+  // single‑selects use null default
+  const [gender,   setGender]   = useState(member.gender || null);
+  const [ethnicity,setEthnicity]= useState(
+    Array.isArray(member.ethnicity) && member.ethnicity.length > 0 
+      ? member.ethnicity[0]
+      : null
   );
-  
+
+  // multi‑select
+  const [personality, setPersonality] = useState(
+    Array.isArray(member.personality)
+      ? member.personality
+      : []
+  );
+
+  // --- items state for each picker ---
   const [gOpen, setGOpen] = useState(false);
+  const [genderItems, setGenderItems] = useState([
+    { label: 'Male',     value: 'male' },
+    { label: 'Female',   value: 'female' },
+    { label: 'Non‑binary', value: 'non-binary' },
+    { label: 'Other',    value: 'other' },
+  ]);
+
   const [eOpen, setEOpen] = useState(false);
-  const [pOpen, setPOpen] = useState(false);
-  
-  const genderItems = [
-    { label: 'Male', value: 'male' },
-    { label: 'Female', value: 'female' },
-    { label: 'Non-binary', value: 'non-binary' },
-    { label: 'Other', value: 'other' },
-  ];
-  
-  const ethnicityItems = [
+  const [ethnicityItems, setEthnicityItems] = useState([
     { label: 'Middle Eastern', value: 'middle_eastern' },
     { label: 'Native American', value: 'native_american' },
     { label: 'Pacific Islander', value: 'pacific_islander' },
@@ -53,13 +64,14 @@ const EditGroupMember = ({ route, navigation }) => {
     { label: 'East Asian', value: 'east_asian' },
     { label: 'Central Asian', value: 'central_asian' },
     { label: 'North African', value: 'north_african' },
-    { label: 'Afro-Caribbean', value: 'afro_caribbean' },
+    { label: 'Afro‑Caribbean', value: 'afro_caribbean' },
     { label: 'Latinx', value: 'latinx' },
     { label: 'Multiracial', value: 'multiracial' },
     { label: 'Prefer Not to Say', value: 'prefer_not_to_say' },
-  ];
-  
-  const personalityItems = [
+  ]);
+
+  const [pOpen, setPOpen] = useState(false);
+  const [personalityItems, setPersonalityItems] = useState([
     { label: 'Curious', value: 'Curious' },
     { label: 'Empathetic', value: 'Empathetic' },
     { label: 'Adventurous', value: 'Adventurous' },
@@ -75,92 +87,80 @@ const EditGroupMember = ({ route, navigation }) => {
     { label: 'Independent', value: 'Independent' },
     { label: 'Funny', value: 'Funny' },
     { label: 'Romantic', value: 'Romantic' },
-    { label: 'Open-Minded', value: 'Open-Minded' },
+    { label: 'Open‑Minded', value: 'Open-Minded' },
     { label: 'Optimistic', value: 'Optimistic' },
     { label: 'Realistic', value: 'Realistic' },
     { label: 'Cautious', value: 'Cautious' },
     { label: 'Chill', value: 'Chill' },
-  ];
+  ]);
 
-
+  // --- load existing photos ---
   useEffect(() => {
-    fetchMemberPhotos();
+    (async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const res = await getGroupMemberPhotos(member.id, token);
+        setPhotos(res.data);
+      } catch (err) {
+        console.error(err);
+        Alert.alert('Error', 'Could not load photos');
+      }
+    })();
   }, []);
 
-  const fetchMemberPhotos = async () => {
-    const token = await AsyncStorage.getItem('token');
-    try {
-      const res = await getGroupMemberPhotos(member.id, token);
-      setPhotos(res.data);
-    } catch (err) {
-      console.error(err);
-      Alert.alert('Error', 'Could not load photos');
-    }
-  };
-
+  // --- photo handlers ---
   const handleAddPhoto = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.7,
+      allowsEditing: true,
+    });
+    if (result.canceled) return;
+
+    const uri = result.assets[0].uri;
+    const formData = new FormData();
+    formData.append('file', { uri, name: 'photo.jpg', type: 'image/jpeg' });
+
     try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 0.7,
-        allowsEditing: true,
-      });
-  
-      if (result.canceled) return;
-  
-      const uri = result.assets[0].uri;
-      const formData = new FormData();
-      formData.append('file', {
-        uri,
-        name: 'photo.jpg',
-        type: 'image/jpeg',
-      });
-  
       const token = await AsyncStorage.getItem('token');
       const res = await uploadGroupMemberPhoto(member.id, formData, token);
-      setPhotos((prev) => [...prev, res.data]);
-    } catch (error) {
-      console.error('[PHOTO UPLOAD ERROR]', error);
-      Alert.alert('Error', 'Could not upload photo');
+      setPhotos((p) => [...p, res.data]);
+    } catch (err) {
+      console.error(err);
+      Alert.alert('Error', 'Upload failed');
     }
   };
 
   const handleDeletePhoto = async (photoId) => {
-    const token = await AsyncStorage.getItem('token');
-    try {
-      await deleteGroupMemberPhoto(member.id, photoId, token);
-      setPhotos((prev) => prev.filter((p) => p.id !== photoId));
-    } catch (err) {
-      console.error(err);
-      Alert.alert('Error', 'Failed to delete');
-    }
-  };
-  const handleSave = async () => {
-    if (!name || !age || !gender || !ethnicity || personality.length === 0) {
-      Alert.alert('Missing Fields', 'Please fill out all fields.');
-      return;
-    }
-  
     try {
       const token = await AsyncStorage.getItem('token');
-      await axios.put(
-        `${API_BASE_URL}/group-members/${member.id}`,
-        {
-          name,
-          age: parseInt(age),
-          gender,
-          ethnicity,
-          personality,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      Alert.alert('Updated', 'Group member info saved.');
+      await deleteGroupMemberPhoto(member.id, photoId, token);
+      setPhotos((p) => p.filter((x) => x.id !== photoId));
+    } catch {
+      Alert.alert('Error', 'Delete failed');
+    }
+  };
+
+  // --- save handler ---
+  const handleSave = async () => {
+    if (!name || !age || !gender || !ethnicity || personality.length === 0) {
+      Alert.alert('Missing Fields', 'Name, age, gender, ethnicity & personality are required');
+      return;
+    }
+    try {
+      const token = await AsyncStorage.getItem('token');
+      await updateGroupMember(member.id, {
+        name,
+        age: parseInt(age, 10),
+        gender,
+        ethnicity: [ethnicity],        // server expects a list
+        personality,
+      }, token);
+      Alert.alert('Saved', 'Member updated');
       navigation.goBack();
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Could not update group member.');
+    } catch (err) {
+      console.error(err);
+      Alert.alert('Error', 'Update failed');
     }
   };
 
@@ -168,26 +168,21 @@ const EditGroupMember = ({ route, navigation }) => {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Edit Group Member</Text>
 
-      {photos.length === 0 ? (
-        <Text>No photos yet</Text>
-      ) : (
-        <View style={styles.photoContainer}>
-          {photos.map((photo) => (
-            <View key={photo.id} style={styles.photoWrapper}>
-              <Image source={{ uri: photo.photo_url }} style={styles.photoImage} />
-              <TouchableOpacity
-                style={styles.deleteBtn}
-                onPress={() => handleDeletePhoto(photo.id)}
-              >
-                <Text style={styles.deleteBtnText}>X</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-      )}
-
-      <TouchableOpacity onPress={handleAddPhoto} style={styles.addPhotoBtn}>
-        <Text style={styles.addPhotoText}>Add Member Photo</Text>
+      {photos.length === 0
+        ? <Text>No photos yet</Text>
+        : <View style={styles.photoContainer}>
+            {photos.map((p) => (
+              <View key={p.id} style={styles.photoWrapper}>
+                <Image source={{ uri: p.photo_url }} style={styles.photoImage} />
+                <TouchableOpacity style={styles.deleteBtn} onPress={() => handleDeletePhoto(p.id)}>
+                  <Text style={styles.deleteBtnText}>✕</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+      }
+      <TouchableOpacity style={styles.addPhotoBtn} onPress={handleAddPhoto}>
+        <Text style={styles.addPhotoText}>Add Photo</Text>
       </TouchableOpacity>
 
       <TextInput
@@ -196,7 +191,6 @@ const EditGroupMember = ({ route, navigation }) => {
         value={name}
         onChangeText={setName}
       />
-
       <TextInput
         style={styles.input}
         placeholder="Age"
@@ -207,132 +201,71 @@ const EditGroupMember = ({ route, navigation }) => {
 
       <Text style={styles.label}>Gender</Text>
       <DropDownPicker
+        listMode="MODAL"
+        placeholder="Select gender"
         open={gOpen}
         value={gender}
         items={genderItems}
         setOpen={setGOpen}
         setValue={setGender}
-        placeholder="Select gender"
+        setItems={setGenderItems}
         style={styles.dropdown}
         dropDownContainerStyle={styles.dropdownContainer}
       />
 
       <Text style={styles.label}>Ethnicity</Text>
       <DropDownPicker
+        listMode="MODAL"
+        placeholder="Select ethnicity"
         open={eOpen}
         value={ethnicity}
         items={ethnicityItems}
         setOpen={setEOpen}
         setValue={setEthnicity}
-        placeholder="Select ethnicity"
+        setItems={setEthnicityItems}
         style={styles.dropdown}
         dropDownContainerStyle={styles.dropdownContainer}
       />
 
-      <Text style={styles.label}>Personality Traits</Text>
+      <Text style={styles.label}>Personality</Text>
       <DropDownPicker
+        listMode="MODAL"
+        placeholder="Select traits"
         open={pOpen}
         value={personality}
         items={personalityItems}
         setOpen={setPOpen}
         setValue={setPersonality}
-        multiple={true}
+        setItems={setPersonalityItems}
+        multiple
         mode="BADGE"
         listMode="MODAL"
-        placeholder="Select traits"
+        searchable
         style={styles.dropdown}
         dropDownContainerStyle={styles.dropdownContainer}
-        searchable={true}
       />
 
       <TouchableOpacity style={styles.button} onPress={handleSave}>
-        <Text style={styles.buttonText}>Save</Text>
+        <Text style={styles.buttonText}>Save Member</Text>
       </TouchableOpacity>
     </ScrollView>
   );
-};
-
-export default EditGroupMember;
+}
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 30,
-    backgroundColor: '#f2f2f2',
-    flexGrow: 1,
-  },
-  header: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  input: {
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 15,
-    borderColor: '#ccc',
-    borderWidth: 1,
-  },
-  dropdown: {
-    marginBottom: 15,
-    borderRadius: 8,
-    borderColor: '#ccc',
-  },
-  dropdownContainer: {
-    borderRadius: 8,
-    borderColor: '#ccc',
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 8,
-    marginTop: 10,
-  },
-  buttonText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontWeight: '600',
-    fontSize: 16,
-  },
-  photoContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  photoImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 8,
-  },
-  addPhotoText: {
-    color: '#aaa',
-    fontWeight: '600',
-  },
-  photoWrapper: {
-    width: 90,
-    height: 90,
-    margin: 5,
-    position: 'relative',
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  deleteBtn: {
-    position: 'absolute',
-    top: 4,
-    right: 4,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
-  },
-  
-  deleteBtnText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  
+  container:       { padding: 20, backgroundColor: '#f7f7f7', flexGrow: 1 },
+  header:          { fontSize: 22, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' },
+  photoContainer:  { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 12 },
+  photoWrapper:    { width: 80, height: 80, margin: 4, position: 'relative' },
+  photoImage:      { width: '100%', height: '100%', borderRadius: 8 },
+  deleteBtn:       { position: 'absolute', top: 2, right: 2, backgroundColor: 'rgba(0,0,0,0.6)', width: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  deleteBtnText:   { color: '#fff', fontWeight: 'bold' },
+  addPhotoBtn:     { marginBottom: 16, padding: 10, backgroundColor: '#007AFF', borderRadius: 6 },
+  addPhotoText:    { color: '#fff', textAlign: 'center' },
+  input:           { backgroundColor: '#fff', padding: 12, borderRadius: 6, marginBottom: 16, borderWidth:1, borderColor:'#ccc' },
+  label:           { marginBottom: 6, fontWeight: '600' },
+  dropdown:        { marginBottom: 16, borderColor: '#ccc' },
+  dropdownContainer:{ borderColor: '#ccc' },
+  button:          { backgroundColor: '#007AFF', padding: 14, borderRadius: 8 },
+  buttonText:      { color: '#fff', textAlign: 'center', fontWeight: '600' },
 });
