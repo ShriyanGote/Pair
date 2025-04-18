@@ -123,7 +123,7 @@ def predict_matches_for_user(target_user_id, top_n=5):
     return candidate_list[:top_n]
 
 # Example usage: predict top 100 matches for a given user (e.g., user with id 893).
-top_matches = predict_matches_for_user(target_user_id=893, top_n=100)
+top_matches = predict_matches_for_user(target_user_id=100, top_n=100)
 print("\nTop 100 predicted matches for user 893:")
 for cand, score in top_matches:
     profile_cand = profiles.loc[profiles["user"] == cand].iloc[0]
