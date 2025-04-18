@@ -1,4 +1,3 @@
-// RegisterScreen.js
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, TouchableOpacity,
@@ -23,19 +22,37 @@ const RegisterScreen = ({ navigation, route }) => {
       return;
     }
 
-    // build the exact same shape your FastAPI expects:
+    const {
+      profile_type,
+      ethnicity,
+      gender,
+      interests,
+      past_activities,
+      looking_for,
+      personality,
+      social_media_use,
+      occupation,
+      // remove shared default since we're flattening
+      // shared = {},
+      bio: topBio,
+      location: topLocation,
+    } = allFields;
+
+    // also pull any shared if still using it
+    const shared = allFields.shared || {};
+
     const profileData = {
-      profile_type: allFields.profile_type,               // snake_case!
-      ethnicity:     allFields.ethnicity,
-      gender:        allFields.gender,
-      interests:     allFields.interests,
-      past_activities: allFields.pastActivities,
-      looking_for:     allFields.lookingFor,
-      personality:   allFields.personality,
-      social_media_use: allFields.social_media_use,
-      occupation:      allFields.occupation,
-      bio:             allFields.bio,        // if you added bio
-      location:        allFields.location,   // from duo/group step
+      profile_type,
+      ethnicity,
+      gender,
+      interests,
+      past_activities,
+      looking_for: shared.lookingFor || looking_for || null,
+      personality,
+      social_media_use,
+      occupation,
+      bio: shared.bio || topBio || null,
+      location: shared.location || topLocation || null,
     };
 
     try {
@@ -73,7 +90,6 @@ const RegisterScreen = ({ navigation, route }) => {
 };
 
 export default RegisterScreen;
-
 
 const styles = StyleSheet.create({
   container: {

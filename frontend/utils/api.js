@@ -54,6 +54,12 @@ export const deleteUserPhotoByUrl = (userId, photoUrl, token) =>
 export const getDuoMembers = (token) =>
   axios.get(`${API_URL}/duo-members`, { headers: { Authorization: `Bearer ${token}` } });
 
+export const addDuoMember = (data, token) =>
+  axios.post( `${API_URL}/duo-members`,data, { headers: { Authorization: `Bearer ${token}` } });
+
+export const deleteDuoMember = (memberId, token) =>
+  axios.delete(`${API_URL}/duo-members/${memberId}`, { headers: { Authorization: `Bearer ${token}` }});
+
 export const getDuoMemberPhotos = (memberId, token) =>
   axios.get(`${API_URL}/duo-members/${memberId}/photos`, { headers: { Authorization: `Bearer ${token}` } });
 
@@ -67,3 +73,17 @@ export const deleteDuoMemberPhoto = (memberId, photoId, token) =>
 
 export const updateDuoMember = (memberId, data, token) =>
   axios.put(`${API_URL}/duo-members/${memberId}`, data, { headers: { Authorization: `Bearer ${token}` } });
+
+
+
+
+
+//--------------------- Group Member endpoints ---------------------
+export const getGroupMembers = (token) =>
+  axios.get(`${API_URL}/group-members`, { headers: { Authorization: `Bearer ${token}` } });
+
+export const deleteGroupMember = (memberId, token) =>
+  axios.delete(`${API_URL}/group-members/${memberId}`, { headers: { Authorization: `Bearer ${token}` } });
+
+export const getGroupMemberPhotos = (memberId, token) =>
+  axios.get(`${API_URL}/group-members/${memberId}/photos`, { headers: { Authorization: `Bearer ${token}` } });

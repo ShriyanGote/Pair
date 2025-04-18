@@ -6,19 +6,17 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
-  ScrollView,
-  KeyboardAvoidingView,
   Platform,
   Image,
   ActivityIndicator,
-  FlatList,
+  KeyboardAvoidingView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DropDownPicker from 'react-native-dropdown-picker';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import DropDownPicker from 'react-native-dropdown-picker';
 import EditProfileDetails from './EditProfileDetails.js';
 import { GOOGLE_API_KEY } from '@env';
 import {
@@ -28,19 +26,18 @@ import {
   uploadUnoPhoto,
   getUserPhotos,
   deleteUserPhoto,
-  deleteUserPhotoByUrl,  // <-- import the delete function
+  deleteUserPhotoByUrl,
 } from '../../utils/api';
 import axios from 'axios';
 import { API_URL } from '../../utils/api';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
-  
   const [userInfo, setUserInfo] = useState(null);
   const [editing, setEditing] = useState(false);
   const [photos, setPhotos] = useState([]);
 
-  // Gender dropdown
+  // gender dropdown
   const [genderOpen, setGenderOpen] = useState(false);
   const [genderItems, setGenderItems] = useState([
     { label: 'Male', value: 'Male' },
@@ -48,11 +45,11 @@ const ProfileScreen = () => {
     { label: 'Non-binary', value: 'Non-binary' },
   ]);
 
-  // Height dropdown
+  // height dropdown
   const [heightOpen, setHeightOpen] = useState(false);
   const [heightItems, setHeightItems] = useState([]);
 
-  // Type profile
+  // profile‐type dropdown (if you ever allow inline change)
   const [profileTypeOpen, setProfileTypeOpen] = useState(false);
   const [profileTypeItems, setProfileTypeItems] = useState([
     { label: '🧍 Uno', value: 'uno' },
@@ -60,57 +57,24 @@ const ProfileScreen = () => {
     { label: '👯 Group', value: 'group' },
   ]);
 
-  // 1) Fetch user + photos
+  // 1) Fetch user + UNO photos
   const fetchUser = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
       const response = await getCurrentUser(token);
       setUserInfo(response.data);
 
-      // If UNO, fetch the photo objects (id + url)
       if (response.data.profile_type === 'uno') {
         const userPhotos = await getUserPhotos(response.data.id, token);
-        // userPhotos.data is something like: [{ id: 1, photo_url: "..."}, ...]
         setPhotos(userPhotos.data);
       }
     } catch (error) {
-      console.error('Error fetching user:', error.response?.data || error.message);
+      console.error(error);
       Alert.alert('Error', 'Failed to load user info');
     }
   };
 
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem('token');
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Home' }],
-    });
-  };
-
-  const handleSave = async () => {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      await axios.post(`${API_URL}/uno-profile`, {
-        age: userInfo.age,
-        gender: userInfo.gender,
-        bio: userInfo.bio,
-        occupation: userInfo.occupation,
-        ethnicity: userInfo.ethnicity,
-        personality: userInfo.personality,
-        past_activities: userInfo.past_activities,
-        social_media_use: userInfo.social_media_use,
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      Alert.alert('Success', 'Profile updated successfully!');
-      setEditing(false);
-    } catch (err) {
-      console.error('Error updating user:', err);
-      Alert.alert('Error', 'Could not update profile.');
-    }
-  };
-
-  // 2) Profile Photo (for main userInfo.profile_photo)
+  // 2) Upload main profile photo
   const handleImagePick = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -120,126 +84,138 @@ const ProfileScreen = () => {
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       const formData = new FormData();
-      formData.append('file', {
-        uri,
-        name: 'profile.jpg',
-        type: 'image/jpeg',
-      });
+      formData.append('file', { uri, name: 'profile.jpg', type: 'image/jpeg' });
       try {
         const token = await AsyncStorage.getItem('token');
         const res = await uploadProfilePhoto(formData, token);
-        setUserInfo((prev) => ({ ...prev, profile_photo: res.data.photo_url }));
-      } catch (error) {
-        console.error(error);
+        setUserInfo((u) => ({ ...u, profile_photo: res.data.photo_url }));
+      } catch {
         Alert.alert('Upload failed', 'Please try again');
       }
     }
   };
 
-  async function handleDeleteByUrl(photoUrl) {
-    const token = await AsyncStorage.getItem('token');
-    await deleteUserPhotoByUrl(userInfo.id, photoUrl, token);
-    setPhotos(prev => prev.filter(p => p !== photoUrl));
-  }
-
-  // 3) Additional Photos for UNO
+  // 3) Add another UNO photo
   const handleAddPhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 0.7,
       allowsEditing: true,
     });
-
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       const formData = new FormData();
-      formData.append('file', {
-        uri,
-        name: 'photo.jpg',
-        type: 'image/jpeg',
-      });
-
+      formData.append('file', { uri, name: 'photo.jpg', type: 'image/jpeg' });
       try {
         const token = await AsyncStorage.getItem('token');
         const res = await uploadUnoPhoto(formData, token);
-        // Expect res.data to have { photo_id, photo_url }
-        setPhotos((prev) => [...prev, {
-          id: res.data.photo_id,
-          photo_url: res.data.photo_url,
-        }]);
-      } catch (error) {
-        Alert.alert('Upload failed', error.response?.data?.detail || 'Please try again');
+        setPhotos((ps) => [
+          ...ps,
+          { id: res.data.photo_id, photo_url: res.data.photo_url },
+        ]);
+      } catch (err) {
+        Alert.alert('Upload failed', err.response?.data?.detail || 'Please try again');
       }
     }
   };
 
-  console.log('Photos array:', photos);
-
-  // 4) Delete a photo
+  // 4) Delete a UNO photo by ID
   const handleDeletePhoto = async (photoId) => {
     try {
       const token = await AsyncStorage.getItem('token');
-      // userInfo.id is the current user's ID
       await deleteUserPhoto(userInfo.id, photoId, token);
-
-      // Remove the photo locally
-      setPhotos((prev) => prev.filter((p) => p.id !== photoId));
-    } catch (error) {
-      console.error(error);
+      setPhotos((ps) => ps.filter((p) => p.id !== photoId));
+    } catch {
       Alert.alert('Error', 'Could not delete photo.');
     }
   };
 
-  // 5) Setup once the component mounts
-  useEffect(() => {
-    fetchUser();
-
-    // Build height dropdown (4ft0in to 7ft0in)
-    const options = [];
-    for (let feet = 4; feet <= 7; feet++) {
-      for (let inches = 0; inches <= 11; inches++) {
-        const total = (feet + inches / 12).toFixed(2);
-        if (total >= 4.5 && total <= 7.0) {
-          options.push({ label: `${feet}'${inches}"`, value: parseFloat(total) });
-        }
-      }
+  // 5) Delete profile photo by URL
+  const handleDeleteByUrl = async (url) => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      await deleteUserPhotoByUrl(userInfo.id, url, token);
+      setPhotos((ps) => ps.filter((p) => p.photo_url !== url));
+    } catch {
+      Alert.alert('Error', 'Could not delete photo by URL.');
     }
-    setHeightItems(options);
-  }, []);
-
-  // update userInfo
-  const handleChange = (field, value) => {
-    setUserInfo((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Add this function to handle edit and backend update
+  // 6) Save UNO profile edits
+  const handleSave = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      await axios.post(
+        `${API_URL}/uno-profile`,
+        {
+          age: userInfo.age,
+          gender: userInfo.gender,
+          bio: userInfo.bio,
+          occupation: userInfo.occupation || [],
+          ethnicity: userInfo.ethnicity || [],
+          personality: userInfo.personality || [],
+          past_activities: userInfo.past_activities || [],
+          social_media_use: userInfo.social_media_use,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      Alert.alert('Success', 'Profile updated!');
+      setEditing(false);
+    } catch {
+      Alert.alert('Error', 'Could not update profile.');
+    }
+  };
+
+  // 7) Go to the “Edit Profile Details” sub‑screen
   const handleEditProfileDetails = () => {
     navigation.navigate('EditProfileDetails', {
-      ethnicity: userInfo.ethnicity,
+      ethnicity: userInfo.ethnicity || [],
       socialMediaUse: userInfo.social_media_use,
       pastActivities: userInfo.past_activities || [],
-      occupation: userInfo.occupation,
-      onSave: async (updatedFields) => {
+      occupation: userInfo.occupation || [],
+      onSave: async (fields) => {
         try {
           const token = await AsyncStorage.getItem('token');
-          await updateUser(userInfo.id, {
-            ...userInfo,
-            ethnicity: updatedFields.ethnicity,
-            social_media_use: updatedFields.socialMediaUse,
-            past_activities: updatedFields.pastActivities,
-            occupation: updatedFields.occupation,
-          }, token);
-          Alert.alert('Success', 'Profile details updated!');
-          fetchUser(); // Refresh profile
-        } catch (err) {
-          Alert.alert('Error', 'Failed to update profile details.');
+          await updateUser(
+            userInfo.id,
+            {
+              ...userInfo,
+              ethnicity: fields.ethnicity,
+              social_media_use: fields.socialMediaUse,
+              past_activities: fields.pastActivities,
+              occupation: fields.occupation,
+            },
+            token
+          );
+          Alert.alert('Success', 'Details updated!');
+          fetchUser();
+        } catch {
+          Alert.alert('Error', 'Failed to update details.');
         }
       },
     });
   };
 
-  // If user info not loaded, show spinner
-  if (!userInfo) return <ActivityIndicator style={{ flex: 1 }} size="large" />;
+  // on mount: load user & build height options
+  useEffect(() => {
+    fetchUser();
+    const opts = [];
+    for (let ft = 4; ft <= 7; ft++) {
+      for (let inch = 0; inch < 12; inch++) {
+        const val = (ft + inch / 12).toFixed(2);
+        if (val >= 4.5 && val <= 7.0) opts.push({ label: `${ft}'${inch}"`, value: parseFloat(val) });
+      }
+    }
+    setHeightItems(opts);
+  }, []);
+
+  // update a single field
+  const handleChange = (field, val) =>
+    setUserInfo((u) => ({ ...u, [field]: val }));
+
+  if (!userInfo) {
+    return <ActivityIndicator style={{ flex: 1 }} size="large" />;
+  }
 
   return (
     <KeyboardAvoidingView
@@ -247,33 +223,25 @@ const ProfileScreen = () => {
       style={{ flex: 1 }}
     >
       <KeyboardAwareScrollView contentContainerStyle={styles.container}>
-        
         <Text style={styles.profileType}>
           {userInfo.profile_type === 'uno' && '🧍 Uno'}
           {userInfo.profile_type === 'duo' && '🧑‍🤝‍🧑 Duo'}
           {userInfo.profile_type === 'group' && '👯 Group'}
         </Text>
 
-        {/* Show up to 5 additional photos for UNO */}
+        {/* UNO additional photos */}
         {userInfo.profile_type === 'uno' && (
           <>
             {photos.length === 0 ? (
               <Text style={styles.noPhotosText}>No photos yet</Text>
             ) : (
               <View style={styles.photoGrid}>
-                {photos.map((photo) => (
-                  <View key={photo.id} style={styles.photoWrapper}>
-
-                    {/* Show the image via photo.photo_url */}
-                    <Image
-                      source={{ uri: photo.photo_url }}
-                      style={styles.photoImage}
-                    />
-
-                    {/* Delete by ID */}
+                {photos.map((p) => (
+                  <View key={p.id} style={styles.photoWrapper}>
+                    <Image source={{ uri: p.photo_url }} style={styles.photoImage} />
                     <TouchableOpacity
                       style={styles.deleteBtn}
-                      onPress={() => handleDeletePhoto(photo.id)}
+                      onPress={() => handleDeletePhoto(p.id)}
                     >
                       <Text style={styles.deleteBtnText}>X</Text>
                     </TouchableOpacity>
@@ -281,33 +249,31 @@ const ProfileScreen = () => {
                 ))}
               </View>
             )}
-
             <TouchableOpacity onPress={handleAddPhoto}>
               <Text style={styles.link}>Add Another Photo</Text>
             </TouchableOpacity>
           </>
         )}
 
-
         {/* Name */}
         <TextInput
           style={styles.input}
           placeholder="Name"
           value={userInfo.name || ''}
-          onChangeText={(value) => handleChange('name', value)}
+          onChangeText={(v) => handleChange('name', v)}
           editable={editing}
         />
-        
+
         {/* Age */}
         <TextInput
           style={styles.input}
           placeholder="Age"
-          value={userInfo.age?.toString() || ''}
-          onChangeText={(value) => handleChange('age', value)}
-          editable={editing}
           keyboardType="numeric"
+          value={userInfo.age?.toString() || ''}
+          onChangeText={(v) => handleChange('age', v)}
+          editable={editing}
         />
-        
+
         {/* Gender */}
         <DropDownPicker
           open={genderOpen}
@@ -322,22 +288,17 @@ const ProfileScreen = () => {
           dropDownContainerStyle={styles.dropdownContainer}
         />
 
-        {/* Location - if editing, show google autocomplete */}
+        {/* Location */}
         {editing ? (
           <GooglePlacesAutocomplete
-            placeholder="Search for location"
+            placeholder="Search location"
             minLength={2}
-            fetchDetails={true}
-            onPress={(data) => {
-              handleChange('location', data.description);
-            }}
-            query={{
-              key: GOOGLE_API_KEY,
-              language: 'en',
-            }}
-            styles={{
-              textInput: styles.input,
-            }}
+            fetchDetails
+            onPress={(_, details) =>
+              handleChange('location', details.formatted_address)
+            }
+            query={{ key: GOOGLE_API_KEY, language: 'en' }}
+            styles={{ textInput: styles.input }}
           />
         ) : (
           <TextInput
@@ -351,7 +312,6 @@ const ProfileScreen = () => {
         {/* Height */}
         <DropDownPicker
           zIndex={3000}
-          zIndexInverse={1000}
           open={heightOpen}
           setOpen={setHeightOpen}
           items={heightItems}
@@ -369,7 +329,7 @@ const ProfileScreen = () => {
           style={styles.input}
           placeholder="Bio"
           value={userInfo.bio || ''}
-          onChangeText={(value) => handleChange('bio', value)}
+          onChangeText={(v) => handleChange('bio', v)}
           editable={editing}
           multiline
         />
@@ -396,13 +356,18 @@ const ProfileScreen = () => {
           <Text style={styles.link}>Change Profile Type</Text>
         </TouchableOpacity>
 
-        {/* Edit Profile Details Button */}
+        {/* Edit Profile Details */}
         <TouchableOpacity onPress={handleEditProfileDetails}>
           <Text style={styles.link}>Edit Profile Details</Text>
         </TouchableOpacity>
 
         {/* Logout */}
-        <TouchableOpacity onPress={handleLogout}>
+        <TouchableOpacity
+          onPress={() => {
+            AsyncStorage.removeItem('token');
+            navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+          }}
+        >
           <Text style={styles.logout}>Logout</Text>
         </TouchableOpacity>
       </KeyboardAwareScrollView>
@@ -440,7 +405,7 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
     margin: 5,
-    position: 'relative', // for the delete button
+    position: 'relative',
   },
   photoImage: {
     width: '100%',
@@ -462,25 +427,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: 'bold',
-  },
-  avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    alignSelf: 'center',
-    marginBottom: 20,
-    marginTop: 10,
-  },
-  placeholderAvatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: '#ddd',
-    alignSelf: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-    marginTop: 10,
   },
   link: {
     color: 'blue',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,12 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { API_BASE_URL } from '@env';
+
+const PROFILE_TYPE_LABELS = {
+  uno: '🧍 Uno',
+  duo: '🧑‍🤝‍🧑 Duo',
+  group: '👯 Group',
+};
 
 const EditProfileType = ({ route, navigation }) => {
   const { currentType } = route.params;
@@ -24,7 +30,7 @@ const EditProfileType = ({ route, navigation }) => {
 
     Alert.alert(
       'Confirm Change',
-      `Switching to '${selected}' will remove any existing members/account information. Are you sure?`,
+      `Switching to '${PROFILE_TYPE_LABELS[selected]}' will delete all data for your current profile type. Continue?`,
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -33,20 +39,20 @@ const EditProfileType = ({ route, navigation }) => {
             setSaving(true);
             try {
               const token = await AsyncStorage.getItem('token');
+
               const res = await axios.put(
                 `${API_BASE_URL}/profile-type`,
                 { new_type: selected },
                 { headers: { Authorization: `Bearer ${token}` } }
               );
+
+              // Optional: clear local data if needed
+              await AsyncStorage.removeItem('profile_data');
+
               Alert.alert('Success', 'Profile type updated.');
               navigation.reset({
                 index: 0,
-                routes: [
-                  {
-                    name: 'MainTabs',
-                    params: { screen: 'Profile' }, 
-                  },
-                ],
+                routes: [{ name: 'MainTabs', params: { screen: 'Profile' } }],
               });
             } catch (err) {
               console.error(err);
@@ -79,7 +85,7 @@ const EditProfileType = ({ route, navigation }) => {
               selected === type && styles.selectedText,
             ]}
           >
-            {type.toUpperCase()}
+            {PROFILE_TYPE_LABELS[type]}
           </Text>
         </TouchableOpacity>
       ))}

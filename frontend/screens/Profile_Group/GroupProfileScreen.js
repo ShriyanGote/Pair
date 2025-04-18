@@ -1,169 +1,231 @@
-// Updated GroupProfileScreen.js
-import React, { useEffect, useState, useCallback } from 'react';
+// screens/Profile_Group/GroupProfileScreen.js
+
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   Image,
   ActivityIndicator,
   TouchableOpacity,
+  Alert,
+  StyleSheet,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getCurrentUser } from '../../utils/api';
-import { getGroupMemberPhotos } from '../../utils/api';
+import {
+  getCurrentUser,
+  getGroupMembers,
+  getGroupMemberPhotos,
+  deleteGroupMember,
+} from '../../utils/api';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
-const GroupProfileScreen = () => {
+export default function GroupProfileScreen() {
   const [user, setUser] = useState(null);
+  const [members, setMembers] = useState([]);
+  const [photosMap, setPhotosMap] = useState({});
   const [loading, setLoading] = useState(true);
-  const [memberPhotosMap, setMemberPhotosMap] = useState({});
   const navigation = useNavigation();
 
-  const fetchUser = async () => {
-    const token = await AsyncStorage.getItem('token');
-    if (!token) return;
-    try {
-      const response = await getCurrentUser(token);
-      const userData = response.data;
-      setUser(userData);
-
-      const newMap = {};
-      for (const mem of userData.members || []) {
-        try {
-          const res = await getGroupMemberPhotos(mem.id, token);
-          newMap[mem.id] = res.data;
-        } catch (err) {
-          console.error('Error fetching photos for member', mem.id, err);
-          newMap[mem.id] = [];
-        }
-      }
-      setMemberPhotosMap(newMap);
-    } catch (error) {
-      console.error('Error fetching user:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Refresh on focus
   useFocusEffect(
     useCallback(() => {
-      fetchUser();
+      let isActive = true;
+      setLoading(true);
+
+      (async () => {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) { setLoading(false); return; }
+
+        try {
+          const { data: me } = await getCurrentUser(token);
+          if (!isActive) return;
+          setUser(me);
+
+          if (me.profile_type === 'group') {
+            const { data: list } = await getGroupMembers(token);
+            if (!isActive) return;
+            setMembers(list);
+
+            const map = {};
+            for (const m of list) {
+              try {
+                const { data: pics } = await getGroupMemberPhotos(m.id, token);
+                map[m.id] = pics;
+              } catch {
+                map[m.id] = [];
+              }
+            }
+            if (isActive) setPhotosMap(map);
+          }
+        } catch (err) {
+          console.error('Error loading group profile:', err);
+        } finally {
+          if (isActive) setLoading(false);
+        }
+      })();
+
+      return () => { isActive = false; };
     }, [])
   );
 
-  const handleEditShared = () => navigation.navigate('EditGroupShared', { group: user.group_profile });
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem('token');
-    navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+  // delete member
+  const handleDelete = (id) => {
+    Alert.alert(
+      'Remove Member?',
+      'Are you sure you want to remove this group member?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Remove',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const token = await AsyncStorage.getItem('token');
+              await deleteGroupMember(id, token);
+              setMembers(ms => ms.filter(m => m.id !== id));
+              setPhotosMap(pm => {
+                const { [id]:_, ...rest } = pm;
+                return rest;
+              });
+            } catch (err) {
+              console.error(err);
+              Alert.alert('Error', 'Failed to remove member');
+            }
+          },
+        },
+      ]
+    );
   };
-  const handleEditMember = (member) => navigation.navigate('EditGroupMember', { member });
 
-  if (loading) {
-    return <View style={styles.center}><ActivityIndicator size="large" /></View>;
-  }
-  if (!user) {
-    return <View style={styles.center}><Text>Unable to load profile.</Text></View>;
-  }
-
-  const group = user.group_profile || {};
+  if (loading) return (
+    <View style={styles.center}>
+      <ActivityIndicator size="large" />
+    </View>
+  );
+  if (!user) return (
+    <View style={styles.center}>
+      <Text>Unable to load profile.</Text>
+    </View>
+  );
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {/* Shared Info */}
       <Text style={styles.header}>Group Profile</Text>
-
       <View style={styles.card}>
         <Text style={styles.label}>📍 Location:</Text>
-        <Text style={styles.value}>{group.location || 'N/A'}</Text>
-
+        <Text style={styles.value}>{user.location || 'N/A'}</Text>
         <Text style={styles.label}>🎯 Looking For:</Text>
-        <Text style={styles.value}>{group.looking_for || 'N/A'}</Text>
-
+        <Text style={styles.value}>{user.looking_for || 'N/A'}</Text>
         <Text style={styles.label}>🎨 Interests:</Text>
         <Text style={styles.value}>
-          {typeof group.interests === 'string' ? group.interests : (group.interests || []).join(', ') || 'N/A'}
+          {Array.isArray(user.interests)
+            ? user.interests.join(', ')
+            : user.interests || 'N/A'}
         </Text>
-
-        <TouchableOpacity style={styles.editBtn} onPress={handleEditShared}>
+        <TouchableOpacity
+          style={styles.editBtn}
+          onPress={() => navigation.navigate('EditGroupShared', { user })}
+        >
           <Text style={styles.editText}>Edit Shared Info</Text>
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity onPress={() => navigation.navigate('EditProfileType', { currentType: user.profile_type })}>
-        <Text style={styles.changeTypeButton}>Change Profile Type</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={handleLogout}>
-        <Text style={styles.logout}>Logout</Text>
-      </TouchableOpacity>
-
+      {/* Members */}
       <Text style={styles.subHeader}>Members</Text>
-      {user.members && user.members.length < 6 && (
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() =>
-            navigation.navigate('AddGroupMember', {
-              step: user.members.length + 1,
-              sharedData: group,
-              members: user.members,
-            })
-          }
-        >
-          <Text style={styles.addButtonText}>Add Group Member</Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() =>
+          navigation.navigate('AddGroupMember', {
+            step: members.length + 1,
+            sharedData: {
+              location: user.location,
+              interests: user.interests,
+              looking_for: user.looking_for,
+            },
+            members,
+          })
+        }
+      >
+        <Text style={styles.addButtonText}>Add Member</Text>
+      </TouchableOpacity>
+      {members.length === 0 && (
+        <Text style={styles.noMembers}>No members added yet.</Text>
       )}
 
-      {(user.members || []).map((member) => (
-        <View key={member.id} style={styles.memberCard}>
-          {member.profile_photo ? (
-            <Image source={{ uri: member.profile_photo }} style={styles.photo} />
-          ) : (
-            <View style={styles.photoPlaceholder}><Text style={styles.initials}>{member.name?.[0]}</Text></View>
-          )}
-
-          <View style={{ flex: 1 }}>
-            <Text style={styles.memberName}>{member.name}</Text>
-            <Text>Age: {member.age}</Text>
-            {member.height && <Text>Height: {member.height}"</Text>}
+      {members.map(m => (
+        <View key={m.id} style={styles.memberCard}>
+          <View style={styles.infoContainer}>
+            <Text style={styles.memberName}>{m.name}</Text>
+            <Text>Age: {m.age}</Text>
+            <Text>Gender: {m.gender}</Text>
+            <Text>
+              Ethnicity:{' '}
+              {Array.isArray(m.ethnicity)
+                ? m.ethnicity.join(', ')
+                : m.ethnicity || 'N/A'}
+            </Text>
+            <Text>
+              Personality:{' '}
+              {Array.isArray(m.personality)
+                ? m.personality.join(', ')
+                : m.personality || 'N/A'}
+            </Text>
+            <Text>
+              Occupation:{' '}
+              {Array.isArray(m.occupation)
+                ? m.occupation.join(', ')
+                : m.occupation || 'N/A'}
+            </Text>
           </View>
 
-          {memberPhotosMap[member.id]?.length > 0 && (
+          <View style={styles.actions}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('EditGroupMember', { member: m })}
+            >
+              <Text style={styles.editText}>Edit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleDelete(m.id)}>
+              <Text style={styles.deleteText}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+
+          {photosMap[m.id]?.length > 0 && (
             <View style={styles.miniPhotoGrid}>
-              {memberPhotosMap[member.id].map((pic) => (
-                <Image key={pic.id} source={{ uri: pic.photo_url }} style={styles.miniPhoto} />
+              {photosMap[m.id].map(p => (
+                <Image
+                  key={p.id}
+                  source={{ uri: p.photo_url }}
+                  style={styles.miniPhoto}
+                />
               ))}
             </View>
           )}
-
-          <TouchableOpacity onPress={() => handleEditMember(member)}>
-            <Text style={styles.editText}>Edit</Text>
-          </TouchableOpacity>
         </View>
       ))}
     </ScrollView>
   );
-};
-
-export default GroupProfileScreen;
+}
 
 const styles = StyleSheet.create({
-  container: { padding: 24, backgroundColor: '#f7f7f7', flexGrow: 1 },
-  center:    { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  header:    { fontSize: 26, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
-  card:      { backgroundColor: '#fff', borderRadius: 10, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: '#ddd' },
-  label:     { fontWeight: '600', marginTop: 12 },
-  value:     { marginBottom: 8 },
-  editBtn:   { marginTop: 10 },
-  editText:  { color: '#007AFF', fontSize: 14, fontWeight: '500' },
-  changeTypeButton: { marginTop: 30, alignSelf: 'center', padding: 12, borderRadius: 8, backgroundColor: '#007AFF' },
-  logout:    { color: 'gray', fontSize: 14, textAlign: 'center', marginTop: 20 },
-  subHeader: { fontSize: 20, fontWeight: '600', marginTop: 24, marginBottom: 12 },
-  addButton: { backgroundColor: '#007AFF', padding: 12, borderRadius: 8, alignSelf: 'center', marginBottom: 12, width: '60%' },
-  addButtonText: { color: 'white', textAlign: 'center', fontWeight: '600' },
-  memberCard: { backgroundColor: '#fff', borderRadius: 10, padding: 12, marginBottom: 12, flexDirection: 'row', alignItems: 'center' },
-  photo:     { width: 60, height: 60, borderRadius: 30, marginRight: 16 },
-  photoPlaceholder: { width: 60, height: 60, borderRadius: 30, marginRight: 16, backgroundColor: '#ccc', justifyContent: 'center', alignItems: 'center' },
-  initials:  { fontSize: 24, fontWeight: 'bold', color: '#fff' },
-  memberName: { fontWeight: 'bold', fontSize: 16 },
-  miniPhotoGrid: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 10 },
-  miniPhoto: { width: 60, height: 60, borderRadius: 8, marginRight: 8, marginBottom: 8 },
+  container:       { padding: 24, backgroundColor: '#f7f7f7', flexGrow: 1 },
+  center:          { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  header:          { fontSize: 26, fontWeight: 'bold', textAlign: 'center', marginBottom: 20 },
+  card:            { backgroundColor: '#fff', borderRadius: 10, padding: 16, marginBottom: 20, borderColor:'#ddd', borderWidth:1 },
+  label:           { fontWeight: '600', marginTop: 12 },
+  value:           { marginBottom: 8 },
+  editBtn:         { marginTop: 10 },
+  editText:        { color: '#007AFF', fontSize: 14, fontWeight: '500' },
+  subHeader:       { fontSize: 20, fontWeight: '600', marginTop: 24, marginBottom: 12 },
+  addButton:       { backgroundColor: '#007AFF', padding: 12, borderRadius: 8, alignSelf: 'center', marginBottom: 12, width: '60%' },
+  addButtonText:   { color: 'white', textAlign: 'center', fontWeight: '600' },
+  noMembers:       { color: 'gray', fontStyle: 'italic', textAlign: 'center' },
+  memberCard:      { backgroundColor: '#fff', borderRadius: 10, padding: 12, marginBottom: 12 },
+  infoContainer:   { marginBottom: 10 },
+  memberName:      { fontWeight: 'bold', fontSize: 16 },
+  actions:         { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
+  deleteText:      { color: 'red', fontSize: 14, fontWeight: '500' },
+  miniPhotoGrid:   { flexDirection: 'row', flexWrap: 'wrap' },
+  miniPhoto:       { width: 60, height: 60, borderRadius: 8, marginRight: 8, marginBottom: 8 },
 });

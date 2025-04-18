@@ -1,5 +1,3 @@
-// RegistrationFlow.js
-
 import React, { useState, useContext, useEffect } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity,
@@ -10,6 +8,13 @@ import Slider from '@react-native-community/slider';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useNavigation } from '@react-navigation/native';
 import { RegistrationContext } from '../Auth/RegistrationContext';
+import {
+  ethnicityOptions,
+  interestsOptions,
+  pastActivitiesOptions,
+  personalityOptions,
+  occupationOptions,
+} from '../constants/Dropdowns';
 
 const RegistrationFlow = () => {
   const navigation = useNavigation();
@@ -19,20 +24,27 @@ const RegistrationFlow = () => {
 
   const [formData, setFormData] = useState({
     profileType: '',
-    ethnicity: null,
+    ethnicity: [],
     gender: null,
     interests: [],
     pastActivities: [],
     personality: [],
     socialMediaUse: 5,
-    occupation: '',
-    shared: { bio: '', location: '', lookingFor: '', interests: [], pastActivities: [] },
+    occupation: [],
+    shared: {
+      bio: '',
+      location: '',
+      lookingFor: '',
+      interests: [],
+      pastActivities: []
+    },
   });
 
-  const isUno = formData.profileType === 'uno';
+  const isUno   = formData.profileType === 'uno';
   const isShared = formData.profileType === 'duo' || formData.profileType === 'group';
   const totalSteps = isUno ? 8 : 13;
 
+  // auto-advance when profileType chosen
   useEffect(() => {
     if (formData.profileType) {
       setCurrentStep(2);
@@ -40,16 +52,11 @@ const RegistrationFlow = () => {
     }
   }, [formData.profileType]);
 
-  const handleSelect = (type) => {
-    setFormData((prev) => ({ ...prev, profileType: type }));
-  };
-
-  const handleGoHome = () => {
-    navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
-  };
+  const handleSelect = type =>
+    setFormData(prev => ({ ...prev, profileType: type }));
 
   const handleNext = () => {
-    const skipSteps = {
+    const skip = {
       2: !isUno,
       3: !isUno,
       4: !isUno,
@@ -63,14 +70,14 @@ const RegistrationFlow = () => {
       12: !isShared,
       13: !isShared,
     };
+    let next = currentStep + 1;
+    while (skip[next]) next++;
 
-    let nextStep = currentStep + 1;
-    while (skipSteps[nextStep]) nextStep++;
-
-    if (nextStep <= totalSteps) {
-      setCurrentStep(nextStep);
+    if (next <= totalSteps) {
+      setCurrentStep(next);
     } else {
-      let payload = {
+      // build payload with snake_case keys
+      const payload = {
         profile_type: formData.profileType,
         ethnicity: formData.ethnicity,
         gender: formData.gender,
@@ -79,15 +86,22 @@ const RegistrationFlow = () => {
         personality: formData.personality,
         social_media_use: formData.socialMediaUse,
         occupation: formData.occupation,
-        ...(isShared && formData.shared),
+        ...(isShared && {
+          bio: formData.shared.bio,
+          location: formData.shared.location,
+          looking_for: formData.shared.lookingFor,
+          interests: formData.shared.interests,
+          past_activities: formData.shared.pastActivities,
+        }),
       };
+
       setRegistrationData(formData);
       navigation.navigate('Register', { allFields: payload });
     }
   };
 
   const handleBack = () => {
-    const skipSteps = {
+    const skip = {
       2: !isUno,
       3: !isUno,
       4: !isUno,
@@ -101,383 +115,230 @@ const RegistrationFlow = () => {
       12: !isShared,
       13: !isShared,
     };
-
-    let prevStep = currentStep - 1;
-    while (skipSteps[prevStep] && prevStep > 1) prevStep--;
-    if (prevStep >= 1) setCurrentStep(prevStep);
+    let prev = currentStep - 1;
+    while (skip[prev] && prev > 1) prev--;
+    if (prev >= 1) setCurrentStep(prev);
   };
 
-  const dropdownProps = (fieldKey, items, multiple = false, isSharedField = false) => {
-    const value = isSharedField ? formData.shared[fieldKey] : formData[fieldKey];
+  // helper for all dropdowns
+  const dropdownProps = (key, items, multiple = false, shared = false) => {
+    let value = shared
+      ? formData.shared[key]
+      : formData[key];
+    if (multiple && !Array.isArray(value)) value = [];
+
     return {
-      open: openDropdowns[fieldKey] || false,
+      open: openDropdowns[key] || false,
       value,
       items,
-      setOpen: (open) => setOpenDropdowns((prev) => ({ ...prev, [fieldKey]: open })),
-      setValue: (callback) => {
-        if (isSharedField) {
-          setFormData((prev) => ({
-            ...prev,
-            shared: { ...prev.shared, [fieldKey]: callback(prev.shared[fieldKey]) },
-          }));
-        } else {
-          setFormData((prev) => ({ ...prev, [fieldKey]: callback(prev[fieldKey]) }));
-        }
-      },
       multiple,
       mode: multiple ? 'BADGE' : 'SIMPLE',
-      style: styles.dropdown,
-      dropDownContainerStyle: styles.dropdownContainer,
       listMode: 'MODAL',
       searchable: true,
-      placeholder: `Select ${fieldKey}...`,
+      placeholder: `Select ${key}`,
+      style: styles.dropdown,
+      dropDownContainerStyle: styles.dropdownContainer,
+      setOpen: o => setOpenDropdowns(prev => ({ ...prev, [key]: o })),
+      setValue: cb => {
+        if (shared) {
+          setFormData(prev => ({
+            ...prev,
+            shared: {
+              ...prev.shared,
+              [key]: cb(prev.shared[key])
+            }
+          }));
+        } else {
+          setFormData(prev => ({
+            ...prev,
+            [key]: cb(prev[key])
+          }));
+        }
+      }
     };
   };
 
+  // simple text‑input for shared fields
+  const sharedInput = (key, placeholder) => (
+    <TextInput
+      style={styles.input}
+      placeholder={placeholder}
+      value={formData.shared[key]}
+      onChangeText={text =>
+        setFormData(prev => ({
+          ...prev,
+          shared: { ...prev.shared, [key]: text }
+        }))
+      }
+    />
+  );
+
+  // render each step
   const renderStep = () => {
-    const sharedInput = (key, placeholder) => (
-      <TextInput
-        style={styles.input}
-        value={formData.shared[key]}
-        onChangeText={(text) =>
-          setFormData((prev) => ({ ...prev, shared: { ...prev.shared, [key]: text } }))
-        }
-        placeholder={placeholder}
-      />
-    );
     switch (currentStep) {
       case 1:
         return (
           <View style={styles.contentContainer}>
-            <TouchableOpacity onPress={handleGoHome}>
-              <Text style={styles.link}>Go Home</Text>
-            </TouchableOpacity>
             <Text style={styles.header}>How are you using the app?</Text>
-            {['uno', 'duo', 'group'].map((type, i) => (
+            {['uno','duo','group'].map((t,i) => (
               <TouchableOpacity
-                key={i}
-                style={[styles.card, formData.profileType === type && styles.selectedCard]}
-                onPress={() => handleSelect(type)}
+                key={t}
+                style={[styles.card, formData.profileType===t && styles.selectedCard]}
+                onPress={() => handleSelect(t)}
               >
-                <Text style={styles.emoji}>{['🧍', '🧑‍🤝‍🧑', '👯'][i]}</Text>
-                <Text style={styles.text}>{['Uno (Solo)', 'Duo (Couple)', 'Group (3+ People)'][i]}</Text>
+                <Text style={styles.emoji}>{['🧍','🧑‍🤝‍🧑','👯'][i]}</Text>
+                <Text style={styles.text}>{['Uno','Duo','Group'][i]}</Text>
               </TouchableOpacity>
             ))}
           </View>
         );
 
+      // UNO‑only steps
       case 2:
         return (
           <View style={styles.contentContainer}>
             <Text style={styles.header}>Select Ethnicity</Text>
-            <DropDownPicker
-              {...dropdownProps('ethnicity', [
-                { label: 'Middle Eastern', value: 'middle_eastern' },
-                { label: 'Native American', value: 'native_american' },
-                { label: 'Pacific Islander', value: 'pacific_islander' },
-                { label: 'South Asian', value: 'south_asian' },
-                { label: 'Southeast Asian', value: 'southeast_asian' },
-                { label: 'East Asian', value: 'east_asian' },
-                { label: 'Central Asian', value: 'central_asian' },
-                { label: 'North African', value: 'north_african' },
-                { label: 'Afro-Caribbean', value: 'afro_caribbean' },
-                { label: 'Latinx', value: 'latinx' },
-                { label: 'Multiracial', value: 'multiracial' },
-                { label: 'Prefer Not to Say', value: 'prefer_not_to_say' },
-              ])}
-            />
+            <DropDownPicker {...dropdownProps('ethnicity', ethnicityOptions, true)} />
           </View>
         );
-
       case 3:
         return (
           <View style={styles.contentContainer}>
             <Text style={styles.header}>Select Gender</Text>
-            <DropDownPicker
-              {...dropdownProps('gender', [
-                { label: 'Male', value: 'male' },
-                { label: 'Female', value: 'female' },
-                { label: 'Non-binary', value: 'non-binary' },
-                { label: 'Other', value: 'other' },
-              ])}
-            />
+            <DropDownPicker {...dropdownProps('gender', [
+              { label:'Male',value:'male'},
+              { label:'Female',value:'female'},
+              { label:'Non‑binary',value:'non-binary'},
+              { label:'Other',value:'other'},
+            ])} />
           </View>
         );
-
       case 4:
         return (
           <View style={styles.contentContainer}>
             <Text style={styles.header}>Select Interests</Text>
-            <DropDownPicker
-              {...dropdownProps(
-                'interests',
-                [
-                  { label: 'Movies & TV', value: 'movies_tv' },
-                  { label: 'Gaming', value: 'gaming' },
-                  { label: 'Photography', value: 'photography' },
-                  { label: 'Fashion', value: 'fashion' },
-                  { label: 'Writing', value: 'writing' },
-                  { label: 'Nature', value: 'nature' },
-                  { label: 'Animals', value: 'animals' },
-                  { label: 'Volunteering', value: 'volunteering' },
-                  { label: 'History', value: 'history' },
-                  { label: 'Science', value: 'science' },
-                  { label: 'Cars & Motorcycles', value: 'cars_motorcycles' },
-                  { label: 'Podcasts', value: 'podcasts' },
-                  { label: 'Crafts & DIY', value: 'crafts_diy' },
-                  { label: 'Spirituality', value: 'spirituality' },
-                  { label: 'Board Games', value: 'board_games' },
-                  { label: 'Languages', value: 'languages' },
-                  { label: 'Politics', value: 'politics' },
-                  { label: 'Comedy', value: 'comedy' },
-                  { label: 'Entrepreneurship', value: 'entrepreneurship' },
-                  { label: 'Collecting', value: 'collecting' },
-                ],
-                true  // multiple selection
-              )}
-            />
+            <DropDownPicker {...dropdownProps('interests', interestsOptions, true)} />
           </View>
         );
-
       case 5:
         return (
           <View style={styles.contentContainer}>
             <Text style={styles.header}>Select Past Activities</Text>
-            <DropDownPicker
-              {...dropdownProps(
-                'pastActivities',
-                [
-                  { label: 'Cardio', value: 'Cardio' },
-                  { label: 'Board Games', value: 'Board Games' },
-                  { label: 'Martial Arts', value: 'Martial Arts' },
-                  { label: 'Climbing', value: 'Climbing' },
-                  { label: 'Skating', value: 'Skating' },
-                  { label: 'Winter Sports', value: 'Winter Sports' },
-                  { label: 'Running', value: 'Running' },
-                  { label: 'Cycling', value: 'Cycling' },
-                  { label: 'Yoga', value: 'Yoga' },
-                  { label: 'Pilates', value: 'Pilates' },
-                  { label: 'Hiking', value: 'Hiking' },
-                  { label: 'Fishing', value: 'Fishing' },
-                  { label: 'Camping', value: 'Camping' },
-                  { label: 'Traveling', value: 'Traveling' },
-                  { label: 'DIY Projects', value: 'DIY Projects' },
-                  { label: 'Esports', value: 'Esports' },
-                  { label: 'Parkour', value: 'Parkour' },
-                  { label: 'Archery', value: 'Archery' },
-                  { label: 'Surfing', value: 'Surfing' },
-                  { label: 'Horseback Riding', value: 'Horseback Riding' },
-                ],
-                true  // multiple selection
-              )}
-            />
+            <DropDownPicker {...dropdownProps('pastActivities', pastActivitiesOptions, true)} />
           </View>
         );
-
       case 6:
         return (
           <View style={styles.contentContainer}>
             <Text style={styles.header}>Select Personality</Text>
-            <DropDownPicker
-              {...dropdownProps(
-                'personality',
-                [
-                  { label: 'Curious', value: 'Curious' },
-                  { label: 'Empathetic', value: 'Empathetic' },
-                  { label: 'Adventurous', value: 'Adventurous' },
-                  { label: 'Thoughtful', value: 'Thoughtful' },
-                  { label: 'Creative', value: 'Creative' },
-                  { label: 'Analytical', value: 'Analytical' },
-                  { label: 'Spontaneous', value: 'Spontaneous' },
-                  { label: 'Organized', value: 'Organized' },
-                  { label: 'Playful', value: 'Playful' },
-                  { label: 'Calm', value: 'Calm' },
-                  { label: 'Driven', value: 'Driven' },
-                  { label: 'Loyal', value: 'Loyal' },
-                  { label: 'Independent', value: 'Independent' },
-                  { label: 'Funny', value: 'Funny' },
-                  { label: 'Romantic', value: 'Romantic' },
-                  { label: 'Open-Minded', value: 'Open-Minded' },
-                  { label: 'Optimistic', value: 'Optimistic' },
-                  { label: 'Realistic', value: 'Realistic' },
-                  { label: 'Cautious', value: 'Cautious' },
-                  { label: 'Chill', value: 'Chill' },
-                ],
-                true  // multiple selection
-              )}
-            />
+            <DropDownPicker {...dropdownProps('personality', personalityOptions, true)} />
           </View>
         );
-
       case 7:
         return (
           <View style={styles.contentContainer}>
-            <Text style={styles.header}>Social Media Usage</Text>
-            <Text style={styles.sliderValue}>{formData.socialMediaUse}</Text>
+            <Text style={styles.header}>Social Media Usage: {formData.socialMediaUse}</Text>
             <Slider
               style={styles.slider}
               minimumValue={1}
               maximumValue={10}
               step={1}
               value={formData.socialMediaUse}
-              onValueChange={(value) =>
-                setFormData((prev) => ({ ...prev, socialMediaUse: value }))
-              }
+              onValueChange={v => setFormData(prev => ({ ...prev, socialMediaUse: v }))}
             />
           </View>
         );
-        case 8:
+      case 8:
         return (
           <View style={styles.contentContainer}>
-            <Text style={styles.header}>Input Occupation Field</Text>
-            <DropDownPicker
-              {...dropdownProps(
-                'occupation',
-                [
-                  { label: 'Technology', value: 'technology' },
-                  { label: 'Healthcare & Medicine', value: 'healthcare_medicine' },
-                  { label: 'Education', value: 'education' },
-                  { label: 'Finance & Accounting', value: 'finance_accounting' },
-                  { label: 'Arts & Entertainment', value: 'arts_entertainment' },
-                  { label: 'Engineering', value: 'engineering' },
-                  { label: 'Law & Government', value: 'law_government' },
-                  { label: 'Marketing & Advertising', value: 'marketing_advertising' },
-                  { label: 'Retail & Sales', value: 'retail_sales' },
-                  { label: 'Science & Research', value: 'science_research' },
-                  { label: 'Hospitality & Tourism', value: 'hospitality_tourism' },
-                  { label: 'Construction & Trade', value: 'construction_trade' },
-                  { label: 'Transportation & Logistics', value: 'transportation_logistics' },
-                  { label: 'Non-Profit & Advocacy', value: 'nonprofit_advocacy' },
-                  { label: 'Media & Communication', value: 'media_communication' },
-                  { label: 'Real Estate', value: 'real_estate' },
-                  { label: 'Sports & Recreation', value: 'sports_recreation' },
-                  { label: 'Business & Entrepreneurship', value: 'business_entrepreneurship' },
-                  { label: 'Agriculture & Environment', value: 'agriculture_environment' },
-                  { label: 'Other', value: 'other' },
-                ],
-                true  // multiple selection
-              )}
-            />
+            <Text style={styles.header}>Select Occupation</Text>
+            <DropDownPicker {...dropdownProps('occupation', occupationOptions, true)} />
           </View>
         );
-        case 9:
-          return <View style={styles.contentContainer}><Text style={styles.header}>Shared Bio</Text>{sharedInput('bio', 'Enter bio')}</View>;
-        case 10:
-          return <View style={styles.contentContainer}><Text style={styles.header}>Shared Location</Text>{sharedInput('location', 'Enter location')}</View>;
-        case 11:
-          return <View style={styles.contentContainer}><Text style={styles.header}>Shared Looking For</Text>{sharedInput('lookingFor', 'Enter preference')}</View>;
-        case 12:
-          return (
-            <View style={styles.contentContainer}>
-              <Text style={styles.header}>Shared Interests</Text>
-              <DropDownPicker {...dropdownProps('interests',
-                [
-                  { label: 'Movies & TV', value: 'movies_tv' },
-                  { label: 'Gaming', value: 'gaming' },
-                  { label: 'Photography', value: 'photography' },
-                  { label: 'Fashion', value: 'fashion' },
-                  { label: 'Writing', value: 'writing' },
-                  { label: 'Nature', value: 'nature' },
-                  { label: 'Animals', value: 'animals' },
-                  { label: 'Volunteering', value: 'volunteering' },
-                  { label: 'History', value: 'history' },
-                  { label: 'Science', value: 'science' },
-                  { label: 'Cars & Motorcycles', value: 'cars_motorcycles' },
-                  { label: 'Podcasts', value: 'podcasts' },
-                  { label: 'Crafts & DIY', value: 'crafts_diy' },
-                  { label: 'Spirituality', value: 'spirituality' },
-                  { label: 'Board Games', value: 'board_games' },
-                  { label: 'Languages', value: 'languages' },
-                  { label: 'Politics', value: 'politics' },
-                  { label: 'Comedy', value: 'comedy' },
-                  { label: 'Entrepreneurship', value: 'entrepreneurship' },
-                  { label: 'Collecting', value: 'collecting' },
-                ], true, true)} />
-            </View>
-          );
-        case 13:
-          return (
-            <View style={styles.contentContainer}>
-              <Text style={styles.header}>Shared Past Activities</Text>
-              <DropDownPicker {...dropdownProps('pastActivities',
-                [
-                  { label: 'Cardio', value: 'Cardio' },
-                  { label: 'Board Games', value: 'Board Games' },
-                  { label: 'Martial Arts', value: 'Martial Arts' },
-                  { label: 'Climbing', value: 'Climbing' },
-                  { label: 'Skating', value: 'Skating' },
-                  { label: 'Winter Sports', value: 'Winter Sports' },
-                  { label: 'Running', value: 'Running' },
-                  { label: 'Cycling', value: 'Cycling' },
-                  { label: 'Yoga', value: 'Yoga' },
-                  { label: 'Pilates', value: 'Pilates' },
-                  { label: 'Hiking', value: 'Hiking' },
-                  { label: 'Fishing', value: 'Fishing' },
-                  { label: 'Camping', value: 'Camping' },
-                  { label: 'Traveling', value: 'Traveling' },
-                  { label: 'DIY Projects', value: 'DIY Projects' },
-                  { label: 'Esports', value: 'Esports' },
-                  { label: 'Parkour', value: 'Parkour' },
-                  { label: 'Archery', value: 'Archery' },
-                  { label: 'Surfing', value: 'Surfing' },
-                  { label: 'Horseback Riding', value: 'Horseback Riding' },
-                ], true, true)} />
-            </View>
-          );
 
-        default:
-          return <Text style={styles.text}>Add other steps here...</Text>;
-      }
-    };
-  
-    return (
-      <SafeAreaView style={styles.safeArea}>
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        >
-          <ScrollView
-            style={styles.scrollView}
-            contentContainerStyle={styles.scrollContentContainer}
-            bounces={false}
-          >
-            {renderStep()}
-          </ScrollView>
-  
-          <View style={styles.buttonContainer}>
-            {currentStep > 1 && (
-              <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-                <Text style={styles.buttonText}>Back</Text>
-              </TouchableOpacity>
-            )}
-            <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-              <Text style={styles.buttonText}>Next</Text>
-            </TouchableOpacity>
+      // Shared “duo/group” steps
+      case 9:
+        return (
+          <View style={styles.contentContainer}>
+            <Text style={styles.header}>Shared Bio</Text>
+            {sharedInput('bio','Enter bio')}
           </View>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    );
+        );
+      case 10:
+        return (
+          <View style={styles.contentContainer}>
+            <Text style={styles.header}>Shared Location</Text>
+            {sharedInput('location','Enter location')}
+          </View>
+        );
+      case 11:
+        return (
+          <View style={styles.contentContainer}>
+            <Text style={styles.header}>Looking For</Text>
+            {sharedInput('lookingFor','Enter what you’re looking for')}
+          </View>
+        );
+      case 12:
+        return (
+          <View style={styles.contentContainer}>
+            <Text style={styles.header}>Shared Interests</Text>
+            <DropDownPicker {...dropdownProps('interests', interestsOptions, true, true)} />
+          </View>
+        );
+      case 13:
+        return (
+          <View style={styles.contentContainer}>
+            <Text style={styles.header}>Shared Past Activities</Text>
+            <DropDownPicker {...dropdownProps('pastActivities', pastActivitiesOptions, true, true)} />
+          </View>
+        );
+
+      default:
+        return null;
+    }
   };
-  
-  export default RegistrationFlow;
-  
-  const styles = StyleSheet.create({
-    safeArea: { flex: 1, backgroundColor: '#fff' },
-    scrollView: { flex: 1, backgroundColor: '#fff' },
-    scrollContentContainer: { paddingHorizontal: 20, paddingBottom: 50 },
-    contentContainer: { marginTop: 20 },
-    header: { fontSize: 24, fontWeight: '600', textAlign: 'center', marginBottom: 30 },
-    card: { padding: 20, borderRadius: 10, backgroundColor: '#f2f2f2', marginBottom: 20, alignItems: 'center' },
-    selectedCard: { backgroundColor: '#DB4437' },
-    emoji: { fontSize: 40, marginBottom: 10 },
-    text: { fontSize: 16, fontWeight: '500' },
-    input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 15, fontSize: 16, marginBottom: 20 },
-    link: { color: 'gray', fontSize: 14, textAlign: 'center', marginBottom: 20 },
-    dropdown: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8 },
-    dropdownContainer: { borderWidth: 1, borderColor: '#ddd' },
-    buttonContainer: { flexDirection: 'row', paddingHorizontal: 20, paddingBottom: 30, paddingTop: 10, backgroundColor: '#fff' },
-    backButton: { flex: 1, backgroundColor: '#fff', padding: 15, borderRadius: 8, marginRight: 10, borderWidth: 1, borderColor: '#ddd' },
-    nextButton: { flex: 1, backgroundColor: '#DB4437', padding: 15, borderRadius: 8, marginLeft: 10 },
-    buttonText: { textAlign: 'center', color: '#000', fontSize: 16, fontWeight: '500' },
-  });
-  
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={{ flex: 1 }}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContentContainer}>
+          {renderStep()}
+        </ScrollView>
+        <View style={styles.buttonContainer}>
+          {currentStep > 1 && (
+            <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+              <Text>Back</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+            <Text style={styles.buttonText}>Next</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+};
+
+export default RegistrationFlow;
+
+const styles = StyleSheet.create({
+  safeArea:{ flex:1, backgroundColor:'#fff' },
+  scrollContentContainer:{ padding:20 },
+  contentContainer:{ marginTop:20 },
+  header:{ fontSize:24, fontWeight:'600', textAlign:'center', marginBottom:20 },
+  card:{ padding:20, backgroundColor:'#eee', borderRadius:10, marginBottom:15, alignItems:'center' },
+  selectedCard:{ backgroundColor:'#c33' },
+  emoji:{ fontSize:36, marginBottom:10 },
+  text:{ fontSize:16 },
+  input:{ borderWidth:1, borderColor:'#ddd', borderRadius:6, padding:12, marginBottom:20 },
+  dropdown:{ borderColor:'#ddd', borderRadius:6, marginBottom:20 },
+  dropdownContainer:{ borderColor:'#ddd', borderRadius:6 },
+  slider:{ width:'100%', height:40, marginBottom:20 },
+  buttonContainer:{ flexDirection:'row', padding:20, justifyContent:'space-between' },
+  backButton:{ flex:1, backgroundColor:'#ddd', padding:15, borderRadius:6, marginRight:10 },
+  nextButton:{ flex:1, backgroundColor:'#c33', padding:15, borderRadius:6 },
+  buttonText:{ color:'#fff', textAlign:'center', fontWeight:'600' },
+});
