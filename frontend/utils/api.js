@@ -92,3 +92,11 @@ export const updateGroupMember = (memberId, data, token) =>
     data,
     { headers: { Authorization: `Bearer ${token}` } }
   );
+
+
+// ---------------------------- Requests --------------------------------------------------------------------
+
+export const getIncomingRequests = (token) =>
+  axios.get(`${API_URL}/incoming-requests`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });

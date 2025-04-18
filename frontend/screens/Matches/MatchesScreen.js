@@ -102,9 +102,9 @@ const MatchesScreen = () => {
   return (
     <View style={styles.container}>
       {loading ? (
-        <Text style={styles.empty}>Loading matches...</Text>
+        <Text style={styles.empty}>Loading connections...</Text>
       ) : matches?.length === 0 ? (
-        <Text style={styles.empty}>No matches yet 😢</Text>
+        <Text style={styles.empty}>No connections yet 😢</Text>
       ) : (
         <FlatList
           data={matches}

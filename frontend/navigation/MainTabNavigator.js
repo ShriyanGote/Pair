@@ -4,6 +4,7 @@ import ProfileScreen from '../screens/Profile_Uno/ProfileScreen';
 import ChatScreen from '../screens/Matches/ChatScreen';
 import MatchesScreen from '../screens/Matches/MatchesScreen';
 import SwipeScreen from '../screens/Swipe/SwipeScreen';
+import RequestScreen from '../screens/Request/RequestScreen'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getCurrentUser } from '../utils/api';
 import DuoStack from './DuoStack';
@@ -49,7 +50,8 @@ const MainTabNavigator = () => {
   return (
     <Tab.Navigator>
       <Tab.Screen name="Discover" component={SwipeScreen} options={{ headerShown: true }} />
-      <Tab.Screen name="Matches" component={MatchesScreen} />
+      <Tab.Screen name="Requests" component={RequestScreen} options={{ headerShown: true }} />
+      <Tab.Screen name="Connections" component={MatchesScreen} options={{ headerShown: true }}/>
       <Tab.Screen name="Profile" options={{ headerShown: true }}>
         {renderProfileTab}
       </Tab.Screen>

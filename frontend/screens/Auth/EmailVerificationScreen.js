@@ -78,11 +78,11 @@ const EmailVerificationScreen = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    // fallback option
-    Alert.alert('Redirecting', 'Opening Google login...');
-    Linking.openURL(`${API_BASE_URL}/auth/google/login`);
-  };
+  // const handleGoogleLogin = () => {
+  //   // fallback option
+  //   Alert.alert('Redirecting', 'Opening Google login...');
+  //   Linking.openURL(`${API_BASE_URL}/auth/google/login`);
+  // };
 
   return (
     <View style={styles.container}>
@@ -110,8 +110,8 @@ const EmailVerificationScreen = () => {
             keyboardType="numeric"
           />
           <Button title={loading ? 'Verifying...' : 'Verify'} onPress={verifyCode} disabled={loading} />
-          <Text style={styles.orText}>or</Text>
-          <Button title="Login with Google" onPress={handleGoogleLogin} />
+          {/* <Text style={styles.orText}>or</Text>
+          <Button title="Login with Google" onPress={handleGoogleLogin} /> */}
         </>
       )}
     </View>
