@@ -297,25 +297,61 @@ const clearFilters = () => {
         /* Swiper state */
         <Swiper
           cards={cards}
-          renderCard={(u) => (
-            <View style={styles.card}>
-              <Image
-                source={{
-                  uri: u.profile_photo || 'https://placekitten.com/300/300',
-                }}
-                style={styles.photo}
-              />
-              <Text style={styles.name}>
-                {u.name}
-                {u.age ? `, ${u.age}` : ''}
-              </Text>
-              <Text style={styles.meta}>📍 {u.location}</Text>
-              <Text style={styles.meta}>🎯 {u.looking_for}</Text>
-              <Text style={styles.meta}>
-                🎨 {(u.interests || []).join(', ')}
-              </Text>
-            </View>
-          )}
+          renderCard={(u) => {
+            // 🧠 Flatten all member photos into a single array
+            const allPhotos = Array.isArray(u.photos) && u.photos.length > 0
+              ? u.photos // uno or profile-level photos
+              : u.members?.flatMap((m) => m.photos || []) || [];
+          
+            return (
+              <View style={styles.card}>
+                {/* 🖼️ Scrollable image row at the top */}
+                {allPhotos.length > 0 ? (
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    style={styles.carousel}
+                  >
+                    {allPhotos.map((photoUrl, idx) => (
+                      <Image
+                        key={`photo-${idx}`}
+                        source={{ uri: photoUrl }}
+                        style={styles.carouselImage}
+                      />
+                    ))}
+                  </ScrollView>
+                ) : (
+                  <Image
+                    source={{ uri: u.profile_photo || 'https://placekitten.com/300/300' }}
+                    style={styles.carouselImage}
+                  />
+                )}
+          
+                {/* Name + rest */}
+                <Text style={styles.name}>
+                  {u.name}
+                  {u.age ? `, ${u.age}` : ''}
+                </Text>
+          
+                <View style={styles.infoRow}><Text style={styles.meta}>📍 {u.location || 'Unknown'}</Text></View>
+                <View style={styles.infoRow}><Text style={styles.meta}>🧠 {u.bio || u.shared_bio || 'No bio yet'}</Text></View>
+                <View style={styles.infoRow}><Text style={styles.meta}>🎯 {u.looking_for || 'Not specified'}</Text></View>
+                <View style={styles.infoRow}><Text style={styles.meta}>🎨 {(u.interests || []).join(', ') || 'No interests yet'}</Text></View>
+          
+                {/* Optional: keep member names below */}
+                {u.members && u.members.length > 0 && (
+                  <View style={{ width: '100%', marginTop: 10 }}>
+                    <Text style={styles.memberHeader}>👥 Members</Text>
+                    {u.members.map((m) => (
+                      <Text key={m.id} style={styles.meta}>
+                        • {m.name}{m.age ? `, ${m.age}` : ''}
+                      </Text>
+                    ))}
+                  </View>
+                )}
+              </View>
+            );
+          }}
           onSwipedLeft={(i) => handleSwipe(i, 'left')}
           onSwipedRight={(i) => handleSwipe(i, 'right')}
           stackSize={3}
@@ -338,18 +374,8 @@ const styles = StyleSheet.create({
   container:        { flex: 1, backgroundColor: '#fff' },
   center:           { flex: 1, justifyContent: 'center', alignItems: 'center' },
   noMore:           { fontSize: 18, color: 'black' },
-  card:             {
-                      flex: 0.7,
-                      borderRadius: 10,
-                      borderWidth: 1,
-                      borderColor: '#e8e8e8',
-                      backgroundColor: '#f9f9f9',
-                      padding: 20,
-                      alignItems: 'center',
-                    },
+
   photo:            { width: 250, height: 250, borderRadius: 12, marginBottom: 20 },
-  name:             { fontSize: 22, fontWeight: 'bold', marginBottom: 6 },
-  meta:             { fontSize: 14, color: 'gray', marginBottom: 4, textAlign: 'center' },
 
   modalOverlay:     { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center' },
   modalContent:     { margin: 20, backgroundColor: '#fff', borderRadius: 10, padding: 16, maxHeight: '80%' },
@@ -364,4 +390,57 @@ const styles = StyleSheet.create({
   clearText:        { color: 'red' },
   applyBtn:         { backgroundColor: '#B76EFF', padding: 10, borderRadius: 6 },
   applyText:        { color: '#fff' },
+
+  card: {
+    flex: 0.75,
+    backgroundColor: '#fdf9ff',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  
+  carousel: {
+    width: '100%',
+    marginBottom: 20,
+  },
+  
+  carouselImage: {
+    width: 260,
+    height: 260,
+    marginRight: 12,
+    borderRadius: 16,
+    borderColor: '#ddd',
+    borderWidth: 1,
+  },
+  
+  name: {
+    fontSize: 22,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 10,
+  },
+  
+  infoRow: {
+    width: '100%',
+    marginBottom: 6,
+  },
+  
+  meta: {
+    fontSize: 15,
+    color: '#555',
+    textAlign: 'left',
+  },
+  memberHeader: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#6c2bb9',
+    marginTop: 10,
+    marginBottom: 4,
+  },
 });

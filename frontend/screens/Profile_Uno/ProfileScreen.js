@@ -45,9 +45,6 @@ const ProfileScreen = () => {
     { label: 'Non-binary', value: 'Non-binary' },
   ]);
 
-  // height dropdown
-  const [heightOpen, setHeightOpen] = useState(false);
-  const [heightItems, setHeightItems] = useState([]);
 
   // profile‐type dropdown (if you ever allow inline change)
   const [profileTypeOpen, setProfileTypeOpen] = useState(false);
@@ -141,27 +138,43 @@ const ProfileScreen = () => {
     }
   };
 
-  // 6) Save UNO profile edits
   const handleSave = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
+  
+      // Update uno_profile fields
       await axios.post(
         `${API_URL}/uno-profile`,
         {
           age: userInfo.age,
           gender: userInfo.gender,
           bio: userInfo.bio,
+          location: userInfo.location,   // <-- add this
+          name: userInfo.name, 
           occupation: userInfo.occupation || [],
           ethnicity: userInfo.ethnicity || [],
           personality: userInfo.personality || [],
           past_activities: userInfo.past_activities || [],
           social_media_use: userInfo.social_media_use,
+          interests: userInfo.interests || [],
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+  
+      // Update base user table (name and location)
+      await axios.put(
+        `${API_URL}/users/${userInfo.id}`,
+        {
+          name: userInfo.name,
+          location: userInfo.location,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
       Alert.alert('Success', 'Profile updated!');
       setEditing(false);
-    } catch {
+    } catch (error) {
+      console.error(error);
       Alert.alert('Error', 'Could not update profile.');
     }
   };
@@ -196,17 +209,8 @@ const ProfileScreen = () => {
     });
   };
 
-  // on mount: load user & build height options
   useEffect(() => {
     fetchUser();
-    const opts = [];
-    for (let ft = 4; ft <= 7; ft++) {
-      for (let inch = 0; inch < 12; inch++) {
-        const val = (ft + inch / 12).toFixed(2);
-        if (val >= 4.5 && val <= 7.0) opts.push({ label: `${ft}'${inch}"`, value: parseFloat(val) });
-      }
-    }
-    setHeightItems(opts);
   }, []);
 
   // update a single field
@@ -309,20 +313,6 @@ const ProfileScreen = () => {
           />
         )}
 
-        {/* Height */}
-        <DropDownPicker
-          zIndex={3000}
-          open={heightOpen}
-          setOpen={setHeightOpen}
-          items={heightItems}
-          setItems={setHeightItems}
-          value={userInfo.height}
-          setValue={(cb) => handleChange('height', cb())}
-          disabled={!editing}
-          placeholder="Select Height"
-          style={styles.dropdown}
-          dropDownContainerStyle={styles.dropdownContainer}
-        />
 
         {/* Bio */}
         <TextInput

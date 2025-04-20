@@ -60,10 +60,22 @@ export const deleteDuoMember = (memberId, token) =>
 export const getDuoMemberPhotos = (memberId, token) =>
   axios.get(`${API_URL}/duo-members/${memberId}/photos`, { headers: { Authorization: `Bearer ${token}` } });
 
-export const uploadDuoMemberPhoto = (memberId, formData, token) =>
-  axios.post(`${API_URL}/duo-members/${memberId}/photos`, formData, {
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' },
+export const uploadDuoMemberPhoto = async (memberId, file, token) => {
+  const formData = new FormData();
+  formData.append('file', {
+    uri: file.uri,
+    name: file.name || 'photo.jpg',
+    type: file.type || 'image/jpeg',
   });
+
+  return await fetch(`${API_URL}/duo-members/${memberId}/photos`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  }).then(res => res.json());
+};
 
 export const deleteDuoMemberPhoto = (memberId, photoId, token) =>
   axios.delete(`${API_URL}/duo-members/${memberId}/photos/${photoId}`, { headers: { Authorization: `Bearer ${token}` } });
