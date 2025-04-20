@@ -115,6 +115,8 @@ def read_me(
                     "age": uno.age,
                     "gender": uno.gender,
                     "bio": uno.bio,
+                    "location": uno.location,            # ✅ add this
+                    "name": current_user.name, 
                     "occupation": uno.occupation or [],
                     "ethnicity": uno.ethnicity or [],
                     "personality": uno.personality or [],
@@ -172,7 +174,7 @@ def update_user_profile(
         raise HTTPException(404, "User not found")
 
     # Always allow these
-    for attr in ("name", "email", "profile_photo"):
+    for attr in ("name", "email", "profile_photo", "location"):
         val = getattr(data, attr)
         if val is not None:
             setattr(user, attr, val)

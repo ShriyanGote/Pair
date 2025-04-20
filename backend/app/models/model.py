@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, func, UniqueConstraint, ForeignKey
 from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, joinedload
 
 from pydantic import BaseModel, EmailStr, validator
 from app.db.database import Base
@@ -51,6 +51,7 @@ class User(Base):
     verification_code: Mapped[Optional[str]] = mapped_column(nullable=True)
     uno_profile = relationship("UnoProfile", back_populates="user", uselist=False)
     group_members = relationship("GroupMember", back_populates="group")
+    user_photos = relationship("UserPhoto", back_populates="user", cascade="all, delete")
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -103,7 +104,10 @@ class UserPhoto(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     photo_url = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    user = relationship("User", backref="user_photos")
+    user = relationship("User", back_populates="user_photos")
+
+# You can now use joinedload(User.user_photos) in your /recommendations query to fetch all photo URLs
+
 
 
 
@@ -123,6 +127,7 @@ class GroupMember(Base):
     group = relationship("User", back_populates="group_members")
     photos = relationship("GroupMemberPhoto", back_populates="group_member", cascade="all, delete")
     group_profile = relationship("GroupProfile", back_populates="members")
+    
 class GroupMemberInput(BaseModel):
     name:        str
     age:         int

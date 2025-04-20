@@ -5,11 +5,14 @@ from sqlalchemy import and_, or_
 from app.models.model import (
     Swipe, Match, User,
     UnoProfile, DuoProfile, DuoMember,
-    GroupProfile, GroupMember,
+    GroupProfile, GroupMember, DuoMemberPhoto, 
+    GroupMemberPhoto
 )
 from app.db.database import SessionLocal
 from app.core.auth import decode_access_token
 import logging
+from sqlalchemy.orm import joinedload
+
 
 logger = logging.getLogger("uvicorn.info")
 router = APIRouter()
@@ -115,6 +118,7 @@ def swipe(
 
 
 # ─────────────────────── recommendations ────────────────────
+
 @router.get("/recommendations")
 def get_recommendations(
     current_user: User = Depends(get_current_user),
@@ -142,6 +146,10 @@ def get_recommendations(
     # 3️⃣  base query: not me, not swiped, not matched
     recs = (
         db.query(User)
+        .options(
+            joinedload(User.user_photos),     # 🆕 eager-load photos
+            joinedload(User.uno_profile),     # 🆕 eager-load Uno profile
+        )
         .filter(
             User.id != current_user.id,
             ~User.id.in_(swiped_subq),
@@ -155,11 +163,13 @@ def get_recommendations(
     # 4️⃣  build response
     results = []
     for u in recs:
+        photos = [p.photo_url for p in u.user_photos] if u.user_photos else []
         base = {
             "id":            u.id,
             "name":          u.name,
             "profile_type":  u.profile_type,
             "profile_photo": first_photo(u),
+            "photos":        photos,               # 🆕 all uploaded profile photos
             "location":      None,
             "gender":        None,
             "bio":           None,
@@ -181,8 +191,24 @@ def get_recommendations(
                     }
                 )
                 members = db.query(DuoMember).filter_by(duo_id=duo.id).all()
+                duo_member_photos = {
+                    p.duo_member_id: [] for p in db.query(DuoMemberPhoto).filter(
+                        DuoMemberPhoto.duo_member_id.in_([m.id for m in members])
+                    )
+                }
+                for p in db.query(DuoMemberPhoto).filter(
+                    DuoMemberPhoto.duo_member_id.in_(duo_member_photos.keys())
+                ):
+                    duo_member_photos[p.duo_member_id].append(p.photo_url)
+
                 base["members"] = [
-                    {"id": m.id, "name": m.name, "age": m.age} for m in members
+                    {
+                        "id": m.id,
+                        "name": m.name,
+                        "age": m.age,
+                        "photos": duo_member_photos.get(m.id, []),  # ✅ photos here
+                    }
+                    for m in members
                 ]
 
         elif u.profile_type == "group":
@@ -196,24 +222,34 @@ def get_recommendations(
                     }
                 )
                 members = db.query(GroupMember).filter_by(group_id=u.id).all()
+
+                # Fetch all photos for these members
+                member_ids = [m.id for m in members]
+                photo_map = {m.id: [] for m in members}
+                for p in db.query(GroupMemberPhoto).filter(GroupMemberPhoto.group_member_id.in_(member_ids)):
+                    photo_map[p.group_member_id].append(p.photo_url)
+
+                # Add members with photo list
                 base["members"] = [
                     {
-                        "id":            m.id,
-                        "name":          m.name,
-                        "age":           m.age,
-                        "profile_photo": getattr(m, "profile_photo", None),
+                        "id":    m.id,
+                        "name":  m.name,
+                        "age":   m.age,
+                        "photos": photo_map.get(m.id, []),
                     }
                     for m in members
                 ]
 
         elif u.profile_type == "uno":
-            uno = db.query(UnoProfile).filter_by(user_id=u.id).first()
+            uno = u.uno_profile  # 🆕 fetched via joinedload
             if uno:
                 base.update(
                     {
                         "bio":       uno.bio,
                         "age":       uno.age,
                         "gender":    uno.gender,
+                        "location":  uno.location,   # 🆕 location added
+                        "ethnicity": uno.ethnicity or [],
                         "interests": uno.interests or [],
                     }
                 )
@@ -228,6 +264,7 @@ def get_recommendations(
 def get_matches(
     current_user: User = Depends(get_current_user), db: Session = Depends(get_db)
 ):
+    print("GET /matches hit by user:", current_user.id)
     match_rows = db.query(Match).filter(
         or_(Match.user1_id == current_user.id, Match.user2_id == current_user.id)
     ).all()

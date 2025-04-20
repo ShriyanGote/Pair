@@ -37,6 +37,8 @@ def create_or_update_uno_profile(
     age: Optional[int] = Body(None),
     gender: Optional[str] = Body(None),
     bio: Optional[str] = Body(None),
+    location: Optional[str] = Body(None),          # <-- add this
+    name: Optional[str] = Body(None),
     occupation: Optional[List[str]] = Body(None),
     ethnicity: Optional[List[str]] = Body(None),
     personality: Optional[List[str]] = Body(None),
@@ -54,6 +56,7 @@ def create_or_update_uno_profile(
         profile.age = age
         profile.gender = gender
         profile.bio = bio
+        profile.location = location 
         profile.occupation = occupation
         profile.ethnicity = ethnicity
         profile.personality = personality
@@ -70,6 +73,7 @@ def create_or_update_uno_profile(
             personality=personality,
             past_activities=past_activities,
             social_media_use=social_media_use,
+            location=location
         )
         db.add(profile)
 
@@ -83,6 +87,7 @@ def create_or_update_uno_profile(
             "age": profile.age,
             "gender": profile.gender,
             "bio": profile.bio,
+            "location": profile.location,
             "occupation": profile.occupation or [],
             "ethnicity": profile.ethnicity or [],
             "personality": profile.personality or [],
