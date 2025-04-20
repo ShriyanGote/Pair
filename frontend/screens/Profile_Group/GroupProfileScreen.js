@@ -16,9 +16,10 @@ import {
   getCurrentUser,
   getGroupMembers,
   getGroupMemberPhotos,
-  deleteGroupMember,
+  uploadGroupMemberPhoto,
 } from '../../utils/api';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 
 export default function GroupProfileScreen() {
   const [user, setUser] = useState(null);
@@ -68,6 +69,37 @@ export default function GroupProfileScreen() {
       return () => { isActive = false; };
     }, [])
   );
+
+
+  const handleAddPhoto = async (memberId) => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 0.7,
+    });
+  
+    if (!result.canceled) {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const file = {
+          uri: result.assets[0].uri,
+          name: 'photo.jpg',
+          type: 'image/jpeg',
+        };
+        const response = await uploadGroupMemberPhoto(memberId, file, token);
+  
+        if (response.photo_url) {
+          setPhotosMap((pm) => ({
+            ...pm,
+            [memberId]: [...(pm[memberId] || []), response],
+          }));
+        }
+      } catch (err) {
+        console.error(err);
+        Alert.alert('Error', 'Failed to upload photo');
+      }
+    }
+  };
 
   // delete member
   const handleDelete = (id) => {
@@ -214,16 +246,20 @@ export default function GroupProfileScreen() {
           </View>
 
           {photosMap[m.id]?.length > 0 && (
-            <View style={styles.miniPhotoGrid}>
-              {photosMap[m.id].map(p => (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>
+              {photosMap[m.id].map((p, idx) => (
                 <Image
-                  key={p.id}
+                  key={`${m.id}-photo-${idx}`}
                   source={{ uri: p.photo_url }}
-                  style={styles.miniPhoto}
+                  style={styles.carouselPhoto}
                 />
               ))}
-            </View>
+            </ScrollView>
           )}
+
+          <TouchableOpacity onPress={() => handleAddPhoto(m.id)} style={{ marginTop: 6 }}>
+            <Text style={styles.editText}>Add Photo</Text>
+          </TouchableOpacity>
         </View>
       ))}
     </ScrollView>
@@ -253,4 +289,5 @@ const styles = StyleSheet.create({
   deleteText:         { color: 'red', fontSize: 14, fontWeight: '500' },
   miniPhotoGrid:      { flexDirection: 'row', flexWrap: 'wrap' },
   miniPhoto:          { width: 60, height: 60, borderRadius: 8, marginRight: 8, marginBottom: 8 },
+  carouselPhoto:      { width: 80, height: 80, borderRadius: 10, marginRight: 10, borderWidth: 1, borderColor: '#ccc',}
 });

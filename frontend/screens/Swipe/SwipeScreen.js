@@ -371,76 +371,27 @@ const clearFilters = () => {
 }
 
 const styles = StyleSheet.create({
-  container:        { flex: 1, backgroundColor: '#fff' },
-  center:           { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  noMore:           { fontSize: 18, color: 'black' },
-
-  photo:            { width: 250, height: 250, borderRadius: 12, marginBottom: 20 },
-
-  modalOverlay:     { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center' },
-  modalContent:     { margin: 20, backgroundColor: '#fff', borderRadius: 10, padding: 16, maxHeight: '80%' },
-  filterHeader:     { fontSize: 20, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' },
-  label:            { fontWeight: '600', marginBottom: 4 },
-  input:            { backgroundColor: '#f2f2f2', padding: 8, borderRadius: 6, marginBottom: 12 },
-  dropdown:         { marginBottom: 12, borderColor: '#ccc' },
-  dropdownContainer:{ borderColor: '#ccc' },
-
-  modalButtons:     { flexDirection: 'row', justifyContent: 'space-between', marginTop: 12 },
-  clearBtn:         { padding: 10 },
-  clearText:        { color: 'red' },
-  applyBtn:         { backgroundColor: '#B76EFF', padding: 10, borderRadius: 6 },
-  applyText:        { color: '#fff' },
-
-  card: {
-    flex: 0.75,
-    backgroundColor: '#fdf9ff',
-    borderRadius: 20,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  
-  carousel: {
-    width: '100%',
-    marginBottom: 20,
-  },
-  
-  carouselImage: {
-    width: 260,
-    height: 260,
-    marginRight: 12,
-    borderRadius: 16,
-    borderColor: '#ddd',
-    borderWidth: 1,
-  },
-  
-  name: {
-    fontSize: 22,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 10,
-  },
-  
-  infoRow: {
-    width: '100%',
-    marginBottom: 6,
-  },
-  
-  meta: {
-    fontSize: 15,
-    color: '#555',
-    textAlign: 'left',
-  },
-  memberHeader: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#6c2bb9',
-    marginTop: 10,
-    marginBottom: 4,
-  },
+  container: { flex: 1, backgroundColor: '#fff' },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  noMore: { fontSize: 18, color: 'black' },
+  photo: { width: 250, height: 250, borderRadius: 12, marginBottom: 20 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center' },
+  modalContent: { margin: 20, backgroundColor: '#fff', borderRadius: 10, padding: 16, maxHeight: '80%' },
+  filterHeader: { fontSize: 20, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' },
+  label: { fontWeight: '600', marginBottom: 4 },
+  input: { backgroundColor: '#f2f2f2', padding: 8, borderRadius: 6, marginBottom: 12 },
+  dropdown: { marginBottom: 12, borderColor: '#ccc' },
+  dropdownContainer: { borderColor: '#ccc' },
+  modalButtons: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 12 },
+  clearBtn: { padding: 10 },
+  clearText: { color: 'red' },
+  applyBtn: { backgroundColor: '#B76EFF', padding: 10, borderRadius: 6 },
+  applyText: { color: '#fff' },
+  card: { flex: 0.75, backgroundColor: '#fdf9ff', borderRadius: 20, padding: 20, alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.1, shadowOffset: { width: 0, height: 4 }, shadowRadius: 6, elevation: 4 },
+  carousel: { width: '100%', marginBottom: 20 },
+  carouselImage: { width: 260, height: 260, marginRight: 12, borderRadius: 16, borderColor: '#ddd', borderWidth: 1, flexShrink: 0, },
+  name: { fontSize: 22, fontWeight: '600', color: '#333', marginBottom: 10 },
+  infoRow: { width: '100%', marginBottom: 6 },
+  meta: { fontSize: 15, color: '#555', textAlign: 'left' },
+  memberHeader: { fontSize: 16, fontWeight: '600', color: '#6c2bb9', marginTop: 10, marginBottom: 4 },
 });

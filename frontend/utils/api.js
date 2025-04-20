@@ -47,6 +47,26 @@ export const deleteUserPhotoByUrl = (userId, photoUrl, token) =>
     params: { photo_url: photoUrl },
   });
 
+
+export const uploadGroupMemberPhoto = async (memberId, file, token) => {
+  const formData = new FormData();
+  formData.append('file', {
+    uri: file.uri,
+    name: file.name || 'photo.jpg',
+    type: file.type || 'image/jpeg',
+  });
+
+  const res = await fetch(`${API_URL}/group-members/${memberId}/photos`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  return await res.json();
+};
+
 //--------------------- Duo Member endpoints ---------------------
 export const getDuoMembers = (token) =>
   axios.get(`${API_URL}/duo-members`, { headers: { Authorization: `Bearer ${token}` } });
