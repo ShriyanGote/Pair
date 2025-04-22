@@ -118,18 +118,22 @@ export default function SwipeScreen({ navigation }) {
     loadRecommendations();
   }, []);
 
-  // swipe handler
   const handleSwipe = async (idx, dir) => {
     const user = cards[idx];
     try {
       const token = await AsyncStorage.getItem('token');
       await sendSwipe(user.id, dir, token);
+  
       if (dir === 'right') {
         const m = await getMatches(token);
         if (m.data.find((x) => x.id === user.id)) {
           Alert.alert('🎉 It is a match!', `You matched with ${user.name}`);
+          
+          // 🚨 Force reload of Matches tab when user switches tabs
+          navigation.setParams({ refreshMatches: true });
         }
       }
+  
       setCards((cs) => cs.filter((_, i) => i !== idx));
     } catch {
       Alert.alert('Error', 'Swipe failed.');

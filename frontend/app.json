@@ -8,6 +8,7 @@
     "platforms": ["ios", "android"],
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
+    "web": { "bundler": "metro" },
     "splash": {
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"

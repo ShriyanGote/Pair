@@ -55,6 +55,8 @@ export default function RequestScreen({ navigation }) {
         const m = await getMatches(token);
         if (m.data.find((x) => x.id === userId)) {
           Alert.alert('🎉 It’s a match!', 'Say hi!');
+      
+          navigation.navigate('Connections', { refresh: true });
         }
       }
     } catch {

@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
+  deleteGroupMember,
+  deleteGroupMemberPhoto,
   getCurrentUser,
   getGroupMembers,
   getGroupMemberPhotos,
@@ -248,11 +250,43 @@ export default function GroupProfileScreen() {
           {photosMap[m.id]?.length > 0 && (
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>
               {photosMap[m.id].map((p, idx) => (
-                <Image
-                  key={`${m.id}-photo-${idx}`}
-                  source={{ uri: p.photo_url }}
-                  style={styles.carouselPhoto}
-                />
+                <View key={`${m.id}-photo-${idx}`} style={{ position: 'relative', marginRight: 10 }}>
+                  <Image
+                    source={{ uri: p.photo_url }}
+                    style={styles.carouselPhoto}
+                  />
+                  <TouchableOpacity
+                    style={styles.deleteButton}
+                    onPress={() => {
+                      Alert.alert(
+                        'Delete Photo?',
+                        'Are you sure you want to delete this photo?',
+                        [
+                          { text: 'Cancel', style: 'cancel' },
+                          {
+                            text: 'Delete',
+                            style: 'destructive',
+                            onPress: async () => {
+                              try {
+                                const token = await AsyncStorage.getItem('token');
+                                await deleteGroupMemberPhoto(m.id, p.id, token);
+                                setPhotosMap((prev) => ({
+                                  ...prev,
+                                  [m.id]: prev[m.id].filter((x) => x.id !== p.id),
+                                }));
+                              } catch (err) {
+                                console.error(err);
+                                Alert.alert('Error', 'Could not delete photo.');
+                              }
+                            },
+                          },
+                        ]
+                      );
+                    }}
+                  >
+                    <Text style={styles.deleteX}>✕</Text>
+                  </TouchableOpacity>
+                </View>
               ))}
             </ScrollView>
           )}
@@ -289,5 +323,7 @@ const styles = StyleSheet.create({
   deleteText:         { color: 'red', fontSize: 14, fontWeight: '500' },
   miniPhotoGrid:      { flexDirection: 'row', flexWrap: 'wrap' },
   miniPhoto:          { width: 60, height: 60, borderRadius: 8, marginRight: 8, marginBottom: 8 },
-  carouselPhoto:      { width: 80, height: 80, borderRadius: 10, marginRight: 10, borderWidth: 1, borderColor: '#ccc',}
+  carouselPhoto:      { width: 80, height: 80, borderRadius: 10, marginRight: 10, borderWidth: 1, borderColor: '#ccc',},
+  deleteButton: { position: 'absolute', top: 0, right: 0, backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: 12, padding: 2, zIndex: 1 },
+  deleteX: { color: 'white', fontSize: 12 }
 });

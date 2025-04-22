@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getMatches, deleteMatch, getCurrentUser } from '../../utils/api'; 
 import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
+
+
 
 const MatchesScreen = () => {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState(null);
   const navigation = useNavigation();
+  const route = useRoute();
 
   const loadMatches = async () => {
     try {
@@ -42,7 +46,16 @@ const MatchesScreen = () => {
     loadData();
   }, []);
 
+  
 
+  useFocusEffect(
+    useCallback(() => {
+      if (route.params?.refreshMatches) {
+        loadMatches(); // reload matches
+        navigation.setParams({ refreshMatches: false }); // reset flag
+      }
+    }, [route.params?.refreshMatches])
+  );
   
   const handleUnmatch = (userId, name) => {
     Alert.alert(

@@ -17,6 +17,7 @@ import {
   getDuoMemberPhotos,
   deleteDuoMember,
   uploadDuoMemberPhoto,
+  deleteDuoMemberPhoto,
 } from '../../utils/api';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
@@ -222,14 +223,29 @@ export default function DuoProfileScreen() {
 
           {photosMap[m.id]?.length > 0 && (
             <View style={styles.miniPhotoGrid}>
-              {photosMap[m.id].map((p, idx) => (
-                <Image
-                  key={p.id || p.photo_url || idx} // ✅ Safe fallback
-                  source={{ uri: p.photo_url }}
-                  style={styles.miniPhoto}
-                />
-              ))}
-            </View>
+            {photosMap[m.id].map((p, idx) => (
+              <View key={p.id || p.photo_url || idx} style={{ position: 'relative' }}>
+                <Image source={{ uri: p.photo_url }} style={styles.miniPhoto} />
+                <TouchableOpacity
+                  style={styles.deleteButton}
+                  onPress={async () => {
+                    const token = await AsyncStorage.getItem('token');
+                    try {
+                      await deleteDuoMemberPhoto(m.id, p.id, token);
+                      setPhotosMap((pm) => ({
+                        ...pm,
+                        [m.id]: pm[m.id].filter((x) => x.id !== p.id)
+                      }));
+                    } catch {
+                      Alert.alert('Error', 'Could not delete photo.');
+                    }
+                  }}
+                >
+                  <Text style={styles.deleteX}>✕</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
           )}
 
           <TouchableOpacity onPress={() => handleAddPhoto(m.id)}>
@@ -242,115 +258,26 @@ export default function DuoProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 24,
-    backgroundColor: '#fdf9ff',
-    flexGrow: 1,
-  },
-  center: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  header: {
-    fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 20,
-    textAlign: 'center',
-    color: '#B76EFF',
-  },
-  subHeader: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginTop: 24,
-    marginBottom: 12,
-    color: '#6C3FB5',
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#e0d6f9',
-  },
-  label: {
-    fontWeight: '600',
-    marginTop: 12,
-    color: '#444',
-  },
-  value: {
-    marginBottom: 8,
-    color: '#555',
-  },
-  editBtn: {
-    marginTop: 12,
-    alignSelf: 'flex-start',
-  },
-  editText: {
-    color: '#B76EFF',
-    fontWeight: '600',
-    fontSize: 14,
-  },
-  secondaryAction: {
-    alignSelf: 'center',
-    marginTop: 12,
-  },
-  secondaryText: {
-    color: '#6C3FB5',
-    fontWeight: '600',
-  },
-  logout: {
-    color: 'gray',
-    fontSize: 14,
-    textAlign: 'center',
-    marginTop: 24,
-  },
-  addButton: {
-    backgroundColor: '#B76EFF',
-    padding: 14,
-    borderRadius: 10,
-    alignSelf: 'center',
-    marginBottom: 16,
-    width: '70%',
-  },
-  addButtonText: {
-    color: 'white',
-    textAlign: 'center',
-    fontWeight: '600',
-  },
-  noMembers: {
-    color: '#888',
-    fontStyle: 'italic',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  memberCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#eee',
-  },
-  infoContainer: {
-    marginBottom: 12,
-  },
-  memberName: {
-    fontWeight: '700',
-    fontSize: 16,
-    marginBottom: 6,
-  },
-  miniPhotoGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 8,
-  },
-  miniPhoto: {
-    width: 60,
-    height: 60,
-    borderRadius: 10,
-    marginRight: 8,
-    marginBottom: 8,
-  },
+  container: { padding: 24, backgroundColor: '#fdf9ff', flexGrow: 1 },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  header: { fontSize: 28, fontWeight: '700', marginBottom: 20, textAlign: 'center', color: '#B76EFF' },
+  subHeader: { fontSize: 20, fontWeight: '600', marginTop: 24, marginBottom: 12, color: '#6C3FB5' },
+  card: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: '#e0d6f9' },
+  label: { fontWeight: '600', marginTop: 12, color: '#444' },
+  value: { marginBottom: 8, color: '#555' },
+  editBtn: { marginTop: 12, alignSelf: 'flex-start' },
+  editText: { color: '#B76EFF', fontWeight: '600', fontSize: 14 },
+  secondaryAction: { alignSelf: 'center', marginTop: 12 },
+  secondaryText: { color: '#6C3FB5', fontWeight: '600' },
+  logout: { color: 'gray', fontSize: 14, textAlign: 'center', marginTop: 24 },
+  addButton: { backgroundColor: '#B76EFF', padding: 14, borderRadius: 10, alignSelf: 'center', marginBottom: 16, width: '70%' },
+  addButtonText: { color: 'white', textAlign: 'center', fontWeight: '600' },
+  noMembers: { color: '#888', fontStyle: 'italic', textAlign: 'center', marginBottom: 16 },
+  memberCard: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: '#eee' },
+  infoContainer: { marginBottom: 12 },
+  memberName: { fontWeight: '700', fontSize: 16, marginBottom: 6 },
+  miniPhotoGrid: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 },
+  miniPhoto: { width: 60, height: 60, borderRadius: 10, marginRight: 8, marginBottom: 8 },
+  deleteButton: { position: 'absolute', top: 0, right: 0, backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: 12, padding: 2, zIndex: 1 },
+  deleteX: { color: 'white', fontSize: 12 }
 });

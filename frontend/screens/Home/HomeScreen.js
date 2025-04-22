@@ -33,7 +33,7 @@ const HomeScreen = ({ navigation }) => {
         style={styles.buttonSecondary}
         onPress={() => navigation.navigate('EmailLogin')}
       >
-        <Text style={styles.buttonText}>Sign in</Text>
+        <Text style={styles.buttonText}>Sign in with Email</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
