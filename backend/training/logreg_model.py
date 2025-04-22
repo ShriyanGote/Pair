@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score, accuracy_score
 
-from Pair.backend.training.help_functions import extract_features, jaccard_similarity, process_text, aggregate_group_profiles, get_group_profile
+from help_functions import extract_features, jaccard_similarity, process_text, aggregate_group_profiles, get_group_profile
 
 # ---------------------------
 # 1. Load Data and Create User IDs

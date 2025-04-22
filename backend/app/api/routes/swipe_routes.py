@@ -13,20 +13,14 @@ from app.core.auth import decode_access_token
 import logging
 from sqlalchemy.orm import joinedload
 
-
 logger = logging.getLogger("uvicorn.info")
 router = APIRouter()
 
 # ───────────────────────── helpers ──────────────────────────
 def first_photo(user) -> str | None:
-    """
-    Return the URL of the user's *first* uploaded photo, or None if none exist.
-    Works even if user.user_photos relationship is missing / empty.
-    """
     if hasattr(user, "user_photos") and user.user_photos:
         return user.user_photos[0].photo_url
     return None
-
 
 # ───────────────────────── deps  ────────────────────────────
 def get_db():
@@ -35,7 +29,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
 
 def get_current_user(
     authorization: str = Header(...),
@@ -52,7 +45,6 @@ def get_current_user(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
-
 
 # ───────────────────────── swipe  ───────────────────────────
 @router.post("/swipe")
@@ -116,9 +108,7 @@ def swipe(
 
     return {"message": "Swipe recorded"}
 
-
 # ─────────────────────── recommendations ────────────────────
-
 @router.get("/recommendations")
 def get_recommendations(
     current_user: User = Depends(get_current_user),
@@ -126,14 +116,12 @@ def get_recommendations(
     skip: int = Query(0),
     limit: int = Query(30),
 ):
-    # 1️⃣  users I have swiped on already (any direction)
     swiped_subq = (
         db.query(Swipe.swipee_id)
         .filter(Swipe.swiper_id == current_user.id)
         .subquery()
     )
 
-    # 2️⃣  users I’m already matched with
     match_rows = db.query(Match).filter(
         or_(Match.user1_id == current_user.id,
             Match.user2_id == current_user.id)
@@ -143,24 +131,31 @@ def get_recommendations(
         for m in match_rows
     }
 
-    # 3️⃣  base query: not me, not swiped, not matched
+    incoming_right_swipes = {
+        uid
+        for uid, in db.query(Swipe.swiper_id)
+        .filter_by(swipee_id=current_user.id, direction="right")
+        .all()
+    }
+
+    exclude_ids = matched_ids | incoming_right_swipes
+
     recs = (
         db.query(User)
         .options(
-            joinedload(User.user_photos),     # 🆕 eager-load photos
-            joinedload(User.uno_profile),     # 🆕 eager-load Uno profile
+            joinedload(User.user_photos),
+            joinedload(User.uno_profile),
         )
         .filter(
             User.id != current_user.id,
             ~User.id.in_(swiped_subq),
-            ~User.id.in_(matched_ids),
+            ~User.id.in_(exclude_ids),
         )
         .offset(skip)
         .limit(limit)
         .all()
     )
 
-    # 4️⃣  build response
     results = []
     for u in recs:
         photos = [p.photo_url for p in u.user_photos] if u.user_photos else []
@@ -169,7 +164,7 @@ def get_recommendations(
             "name":          u.name,
             "profile_type":  u.profile_type,
             "profile_photo": first_photo(u),
-            "photos":        photos,               # 🆕 all uploaded profile photos
+            "photos":        photos,
             "location":      None,
             "gender":        None,
             "bio":           None,
@@ -206,7 +201,7 @@ def get_recommendations(
                         "id": m.id,
                         "name": m.name,
                         "age": m.age,
-                        "photos": duo_member_photos.get(m.id, []),  # ✅ photos here
+                        "photos": duo_member_photos.get(m.id, []),
                     }
                     for m in members
                 ]
@@ -222,14 +217,10 @@ def get_recommendations(
                     }
                 )
                 members = db.query(GroupMember).filter_by(group_id=u.id).all()
-
-                # Fetch all photos for these members
                 member_ids = [m.id for m in members]
                 photo_map = {m.id: [] for m in members}
                 for p in db.query(GroupMemberPhoto).filter(GroupMemberPhoto.group_member_id.in_(member_ids)):
                     photo_map[p.group_member_id].append(p.photo_url)
-
-                # Add members with photo list
                 base["members"] = [
                     {
                         "id":    m.id,
@@ -241,14 +232,14 @@ def get_recommendations(
                 ]
 
         elif u.profile_type == "uno":
-            uno = u.uno_profile  # 🆕 fetched via joinedload
+            uno = u.uno_profile
             if uno:
                 base.update(
                     {
                         "bio":       uno.bio,
                         "age":       uno.age,
                         "gender":    uno.gender,
-                        "location":  uno.location,   # 🆕 location added
+                        "location":  uno.location,
                         "ethnicity": uno.ethnicity or [],
                         "interests": uno.interests or [],
                     }
@@ -257,7 +248,6 @@ def get_recommendations(
         results.append(base)
 
     return results
-
 
 # ───────────────────────── matches ──────────────────────────
 @router.get("/matches")
