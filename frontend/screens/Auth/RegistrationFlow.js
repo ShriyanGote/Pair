@@ -44,6 +44,12 @@ const RegistrationFlow = () => {
   const isShared = formData.profileType === 'duo' || formData.profileType === 'group';
   const totalSteps = isUno ? 8 : 13;
 
+  const handleGoHome = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Home', params: { registered: true } }],
+    });
+  };
   useEffect(() => {
     if (formData.profileType) {
       setCurrentStep(2);
@@ -193,6 +199,9 @@ const RegistrationFlow = () => {
               <Text style={styles.backText}>Back</Text>
             </TouchableOpacity>
           )}
+          <TouchableOpacity style={styles.nextButton} onPress={handleGoHome}>
+            <Text style={styles.buttonText}>Home</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
             <Text style={styles.buttonText}>Next</Text>
           </TouchableOpacity>
@@ -217,9 +226,16 @@ const styles = StyleSheet.create({
   dropdown: { borderColor: '#d4c2f5', borderRadius: 6, marginBottom: 20 },
   dropdownContainer: { borderColor: '#d4c2f5', borderRadius: 6 },
   slider: { width: '100%', height: 40, marginBottom: 20 },
-  buttonContainer: { flexDirection: 'row', padding: 20, justifyContent: 'space-between' },
+  buttonContainer: { flexDirection: 'row', padding: 20, justifyContent: 'space-between'},
+  nextButton: { flex: 1, backgroundColor: '#7e5bef', padding: 15,  borderRadius: 6, marginLeft: 10},
+  homeButton: {
+    flex: 1,
+    backgroundColor: '#7e5bef',
+    padding: 15,
+    borderRadius: 6,
+    marginRight: 10, 
+  },
   backButton: { flex: 1, backgroundColor: '#eee', padding: 15, borderRadius: 6, marginRight: 10 },
   backText: { textAlign: 'center', fontWeight: '600', color: '#6f4cc7' },
-  nextButton: { flex: 1, backgroundColor: '#7e5bef', padding: 15, borderRadius: 6 },
   buttonText: { color: '#fff', textAlign: 'center', fontWeight: '600' },
 });

@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, Alert, StyleSheet } from 'react-native';
+import { View, TextInput, Button, Text, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { navigationRef } from '../../navigation/navigationRef';
 import { API_BASE_URL } from '@env';
+import { useNavigation } from '@react-navigation/native';
+
 
 const EmailVerificationScreen = () => {
+  const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [step, setStep] = useState('email');
@@ -12,6 +15,13 @@ const EmailVerificationScreen = () => {
 
   const isValidEmail = (value) => {
     return /\S+@\S+\.\S+/.test(value);
+  };
+
+  const handleGoHome = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Home', params: { registered: true } }],
+    });
   };
 
   const requestCode = async () => {
@@ -114,21 +124,27 @@ const EmailVerificationScreen = () => {
           <Button title="Login with Google" onPress={handleGoogleLogin} /> */}
         </>
       )}
+      <Button style={styles.normalText} title={'Go Home'} onPress={handleGoHome} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, justifyContent: 'center' },
+  container: { flex: 1, padding: 20, justifyContent: 'center', backgroundColor: '#F7F3FF',},
   label: { fontSize: 16, marginBottom: 8 },
   input: {
     borderWidth: 1,
-    borderColor: '#B76EFF',
+    borderColor: 'black',
     borderRadius: 8,
     padding: 10,
     marginBottom: 16,
   },
   orText: {
+    textAlign: 'center',
+    marginVertical: 10,
+    color: '#888',
+  },
+  normalText: {
     textAlign: 'center',
     marginVertical: 10,
     color: '#888',

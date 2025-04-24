@@ -26,7 +26,7 @@ const HomeScreen = ({ navigation }) => {
         style={styles.buttonPrimary}
         onPress={() => navigation.navigate('RegistrationFlow')}
       >
-        <Text style={styles.buttonText}>Create account</Text>
+        <Text style={styles.buttonText}>Create Account</Text>
       </TouchableOpacity>
 
       <TouchableOpacity

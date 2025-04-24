@@ -1,17 +1,22 @@
+// screens/ChatScreen.js
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  SafeAreaView,
   View,
   TextInput,
-  Button,
   FlatList,
   Text,
   StyleSheet,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { API_BASE_URL } from '@env';
 
-const ChatScreen = ({ route }) => {
+export default function ChatScreen({ route }) {
   const { userId, matchId, matchName } = route.params;
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -19,131 +24,179 @@ const ChatScreen = ({ route }) => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    const fetchMessages = async () => {
-      const res = await fetch(`${API_BASE_URL}/messages/${userId}/${matchId}`);
+    // fetch history
+    (async () => {
+      const token = await AsyncStorage.getItem('token');
+      const res = await fetch(
+        `${API_BASE_URL}/messages/${userId}/${matchId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       const data = await res.json();
       setMessages(data);
+    })();
+
+    // open WS
+    const host = API_BASE_URL.replace(/^https?:\/\//, '');
+    socket.current = new WebSocket(`ws://${host}/ws/chat/${userId}`);
+    socket.current.onmessage = evt => {
+      const incoming = JSON.parse(evt.data);
+      setMessages(prev => [...prev, incoming]);
     };
-
-    fetchMessages();
-
-    // Open WebSocket
-    const baseUrlNoProtocol = API_BASE_URL.replace(/^http(s)?:\/\//, '');
-    socket.current = new WebSocket(`ws://${baseUrlNoProtocol}/ws/chat/${userId}`);
-
-    // Listen for messages
-    socket.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      setMessages((prev) => [...prev, data]);
-    };
-
-    // Clean up
-    return () => {
-      if (socket.current) {
-        socket.current.close();
-      }
-    };
-  }, []);
+    return () => socket.current?.close();
+  }, [userId, matchId]);
 
   const sendMessage = () => {
-    if (socket.current && input.trim()) {
-      const message = input.trim();
+    if (!input.trim()) return;
+    socket.current.send(
+      JSON.stringify({ to: matchId, message: input.trim() })
+    );
+    setInput('');
+  };
 
-      // Send JSON to server (the server will store it and echo it back)
-      socket.current.send(JSON.stringify({ to: matchId, message }));
-
-      // Clear local input
-      setInput('');
-      // NOTE: Do NOT append to messages here 
-      // to avoid double-pushing the same message.
-    }
+  const renderItem = ({ item }) => {
+    const isMe = item.from === userId;
+    return (
+      <View
+        style={[
+          styles.bubble,
+          isMe ? styles.bubbleOut : styles.bubbleIn,
+        ]}
+      >
+        <Text
+          style={[
+            styles.bubbleText,
+            isMe && styles.bubbleTextOut,
+          ]}
+        >
+          {item.message}
+        </Text>
+      </View>
+    );
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
+    <SafeAreaView style={styles.safe}>
+      {/* — Header — */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backBtn}>← Back</Text>
+          <Ionicons
+            name="chevron-back"
+            size={24}
+            color="#6C3FB5"
+          />
         </TouchableOpacity>
-        <Text style={styles.matchName}>{String(matchName || 'Connection')}</Text>
-        <View style={{ width: 60 }} />
+        <Text style={styles.title}>{matchName}</Text>
+        <View style={{ width: 24 }} />
       </View>
 
-      {/* Messages */}
+      {/* — Chat messages — */}
       <FlatList
         data={messages}
-        keyExtractor={(_, index) => index.toString()}
-        renderItem={({ item }) => (
-          <Text
-            style={[
-              styles.message,
-              item.from === userId ? styles.outgoing : styles.incoming,
-            ]}
+        keyExtractor={(_, i) => i.toString()}
+        renderItem={renderItem}
+        contentContainerStyle={styles.chatList}
+      />
+
+      {/* — Input row (keyboard aware) — */}
+      <KeyboardAvoidingView
+        style={styles.avoider}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      >
+        <View style={styles.inputRow}>
+          <TextInput
+            style={styles.input}
+            value={input}
+            onChangeText={setInput}
+            placeholder="Type a message..."
+            placeholderTextColor="#999"
+          />
+          <TouchableOpacity
+            onPress={sendMessage}
+            style={styles.sendBtn}
           >
-            {`${item.from === userId ? 'You' : String(matchName)}: ${String(
-              item.message
-            )}`}
-          </Text>
-        )}
-        contentContainerStyle={{ paddingBottom: 10 }}
-      />
-
-      {/* Input */}
-      <TextInput
-        value={input}
-        onChangeText={setInput}
-        placeholder="Type a message..."
-        style={styles.input}
-      />
-      <Button title="Send" onPress={sendMessage} />
-    </View>
+            <Ionicons name="send" size={20} color="#fff" />
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
-};
-
-export default ChatScreen;
+}
 
 const styles = StyleSheet.create({
-  container: {
+  safe: {
     flex: 1,
-    padding: 20,
-    paddingTop: 50,
-    backgroundColor: '#fdf9ff',
+    backgroundColor: '#f7f7f7',
   },
   header: {
+    height: 56,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
-    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    borderBottomColor: '#eee',
+    borderBottomWidth: 1,
+    backgroundColor: '#fff',
   },
-  backBtn: {
-    fontSize: 16,
-    color: '#007AFF',
-  },
-  matchName: {
+  title: {
+    flex: 1,
+    textAlign: 'center',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    color: '#333',
   },
-  message: {
+  chatList: {
+    padding: 16,
+    flexGrow: 1,
+  },
+  bubble: {
+    maxWidth: '75%',
     padding: 10,
-    marginVertical: 4,
-    borderRadius: 10,
-    maxWidth: '80%',
+    marginVertical: 6,
+    borderRadius: 16,
   },
-  incoming: {
-    backgroundColor: '#eee',
+  bubbleIn: {
+    backgroundColor: '#fff',
     alignSelf: 'flex-start',
+    borderTopLeftRadius: 0,
   },
-  outgoing: {
-    backgroundColor: '#007AFF',
-    color: 'white',
+  bubbleOut: {
+    backgroundColor: '#6C3FB5',
     alignSelf: 'flex-end',
+    borderTopRightRadius: 0,
+  },
+  bubbleText: {
+    color: '#333',
+    fontSize: 15,
+  },
+  bubbleTextOut: {
+    color: '#fff',
+  },
+  avoider: {
+    width: '100%',
+  },
+  inputRow: {
+    flexDirection: 'row',
+    padding: 12,
+    borderTopColor: '#eee',
+    borderTopWidth: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
   },
   input: {
-    borderColor: 'gray',
-    borderWidth: 1,
-    padding: 10,
-    marginTop: 10,
-    borderRadius: 5,
+    flex: 1,
+    backgroundColor: '#f0f0f0',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    fontSize: 16,
+    marginRight: 8,
+  },
+  sendBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#6C3FB5',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

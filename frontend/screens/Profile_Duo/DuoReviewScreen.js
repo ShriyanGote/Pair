@@ -14,7 +14,7 @@ import {
   getDuoMembers,
   getDuoMemberPhotos,
 } from '../../utils/api';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation, useFocusEffect, CommonActions } from '@react-navigation/native';
 
 export default function DuoProfileScreen() {
   const [user, setUser] = useState(null);
@@ -118,11 +118,12 @@ export default function DuoProfileScreen() {
       >
         <Text style={styles.changeTypeButton}>Change Profile Type</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={async () => {
-        await AsyncStorage.removeItem('token');
-        navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
-      }}>
-        <Text style={styles.logout}>Logout</Text>
+        <TouchableOpacity
+          onPress={() => {
+            AsyncStorage.removeItem('token');
+            navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+          }}
+        > <Text style={styles.logout}>Logout</Text>
       </TouchableOpacity>
 
       {/* Members */}

@@ -93,11 +93,14 @@ export default function EditDuoMember({ route, navigation }) {
 
     try {
       const token = await AsyncStorage.getItem('token');
-      const up = await uploadDuoMemberPhoto(member.id, formData, token);
-      setPhotos(p => [
-        ...p,
-        { id: up.data.photo_id, photo_url: up.data.photo_url },
-      ]);
+      const res = await uploadDuoMemberPhoto(member.id, formData, token);
+      // normalize whatever shape the helper returns
+      const payload = res.data != null ? res.data : res;
+      const newPhoto = {
+        id:   payload.photo_id   ?? payload.id,
+        photo_url: payload.photo_url ?? payload.photoUrl,
+      };
+      setPhotos(p => [...p, newPhoto]);
     } catch (err) {
       console.error(err);
       Alert.alert('Error', 'Upload failed');

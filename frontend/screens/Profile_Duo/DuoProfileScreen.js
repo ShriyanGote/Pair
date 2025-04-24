@@ -1,15 +1,18 @@
-import React, { useState, useCallback } from 'react';
+// screens/Profile_Duo/DuoProfileScreen.js
+
+import React, { useState, useCallback, useLayoutEffect } from 'react';
 import {
   View,
   Text,
   ScrollView,
   Image,
-  ActivityIndicator,
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import {
   getCurrentUser,
@@ -28,72 +31,98 @@ export default function DuoProfileScreen() {
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: 'Edit Profile',
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerBtn}>
+          <Ionicons name="arrow-back" size={24} color="#333" />
+        </TouchableOpacity>
+      ),
+      headerRight: () => (
+        <TouchableOpacity onPress={() => {/* TODO: save handler */}} style={styles.headerBtn}>
+          <Text style={styles.saveText}>Save</Text>
+        </TouchableOpacity>
+      ),
+      headerStyle: { backgroundColor: '#fff', shadowOpacity: 0 },
+      headerTitleStyle: { fontSize: 18, fontWeight: '600', color: '#333' },
+    });
+  }, [navigation]);
+
   useFocusEffect(
     useCallback(() => {
-      let isActive = true;
-      async function fetchAll() {
+      let active = true;
+      (async () => {
         setLoading(true);
         const token = await AsyncStorage.getItem('token');
-        if (!token) {
-          setLoading(false);
-          return;
-        }
+        if (!token) return setLoading(false);
         try {
           const { data: me } = await getCurrentUser(token);
-          if (!isActive) return;
+          if (!active) return;
           setUser(me);
 
-          if (me.profile_type === 'duo') {
-            const { data: duoList } = await getDuoMembers(token);
-            if (!isActive) return;
-            setMembers(duoList);
+          const { data: list } = await getDuoMembers(token);
+          if (!active) return;
+          setMembers(list);
 
-            const newMap = {};
-            for (const m of duoList) {
-              try {
-                const { data: pics } = await getDuoMemberPhotos(m.id, token);
-                newMap[m.id] = pics;
-              } catch {
-                newMap[m.id] = [];
-              }
+          const map = {};
+          for (let m of list) {
+            try {
+              const { data: pics } = await getDuoMemberPhotos(m.id, token);
+              map[m.id] = pics;
+            } catch {
+              map[m.id] = [];
             }
-            if (isActive) setPhotosMap(newMap);
           }
+          if (active) setPhotosMap(map);
         } catch (err) {
-          console.error('Error loading duo profile:', err);
+          console.error(err);
         } finally {
-          if (isActive) setLoading(false);
+          active && setLoading(false);
         }
-      }
-      fetchAll();
-      return () => {
-        isActive = false;
-      };
+      })();
+      return () => { active = false; };
     }, [])
   );
 
-  const handleDelete = (memberId) => {
-    Alert.alert('Remove Member?', 'Are you sure you want to remove this duo member?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Remove',
-        style: 'destructive',
-        onPress: async () => {
-          try {
+  if (loading) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator size="large" color="#B76EFF" />
+      </View>
+    );
+  }
+
+  if (!user) {
+    return (
+      <View style={styles.loading}>
+        <Text>Unable to load profile.</Text>
+      </View>
+    );
+  }
+
+    // delete member
+  const handleDeleteMember = (id) => {
+    Alert.alert(
+      'Remove Member?',
+      'Are you sure you want to delete this member?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
             const token = await AsyncStorage.getItem('token');
-            await deleteDuoMember(memberId, token);
-            setMembers(ms => ms.filter(m => m.id !== memberId));
+            await deleteDuoMember(id, token);
+            setMembers(ms => ms.filter(m => m.id !== id));
             setPhotosMap(pm => {
-              const { [memberId]: _, ...rest } = pm;
+              const { [id]:_, ...rest } = pm;
               return rest;
             });
-          } catch (err) {
-            console.error(err);
-            Alert.alert('Error', 'Failed to remove member');
-          }
+          },
         },
-      },
-    ]);
+      ]
+    );
   };
 
   const handleAddPhoto = async (memberId) => {
@@ -111,14 +140,14 @@ export default function DuoProfileScreen() {
           name: 'photo.jpg',
           type: 'image/jpeg',
         };
-        const response = await uploadDuoMemberPhoto(memberId, file, token);
+      const res = await uploadDuoMemberPhoto(memberId, file, token);
+      const newPhoto = res.data;
 
-        if (response.photo_url) {
-          setPhotosMap((pm) => ({
-            ...pm,
-            [memberId]: [...(pm[memberId] || []), response],
-          }));
-        }
+      // add it into our map
+      setPhotosMap((pm) => ({
+        ...pm,
+        [memberId]: [...(pm[memberId] || []), newPhoto],
+      }));
       } catch (e) {
         Alert.alert('Upload failed', 'Could not upload photo.');
         console.error(e);
@@ -126,158 +155,225 @@ export default function DuoProfileScreen() {
     }
   };
 
-  if (loading) {
-    return (
-      <View style={styles.center}><ActivityIndicator size="large" /></View>
-    );
-  }
-
-  if (!user) {
-    return (
-      <View style={styles.center}><Text>Unable to load profile.</Text></View>
-    );
-  }
-
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Profile</Text>
-      <View style={styles.card}>
-        <Text style={styles.label}>📍 Location:</Text>
-        <Text style={styles.value}>{user.location || 'N/A'}</Text>
-
-        <Text style={styles.label}>🎯 Looking For:</Text>
-        <Text style={styles.value}>{user.looking_for || 'N/A'}</Text>
-
-        <Text style={styles.label}>🎨 Interests:</Text>
-        <Text style={styles.value}>
-          {Array.isArray(user.interests)
-            ? user.interests.join(', ')
-            : user.interests || 'N/A'}
-        </Text>
+    <ScrollView style={styles.container}>
+      {/* — Settings & Change Type Row — */}
+      <View style={styles.topActionsRow}>
+        <TouchableOpacity
+          style={styles.actionBtn}
+          onPress={() => { /* TODO: settings */ }}
+        >
+          <Ionicons name="settings-outline" size={24} color="#6C3FB5" />
+          <Text style={styles.actionText}>Settings</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.editBtn}
-          onPress={() => navigation.push('EditDuoShared', { user })}
+          style={styles.actionBtn}
+          onPress={() => navigation.push('EditProfileType', { currentType: user.profile_type })}
         >
-          <Text style={styles.editText}>Edit Shared Info</Text>
+          <Ionicons name="swap-horizontal-outline" size={24} color="#6C3FB5" />
+          <Text style={styles.actionText}>Change Type</Text>
+        </TouchableOpacity>
+      </View>
+      {/* — Group Photo */}
+      <View style={styles.photoSection}>
+        <Image
+          source={{ uri: user.profile_photo || 'https://placekitten.com/200/200' }}
+          style={styles.groupPhoto}
+        />
+        <Text style={styles.profileType}>Duo</Text>
+        <TouchableOpacity style={styles.pillButton} onPress={handleAddPhoto}>
+          <Text style={styles.pillText}>Upload New Group Photo</Text>
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity
-        style={styles.secondaryAction}
-        onPress={() => navigation.push('EditProfileType', { currentType: user.profile_type })}
-      >
-        <Text style={styles.secondaryText}>Change Profile Type</Text>
-      </TouchableOpacity>
+      {/* — Shared Info */}
+      <View style={styles.card}>
+        <View style={styles.rowHeader}>
+          <Text style={styles.cardTitle}>Shared Info</Text>
+          <TouchableOpacity onPress={() => navigation.push('EditDuoShared',{user})}>
+            <Ionicons name="pencil-outline" size={20} color="#6C3FB5" />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Location</Text>
+          <Text style={styles.infoValue}>{user.location || '—'}</Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Looking For</Text>
+          <Text style={styles.infoValue}>{user.looking_for || '—'}</Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Past Activities</Text>
+          <Text style={styles.infoValue}>{(user.past_activities||[]).join(', ') || '—'}</Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Interests</Text>
+          <Text style={styles.infoValue}>{(user.interests||[]).join(', ') || '—'}</Text>
+        </View>
+      </View>
 
+      
+
+      {/* — Members */}
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Members</Text>
+        {members.map(m => (
+          <View key={m.id} style={styles.memberRow}>
+            <Image source={{ uri: m.profile_photo||'https://placekitten.com/100' }}
+                   style={styles.memberAvatar} />
+            <Text style={styles.memberName}>{m.name}</Text>
+            <TouchableOpacity onPress={() => navigation.push('EditDuoMember',{member:m})} style={{ marginRight: 15 }}>
+              <Text style={styles.editSmall}>Edit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={()=>handleDeleteMember(m.id)}>
+              <Ionicons name="trash-outline" size={20} color="red" />
+            </TouchableOpacity>
+          </View>
+        ))}
+
+        {/* only if less than 2 */}
+        {members.length < 2 && (
+          <TouchableOpacity
+            style={styles.pillButton}
+            onPress={() => navigation.push('AddDuoMember',{
+              step: members.length+1,
+              sharedData:{location:user.location,interests:user.interests,looking_for:user.looking_for},
+              member1: members[0]||{}
+            })}
+          >
+            <Ionicons name="person-add-outline" size={16} color="#6C3FB5" style={{marginRight:4}}/>
+            <Text style={styles.pillText}>Add Member</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {/* — Logout Button — */}
       <TouchableOpacity
-        style={styles.secondaryAction}
+        style={styles.logoutButton}
         onPress={async () => {
           await AsyncStorage.removeItem('token');
           navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
         }}
       >
-        <Text style={styles.logout}>Logout</Text>
+        <Ionicons name="log-out-outline" size={24} color="red" />
+        <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
-
-      <Text style={styles.subHeader}>Members</Text>
-
-      {members.length < 2 && (
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => navigation.push('AddDuoMember', {
-            step: members.length + 1,
-            sharedData: {
-              location: user.location,
-              interests: user.interests,
-              looking_for: user.looking_for,
-            },
-            member1: members[0] || {},
-            _timestamp: Date.now(),
-          })}
-        >
-          <Text style={styles.addButtonText}>
-            {members.length === 1 ? 'Add Second Member' : 'Add Member'}
-          </Text>
-        </TouchableOpacity>
-      )}
-
-      {members.length === 0 && (
-        <Text style={styles.noMembers}>No members added yet.</Text>
-      )}
-
-      {members.map((m) => (
-        <View key={m.id} style={styles.memberCard}>
-          <View style={styles.infoContainer}>
-            <Text style={styles.memberName}>{m.name}</Text>
-            <Text>Age: {m.age}</Text>
-            <Text>Gender: {m.gender}</Text>
-            <Text>Ethnicity: {Array.isArray(m.ethnicity) ? m.ethnicity.join(', ') : m.ethnicity || 'N/A'}</Text>
-            <Text>Personality: {Array.isArray(m.personality) ? m.personality.join(', ') : m.personality || 'N/A'}</Text>
-            <Text>Occupation: {Array.isArray(m.occupation) ? m.occupation.join(', ') : m.occupation || 'N/A'}</Text>
-          </View>
-
-          <TouchableOpacity onPress={() => navigation.push('EditDuoMember', { member: m })}>
-            <Text style={styles.editText}>Edit</Text>
-          </TouchableOpacity>
-
-          {photosMap[m.id]?.length > 0 && (
-            <View style={styles.miniPhotoGrid}>
-            {photosMap[m.id].map((p, idx) => (
-              <View key={p.id || p.photo_url || idx} style={{ position: 'relative' }}>
-                <Image source={{ uri: p.photo_url }} style={styles.miniPhoto} />
-                <TouchableOpacity
-                  style={styles.deleteButton}
-                  onPress={async () => {
-                    const token = await AsyncStorage.getItem('token');
-                    try {
-                      await deleteDuoMemberPhoto(m.id, p.id, token);
-                      setPhotosMap((pm) => ({
-                        ...pm,
-                        [m.id]: pm[m.id].filter((x) => x.id !== p.id)
-                      }));
-                    } catch {
-                      Alert.alert('Error', 'Could not delete photo.');
-                    }
-                  }}
-                >
-                  <Text style={styles.deleteX}>✕</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
-          )}
-
-          <TouchableOpacity onPress={() => handleAddPhoto(m.id)}>
-            <Text style={styles.editText}>Add Photo</Text>
-          </TouchableOpacity>
-        </View>
-      ))}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 24, backgroundColor: '#fdf9ff', flexGrow: 1 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  header: { fontSize: 28, fontWeight: '700', marginBottom: 20, textAlign: 'center', color: '#B76EFF' },
-  subHeader: { fontSize: 20, fontWeight: '600', marginTop: 24, marginBottom: 12, color: '#6C3FB5' },
-  card: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: '#e0d6f9' },
-  label: { fontWeight: '600', marginTop: 12, color: '#444' },
-  value: { marginBottom: 8, color: '#555' },
-  editBtn: { marginTop: 12, alignSelf: 'flex-start' },
-  editText: { color: '#B76EFF', fontWeight: '600', fontSize: 14 },
-  secondaryAction: { alignSelf: 'center', marginTop: 12 },
-  secondaryText: { color: '#6C3FB5', fontWeight: '600' },
-  logout: { color: 'gray', fontSize: 14, textAlign: 'center', marginTop: 24 },
-  addButton: { backgroundColor: '#B76EFF', padding: 14, borderRadius: 10, alignSelf: 'center', marginBottom: 16, width: '70%' },
-  addButtonText: { color: 'white', textAlign: 'center', fontWeight: '600' },
-  noMembers: { color: '#888', fontStyle: 'italic', textAlign: 'center', marginBottom: 16 },
-  memberCard: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: '#eee' },
-  infoContainer: { marginBottom: 12 },
-  memberName: { fontWeight: '700', fontSize: 16, marginBottom: 6 },
-  miniPhotoGrid: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 },
-  miniPhoto: { width: 60, height: 60, borderRadius: 10, marginRight: 8, marginBottom: 8 },
-  deleteButton: { position: 'absolute', top: 0, right: 0, backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: 12, padding: 2, zIndex: 1 },
-  deleteX: { color: 'white', fontSize: 12 }
+  container:       { flex: 1, backgroundColor: '#F7F7F7' },
+  headerBtn:       { paddingHorizontal: 16 },
+  saveText:        { color: '#B76EFF', fontWeight: '600', fontSize: 16 },
+
+  loading:         { flex: 1, justifyContent: 'center', alignItems: 'center' },
+
+  photoSection:    {
+    backgroundColor: '#fff',
+    alignItems:      'center',
+    paddingVertical: 24,
+    marginBottom:    12,
+    shadowColor:     '#000',
+    shadowOpacity:   0.05,
+    shadowOffset:    { width: 0, height: 2 },
+    shadowRadius:    4,
+    elevation:       2,
+  },
+  groupPhoto:      { width: 100, height: 100, borderRadius: 50, marginBottom: 12 },
+  profileType:     { fontSize: 20, fontWeight: '600', color: '#333', marginBottom: 8 },
+
+  pillButton:      {
+    flexDirection:   'row',
+    alignItems:      'center',
+    backgroundColor: '#F0F0F5',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius:    20,
+  },
+  pillText:        { color: '#6C3FB5', fontWeight: '600', fontSize: 14 },
+
+  card:            {
+    backgroundColor: '#fff',
+    marginHorizontal: 16,
+    borderRadius:    12,
+    padding:         16,
+    marginBottom:    12,
+    shadowColor:     '#000',
+    shadowOpacity:   0.05,
+    shadowOffset:    { width: 0, height: 2 },
+    shadowRadius:    4,
+    elevation:       2,
+  },
+  rowHeader:       {
+    flexDirection:  'row', 
+    justifyContent: 'space-between', 
+    alignItems:     'center', 
+    marginBottom:   12,
+  },
+  cardTitle:       { fontSize: 16, fontWeight: '600', color: '#333' },
+
+  memberRow:       {
+    flexDirection: 'row',
+    alignItems:    'center',
+    marginBottom:  12,
+  },
+  memberAvatar:    { width: 40, height: 40, borderRadius: 20, marginRight: 12 },
+  memberName:      { flex: 1, fontSize: 15, color: '#333' },
+  editSmall:       { color: '#6C3FB5', fontSize: 14, fontWeight: '500' },
+
+  interestsRow:    { flexDirection: 'row', flexWrap: 'wrap' },
+  interestPill:    {
+    flexDirection:   'row',
+    alignItems:      'center',
+    backgroundColor: '#F0F0F5',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius:    16,
+    marginRight:     8,
+    marginBottom:    8,
+  },
+  interestText:    { fontSize: 13, color: '#6C3FB5' },
+
+  infoRow:         {
+    flexDirection:  'row',
+    justifyContent: 'space-between',
+    marginBottom:   12,
+  },
+  infoLabel:       { color: '#555', fontWeight: '600' },
+  infoValue:       { color: '#333', maxWidth: '65%', textAlign: 'right' },
+
+  // Styles for the top row (Settings & Change Type)
+  topActionsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between', // Pushes items to ends
+    marginHorizontal: 16,            // Align with card margins
+    marginVertical: 10,              // Add vertical space
+    paddingHorizontal: 10,           // Optional inner padding
+  },
+  // Style for individual buttons within the top row
+  actionBtn: {
+    alignItems: 'center',
+    padding: 5,                      // Improve touch area
+  },
+  // Style for text below icons in the top row
+  actionText: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#6C3FB5',
+  },
+
+  // Style for the Logout button container
+  logoutButton: {
+    alignItems: 'center',            // Center icon and text
+    marginTop: 30,                   // Space above
+    marginBottom: 20,                // Space below
+  },
+  // Style for the Logout text
+  logoutText: {
+    marginTop: 4,
+    fontSize: 12,
+    color: 'red',
+  },
 });

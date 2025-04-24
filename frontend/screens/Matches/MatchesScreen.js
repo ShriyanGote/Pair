@@ -1,24 +1,33 @@
+// screens/MatchesScreen.js
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, FlatList, Image, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  StyleSheet,
+  Alert,
+  TouchableOpacity,
+  TextInput,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getMatches, deleteMatch, getCurrentUser } from '../../utils/api'; 
 import { useNavigation } from '@react-navigation/native';
-import { useFocusEffect, useRoute } from '@react-navigation/native';
 
-
-
-const MatchesScreen = () => {
+export default function MatchesScreen() {
   const [matches, setMatches] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState(null);
   const navigation = useNavigation();
-  const route = useRoute();
 
   const loadMatches = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      const res = await getMatches(token);
-      setMatches(res.data);
+      const matchRes = await getMatches(token);
+      setMatches(matchRes.data);
+      setFiltered(matchRes.data);
     } catch (err) {
       console.error(err);
       Alert.alert('Error', 'Failed to load matches');
@@ -28,39 +37,23 @@ const MatchesScreen = () => {
   };
 
   useEffect(() => {
-    const loadData = async () => {
+    (async () => {
+      setLoading(true);
+      const token = await AsyncStorage.getItem('token');
+      if (!token) return setLoading(false);
+
       try {
-        const token = await AsyncStorage.getItem('token');
         const userRes = await getCurrentUser(token);
-        setCurrentUserId(userRes.data.id); // ✅ Set the ID
-        const matchRes = await getMatches(token);
-        setMatches(matchRes.data);
-      } catch (err) {
-        console.error(err);
-        Alert.alert('Error', 'Failed to load matches');
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    loadData();
+        setCurrentUserId(userRes.data.id);
+      } catch {}
+      await loadMatches();
+    })();
   }, []);
 
-  
-
-  useFocusEffect(
-    useCallback(() => {
-      if (route.params?.refreshMatches) {
-        loadMatches(); // reload matches
-        navigation.setParams({ refreshMatches: false }); // reset flag
-      }
-    }, [route.params?.refreshMatches])
-  );
-  
   const handleUnmatch = (userId, name) => {
     Alert.alert(
       `Unconnect ${name}?`,
-      "Are you sure you want to remove this connection?",
+      null,
       [
         { text: "Cancel", style: "cancel" },
         {
@@ -70,9 +63,9 @@ const MatchesScreen = () => {
             try {
               const token = await AsyncStorage.getItem('token');
               await deleteMatch(userId, token);
-              setMatches((prev) => prev.filter((m) => m.id !== userId));
-            } catch (err) {
-              console.error('Unmatch error', err);
+              setMatches(ms => ms.filter(m => m.id !== userId));
+              setFiltered(ms => ms.filter(m => m.id !== userId));
+            } catch {
               Alert.alert("Error", "Failed to unmatch.");
             }
           },
@@ -80,7 +73,16 @@ const MatchesScreen = () => {
       ]
     );
   };
-  
+
+  const onSearch = text => {
+    setSearch(text);
+    const low = text.toLowerCase();
+    setFiltered(
+      matches.filter(m =>
+        m.name.toLowerCase().includes(low)
+      )
+    );
+  };
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
@@ -88,66 +90,67 @@ const MatchesScreen = () => {
         source={{ uri: item.profile_photo || 'https://placekitten.com/200/200' }}
         style={styles.avatar}
       />
-      <View style={{ flex: 1 }}>
+      <View style={styles.info}>
         <Text style={styles.name}>{item.name}</Text>
-        <Text>{item.age} • {item.location}</Text>
-  
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('ChatScreen', {
-              userId: currentUserId,  // Set this up
-              matchId: item.id,
-              matchName: item.name,
-            })
-          }
-        >
-          <Text style={styles.chatText}>💬 Chat</Text>
-        </TouchableOpacity>
+        <Text style={styles.sub}>{`Sent ${item.last_swipe_time_ago}`}</Text>
       </View>
-  
-      <TouchableOpacity onPress={() => handleUnmatch(item.id, item.name)}>
-        <Text style={styles.unmatchText}>Unconnect</Text>
+      <TouchableOpacity
+        style={styles.chatBtn}
+        onPress={() =>
+          navigation.navigate('ChatScreen', {
+            userId: currentUserId,
+            matchId: item.id,
+            matchName: item.name,
+          })
+        }
+      >
+        <Text style={styles.chatText}>Chat</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.unmatchBtn}
+        onPress={() => handleUnmatch(item.id, item.name)}
+      >
+        <Text style={styles.unmatchText}>✕</Text>
       </TouchableOpacity>
     </View>
   );
-  
 
   return (
     <View style={styles.container}>
+      <TextInput
+        placeholder="Search"
+        value={search}
+        onChangeText={onSearch}
+        style={styles.searchBar}
+        placeholderTextColor="#999"
+      />
+
       {loading ? (
         <Text style={styles.empty}>Loading connections...</Text>
-      ) : matches?.length === 0 ? (
+      ) : filtered.length === 0 ? (
         <Text style={styles.empty}>No connections yet 😢</Text>
       ) : (
         <FlatList
-          data={matches}
-          keyExtractor={(item) => item.id.toString()}
+          data={filtered}
+          keyExtractor={item => String(item.id)}
           renderItem={renderItem}
         />
       )}
     </View>
   );
-};
-
-export default MatchesScreen;
+}
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#fdf9ff' },
-  empty: { textAlign: 'center', marginTop: 30, color: 'black' },
-  card: {
-    flexDirection: 'row',
-    padding: 12,
-    marginBottom: 10,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  unmatchText: {
-    color: 'red',
-    fontSize: 14,
-    marginLeft: 10,
-  },  
-  avatar: { width: 60, height: 60, borderRadius: 30, marginRight: 15 },
-  name: { fontSize: 18, fontWeight: '600' },
-  unmatch: { color: 'red', marginLeft: 10 },
+  container: { flex: 1, backgroundColor: '#fff' },
+  searchBar: { margin: 12, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: '#f0f0f0', fontSize: 16 },
+  empty: { textAlign: 'center', marginTop: 40, color: '#666', fontSize: 16 },
+  card: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, paddingHorizontal: 16, borderBottomColor: '#eee', borderBottomWidth: 1 },
+  avatar: { width: 50, height: 50, borderRadius: 25 },
+  info: { flex: 1, marginLeft: 12 },
+  name: { fontSize: 17, fontWeight: '600', color: '#333' },
+  sub: { fontSize: 13, color: '#888', marginTop: 2 },
+  chatBtn: { backgroundColor: '#f0f0f0', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, marginRight: 12 },
+  chatText: { fontSize: 14, color: '#333' },
+  unmatchBtn: { padding: 6 },
+  unmatchText: { fontSize: 18, color: 'red' }
 });

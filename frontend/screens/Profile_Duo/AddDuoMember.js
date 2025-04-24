@@ -70,7 +70,7 @@ export default function AddDuoMember() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Add Duo Member — Step #{step}</Text>
+      <Text style={styles.header}>Add Duo Member #{step}</Text>
 
       <TextInput
         style={styles.input}
