@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, Body, Header
+from fastapi import APIRouter, Depends, HTTPException, Body, Header, status
 from sqlalchemy.orm import Session
 from sqlalchemy import inspect
 from app.db.database import SessionLocal
-from app.models.model import User, DuoProfile, DuoProfileInput, DuoMember, GroupMemberInput, GroupProfile
+from app.models.model import User, DuoProfile, DuoProfileInput, DuoMember, GroupMemberInput, GroupProfile, DuoMemberPhoto
 from app.db.crud import get_user_by_email
 from app.core.auth import decode_access_token
 
@@ -237,3 +237,31 @@ def update_duo_member(
             "occupation":member.occupation,
         },
     }
+
+
+
+@router.delete("/duo-members/{member_id}", status_code=status.HTTP_204_NO_CONTENT)
+def remove_duo_member(
+    member_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    # make sure this member really belongs to the current user’s duo
+    duo_profile = db.query(DuoProfile).filter_by(duo_id=current_user.id).first()
+    if not duo_profile:
+        raise HTTPException(404, "Duo profile not found")
+
+    member = (
+        db.query(DuoMember)
+          .filter_by(id=member_id, duo_id=duo_profile.id)
+          .first()
+    )
+    if not member:
+        raise HTTPException(404, "Member not found")
+
+    # delete any photos
+    db.query(DuoMemberPhoto).filter_by(duo_member_id=member_id).delete(synchronize_session=False)
+    # delete the member
+    db.delete(member)
+    db.commit()
+    return
