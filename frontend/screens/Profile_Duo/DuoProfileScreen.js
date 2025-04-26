@@ -264,67 +264,24 @@ export default function DuoProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container:       { flex: 1, backgroundColor: '#F7F7F7' },
-  headerBtn:       { paddingHorizontal: 16 },
-  saveText:        { color: '#B76EFF', fontWeight: '600', fontSize: 16 },
-
-  loading:         { flex: 1, justifyContent: 'center', alignItems: 'center' },
-
-  photoSection:    {
-    backgroundColor: '#fff',
-    alignItems:      'center',
-    paddingVertical: 24,
-    marginBottom:    12,
-    shadowColor:     '#000',
-    shadowOpacity:   0.05,
-    shadowOffset:    { width: 0, height: 2 },
-    shadowRadius:    4,
-    elevation:       2,
-  },
-  groupPhoto:      { width: 100, height: 100, borderRadius: 50, marginBottom: 12 },
-  profileType:     { fontSize: 20, fontWeight: '600', color: '#333', marginBottom: 8 },
-
-  pillButton:      {
-    flexDirection:   'row',
-    alignItems:      'center',
-    backgroundColor: '#F0F0F5',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius:    20,
-  },
-  pillText:        { color: '#6C3FB5', fontWeight: '600', fontSize: 14 },
-
-  card:            {
-    backgroundColor: '#fff',
-    marginHorizontal: 16,
-    borderRadius:    12,
-    padding:         16,
-    marginBottom:    12,
-    shadowColor:     '#000',
-    shadowOpacity:   0.05,
-    shadowOffset:    { width: 0, height: 2 },
-    shadowRadius:    4,
-    elevation:       2,
-  },
-  rowHeader:       {
-    flexDirection:  'row', 
-    justifyContent: 'space-between', 
-    alignItems:     'center', 
-    marginBottom:   12,
-  },
-  cardTitle:       { fontSize: 16, fontWeight: '600', color: '#333' },
-
-  memberRow:       {
-    flexDirection: 'row',
-    alignItems:    'center',
-    marginBottom:  12,
-  },
-  memberAvatar:    { width: 40, height: 40, borderRadius: 20, marginRight: 12 },
-  memberName:      { flex: 1, fontSize: 15, color: '#333' },
-  editSmall:       { color: '#6C3FB5', fontSize: 14, fontWeight: '500' },
-
-  interestsRow:    { flexDirection: 'row', flexWrap: 'wrap' },
-  interestPill:    {
+  container: { flex: 1, backgroundColor: '#F7F7F7' },
+  headerBtn: { paddingHorizontal: 16 },
+  saveText: { color: '#B76EFF', fontWeight: '600', fontSize: 16 },
+  loading: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  photoSection: { backgroundColor: '#fff', alignItems: 'center', paddingVertical: 24, marginBottom: 12, shadowColor: '#000', shadowOpacity: 0.05, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4, elevation: 2 },
+  groupPhoto: { width: 100, height: 100, borderRadius: 50, marginBottom: 12 },
+  profileType: { fontSize: 20, fontWeight: '600', color: '#333', marginBottom: 8 },
+  pillButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F0F0F5', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20 },
+  pillText: { color: '#6C3FB5', fontWeight: '600', fontSize: 14 },
+  card: { backgroundColor: '#fff', marginHorizontal: 16, borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOpacity: 0.05, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4, elevation: 2 },
+  rowHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  cardTitle: { fontSize: 16, fontWeight: '600', color: '#333' },
+  memberRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+  memberAvatar: { width: 40, height: 40, borderRadius: 20, marginRight: 12 },
+  memberName: { flex: 1, fontSize: 15, color: '#333' },
+  editSmall: { color: '#6C3FB5', fontSize: 14, fontWeight: '500' },
+  interestsRow: { flexDirection: 'row', flexWrap: 'wrap' },
+  interestPill: {
     flexDirection:   'row',
     alignItems:      'center',
     backgroundColor: '#F0F0F5',
@@ -335,7 +292,6 @@ const styles = StyleSheet.create({
     marginBottom:    8,
   },
   interestText:    { fontSize: 13, color: '#6C3FB5' },
-
   infoRow:         {
     flexDirection:  'row',
     justifyContent: 'space-between',
@@ -343,34 +299,27 @@ const styles = StyleSheet.create({
   },
   infoLabel:       { color: '#555', fontWeight: '600' },
   infoValue:       { color: '#333', maxWidth: '65%', textAlign: 'right' },
-
-  // Styles for the top row (Settings & Change Type)
   topActionsRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // Pushes items to ends
-    marginHorizontal: 16,            // Align with card margins
-    marginVertical: 10,              // Add vertical space
-    paddingHorizontal: 10,           // Optional inner padding
+    justifyContent: 'space-between',
+    marginHorizontal: 16,
+    marginVertical: 10,
+    paddingHorizontal: 10,
   },
-  // Style for individual buttons within the top row
   actionBtn: {
     alignItems: 'center',
-    padding: 5,                      // Improve touch area
+    padding: 5,
   },
-  // Style for text below icons in the top row
   actionText: {
     marginTop: 4,
     fontSize: 12,
     color: '#6C3FB5',
   },
-
-  // Style for the Logout button container
   logoutButton: {
-    alignItems: 'center',            // Center icon and text
-    marginTop: 30,                   // Space above
-    marginBottom: 20,                // Space below
+    alignItems: 'center',
+    marginTop: 30,
+    marginBottom: 20,
   },
-  // Style for the Logout text
   logoutText: {
     marginTop: 4,
     fontSize: 12,

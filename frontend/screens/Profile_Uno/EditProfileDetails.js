@@ -133,45 +133,12 @@ const EditProfileDetails = ({ route, navigation }) => {
 export default EditProfileDetails;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  label: {
-    fontSize: 16,
-    marginTop: 15,
-    marginBottom: 5,
-  },
-  dropdown: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-  },
-  dropdownContainer: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  slider: {
-    width: '100%',
-    height: 40,
-  },
-  saveButton: {
-    backgroundColor: '#DB4437',
-    padding: 15,
-    borderRadius: 8,
-    marginTop: 30,
-  },
-  saveButtonText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
+  container: { flex: 1, padding: 20, backgroundColor: '#fff' },
+  header: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
+  label: { fontSize: 16, marginTop: 15, marginBottom: 5 },
+  dropdown: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8 },
+  dropdownContainer: { borderWidth: 1, borderColor: '#ddd' },
+  slider: { width: '100%', height: 40 },
+  saveButton: { backgroundColor: '#DB4437', padding: 15, borderRadius: 8, marginTop: 30 },
+  saveButtonText: { color: '#fff', textAlign: 'center', fontWeight: 'bold', fontSize: 16 }
 });

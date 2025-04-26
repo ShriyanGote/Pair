@@ -226,16 +226,10 @@ const styles = StyleSheet.create({
   dropdown: { borderColor: '#d4c2f5', borderRadius: 6, marginBottom: 20 },
   dropdownContainer: { borderColor: '#d4c2f5', borderRadius: 6 },
   slider: { width: '100%', height: 40, marginBottom: 20 },
-  buttonContainer: { flexDirection: 'row', padding: 20, justifyContent: 'space-between'},
-  nextButton: { flex: 1, backgroundColor: '#7e5bef', padding: 15,  borderRadius: 6, marginLeft: 10},
-  homeButton: {
-    flex: 1,
-    backgroundColor: '#7e5bef',
-    padding: 15,
-    borderRadius: 6,
-    marginRight: 10, 
-  },
+  buttonContainer: { flexDirection: 'row', padding: 20, justifyContent: 'space-between' },
+  nextButton: { flex: 1, backgroundColor: '#7e5bef', padding: 15, borderRadius: 6, marginLeft: 10 },
+  homeButton: { flex: 1, backgroundColor: '#7e5bef', padding: 15, borderRadius: 6, marginRight: 10 },
   backButton: { flex: 1, backgroundColor: '#eee', padding: 15, borderRadius: 6, marginRight: 10 },
   backText: { textAlign: 'center', fontWeight: '600', color: '#6f4cc7' },
-  buttonText: { color: '#fff', textAlign: 'center', fontWeight: '600' },
+  buttonText: { color: '#fff', textAlign: 'center', fontWeight: '600' }
 });

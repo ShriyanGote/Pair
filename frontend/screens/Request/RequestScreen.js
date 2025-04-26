@@ -50,11 +50,11 @@ export default function RequestScreen({ navigation }) {
       // optimistic UI
       setRequests((prev) => prev.filter((u) => u.id !== userId));
 
-      // check if it’s now a match
+      // check if it's now a match
       if (dir === 'right') {
         const m = await getMatches(token);
         if (m.data.find((x) => x.id === userId)) {
-          Alert.alert('🎉 It’s a match!', 'Say hi!');
+          Alert.alert('🎉 It`s a match!', 'Say hi!');
       
           navigation.navigate('Connections', { refresh: true });
         }
@@ -126,31 +126,17 @@ export default function RequestScreen({ navigation }) {
 
 /* ────────────── styles ─────────────── */
 const styles = StyleSheet.create({
-  list:       { padding: 16 },
-  center:     { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  empty:      { fontSize: 18, color: 'gray' },
-
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 16,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#e8e8e8',
-    alignItems: 'center',
-  },
-  photo:      { width: 250, height: 250, borderRadius: 12, marginBottom: 12 },
-  name:       { fontSize: 22, fontWeight: 'bold', marginBottom: 4 },
-  meta:       { fontSize: 14, color: 'gray', marginBottom: 8 },
-  btnRow:     { flexDirection: 'row', gap: 12 },
-  btn:        {
-                flex: 1,
-                paddingVertical: 10,
-                borderRadius: 6,
-                alignItems: 'center',
-              },
-  pass:       { backgroundColor: '#f2f2f2' },
-  passText:   { color: '#444' },
-  accept:     { backgroundColor: '#B76EFF' },
-  acceptText: { color: '#fff' },
+  list: { padding: 16 },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  empty: { fontSize: 18, color: 'gray' },
+  card: { backgroundColor: '#fff', borderRadius: 10, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: '#e8e8e8', alignItems: 'center' },
+  photo: { width: 250, height: 250, borderRadius: 12, marginBottom: 12 },
+  name: { fontSize: 22, fontWeight: 'bold', marginBottom: 4 },
+  meta: { fontSize: 14, color: 'gray', marginBottom: 8 },
+  btnRow: { flexDirection: 'row', gap: 12 },
+  btn: { flex: 1, paddingVertical: 10, borderRadius: 6, alignItems: 'center' },
+  pass: { backgroundColor: '#f2f2f2' },
+  passText: { color: '#444' },
+  accept: { backgroundColor: '#B76EFF' },
+  acceptText: { color: '#fff' }
 });

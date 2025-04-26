@@ -270,73 +270,23 @@ export default function GroupProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container:       { flex: 1, backgroundColor: '#F7F7F7' },
-  center:          { flex: 1, justifyContent: 'center', alignItems: 'center' },
-
-  topActionsRow:   {
-    flexDirection:   'row',
-    justifyContent:  'space-between',
-    marginHorizontal:16,
-    marginVertical:  10,
-  },
-  actionBtn:       { alignItems: 'center' },
-  actionText:      { fontSize: 12, color: '#6C3FB5', marginTop: 4 },
-
-  photoSection:    {
-    backgroundColor: '#fff',
-    alignItems:      'center',
-    paddingVertical: 24,
-    marginBottom:    12,
-    shadowColor:     '#000',
-    shadowOpacity:   0.05,
-    shadowOffset:    { width: 0, height: 2 },
-    shadowRadius:    4,
-    elevation:       2,
-  },
-  card:            {
-    backgroundColor:'#fff',
-    marginHorizontal:16,
-    borderRadius:   12,
-    padding:        16,
-    marginBottom:   12,
-    shadowColor:    '#000',
-    shadowOpacity:  0.05,
-    shadowOffset:   { width:0, height:2 },
-    shadowRadius:   4,
-    elevation:      2,
-  },
-  rowHeader:       {
-    flexDirection:  'row',
-    justifyContent: 'space-between',
-    alignItems:     'center',
-    marginBottom:   12,
-  },
-  cardTitle:       { fontSize:16, fontWeight:'600', color:'#333' },
-
-  infoRow:         {
-    flexDirection:  'row',
-    justifyContent: 'space-between',
-    marginBottom:   12,
-  },
-  infoLabel:       { color:'#555', fontWeight:'600' },
-  infoValue:       { color:'#333', maxWidth:'65%', textAlign:'right' },
-
-  subHeader:       { fontSize:20, fontWeight:'600', marginHorizontal:16, marginTop:16, marginBottom:8 },
-  pillButton:      {
-    flexDirection: 'row',
-    alignItems:    'center',
-    backgroundColor:'#F0F0F5',
-    paddingVertical:8,
-    paddingHorizontal:16,
-    borderRadius:  20,
-    alignSelf:     'center',
-    marginBottom:  12,
-  },
-  pillText:        { color:'#6C3FB5', fontWeight:'600', fontSize:14 },
-
-  noMembers:       { textAlign:'center', color:'gray', fontStyle:'italic' },
-
-  memberRow:       {
+  container: { flex: 1, backgroundColor: '#F7F7F7' },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  topActionsRow: { flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 16, marginVertical: 10 },
+  actionBtn: { alignItems: 'center' },
+  actionText: { fontSize: 12, color: '#6C3FB5', marginTop: 4 },
+  photoSection: { backgroundColor: '#fff', alignItems: 'center', paddingVertical: 24, marginBottom: 12, shadowColor: '#000', shadowOpacity: 0.05, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4, elevation: 2 },
+  card: { backgroundColor: '#fff', marginHorizontal: 16, borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOpacity: 0.05, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4, elevation: 2 },
+  rowHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  cardTitle: { fontSize: 16, fontWeight: '600', color: '#333' },
+  infoRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
+  infoLabel: { color: '#555', fontWeight: '600' },
+  infoValue: { color: '#333', maxWidth: '65%', textAlign: 'right' },
+  subHeader: { fontSize: 20, fontWeight: '600', marginHorizontal: 16, marginTop: 16, marginBottom: 8 },
+  pillButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F0F0F5', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20, alignSelf: 'center', marginBottom: 12 },
+  pillText: { color: '#6C3FB5', fontWeight: '600', fontSize: 14 },
+  noMembers: { textAlign: 'center', color: 'gray', fontStyle: 'italic' },
+  memberRow: {
     flexDirection:'row',
     alignItems:   'center',
     marginBottom: 12,
@@ -345,15 +295,12 @@ const styles = StyleSheet.create({
   memberName:      { fontSize:15, fontWeight:'600', flex:1 },
   editSmall:       { color:'#6C3FB5', marginRight:12 },
   groupPhoto:      { width: 100, height: 100, borderRadius: 50, marginBottom: 12 },
-
   carouselPhoto:   { width:80, height:80, borderRadius:10, borderWidth:1, borderColor:'#ddd' },
   deleteButton:    { position:'absolute', top:0, right:0, backgroundColor:'rgba(0,0,0,0.6)', borderRadius:12, padding:2 },
   deleteX:         { color:'#fff', fontSize:12 },
   profileType:     { fontSize: 20, fontWeight: '600', color: '#333', marginBottom: 8 },
-
   editText:        { color:'#007AFF', fontSize:14, marginTop:6 },
   deleteText:      { color:'red', fontSize:14 },
-
   logoutButton:    { alignItems:'center', marginTop:20, marginBottom:30 },
   logoutText:      { color:'red', fontSize:12, marginTop:4 },
   infoIcon: {

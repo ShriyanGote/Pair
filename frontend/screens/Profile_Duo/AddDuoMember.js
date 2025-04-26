@@ -150,31 +150,9 @@ export default function AddDuoMember() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 24,
-    backgroundColor: '#fff',
-    flexGrow: 1,
-  },
-  header: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 6,
-    padding: 12,
-    marginBottom: 16,
-  },
-  dropdown: {
-    borderColor: '#ddd',
-    borderRadius: 6,
-    marginBottom: 16,
-  },
-  dropdownContainer: {
-    borderColor: '#ddd',
-    borderRadius: 6,
-  },
+  container: { padding: 24, backgroundColor: '#fff', flexGrow: 1 },
+  header: { fontSize: 20, fontWeight: '600', marginBottom: 20, textAlign: 'center' },
+  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 6, padding: 12, marginBottom: 16 },
+  dropdown: { borderColor: '#ddd', borderRadius: 6, marginBottom: 16 },
+  dropdownContainer: { borderColor: '#ddd', borderRadius: 6 }
 });

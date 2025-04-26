@@ -133,12 +133,14 @@ export default function SwipeScreen({ navigation }) {
           navigation.setParams({ refreshMatches: true });
         }
       }
-  
-      setCards((cs) => cs.filter((_, i) => i !== idx));
+      setCards(cs =>
+        cs.map((c, i) => (i === idx ? { ...c, _swiped: true } : c))
+      );
     } catch {
       Alert.alert('Error', 'Swipe failed.');
     }
   };
+  const visibleCards = cards.filter(c => !c._swiped);
 
   // apply / clear
   const applyFilters = () => {
@@ -302,26 +304,19 @@ const clearFilters = () => {
         <Swiper
           cards={cards}
           renderCard={(u) => {
-            // 🧠 Flatten all member photos into a single array
-            const allPhotos = Array.isArray(u.photos) && u.photos.length > 0
-              ? u.photos // uno or profile-level photos
-              : u.members?.flatMap((m) => m.photos || []) || [];
+            if (!u) return <View style={styles.card} />;     // <- early bail-out
+          
+            const allPhotos =
+              Array.isArray(u.photos) && u.photos.length
+                ? u.photos
+                : u.members?.flatMap((m) => m.photos || []) || [];
           
             return (
               <View style={styles.card}>
-                {/* 🖼️ Scrollable image row at the top */}
-                {allPhotos.length > 0 ? (
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    style={styles.carousel}
-                  >
-                    {allPhotos.map((photoUrl, idx) => (
-                      <Image
-                        key={`photo-${idx}`}
-                        source={{ uri: photoUrl }}
-                        style={styles.carouselImage}
-                      />
+                {allPhotos.length ? (
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.carousel}>
+                    {allPhotos.map((url, i) => (
+                      <Image key={i} source={{ uri: url }} style={styles.carouselImage} />
                     ))}
                   </ScrollView>
                 ) : (

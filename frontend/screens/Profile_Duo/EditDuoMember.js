@@ -252,38 +252,17 @@ export default function EditDuoMember({ route, navigation }) {
 const styles = StyleSheet.create({
   container: { padding: 20, backgroundColor: '#f7f7f7' },
   header: { fontSize: 22, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' },
-
   photoContainer: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 12 },
   photoWrapper: { width: 80, height: 80, margin: 4, position: 'relative' },
   photoImage: { width: '100%', height: '100%', borderRadius: 8 },
-  deleteBtn: {
-    position: 'absolute',
-    top: 2, right: 2,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    width: 20, height: 20,
-    borderRadius: 10, alignItems: 'center', justifyContent: 'center'
-  },
+  deleteBtn: { position: 'absolute', top: 2, right: 2, backgroundColor: 'rgba(0,0,0,0.6)', width: 20, height: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   deleteBtnText: { color: '#fff', fontWeight: 'bold' },
-  addPhotoBtn: {
-    marginBottom: 16,
-    padding: 10,
-    backgroundColor: '#007AFF',
-    borderRadius: 6
-  },
+  addPhotoBtn: { marginBottom: 16, padding: 10, backgroundColor: '#007AFF', borderRadius: 6 },
   addPhotoText: { color: '#fff', textAlign: 'center' },
-
-  input: {
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 6,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#ccc'
-  },
+  input: { backgroundColor: '#fff', padding: 12, borderRadius: 6, marginBottom: 16, borderWidth: 1, borderColor: '#ccc' },
   label: { marginBottom: 6, fontWeight: '600' },
   dropdown: { marginBottom: 16, borderColor: '#ccc' },
   dropdownContainer: { borderColor: '#ccc' },
-
   button: { backgroundColor: '#007AFF', padding: 14, borderRadius: 8 },
-  buttonText: { color: '#fff', textAlign: 'center', fontWeight: '600' },
+  buttonText: { color: '#fff', textAlign: 'center', fontWeight: '600' }
 });

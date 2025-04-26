@@ -33,7 +33,9 @@ export default function ProfileScreen() {
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   if (loading) {
     return (
@@ -95,9 +97,12 @@ export default function ProfileScreen() {
       </View>
 
       {/* ——— Content ——— */}
-      <ScrollView style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
+      >
         {mode === 'edit' ? (
-          <EditProfileView user={user} onRefresh={load}/>
+          <EditProfileView user={user} onRefresh={load} />
         ) : (
           <PreviewProfileView user={user} />
         )}
@@ -107,24 +112,59 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  flex:      { flex: 1 },
-  container: { flex: 1, backgroundColor: '#f7f7f7' },
-  center:    { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  toggleRow: { flexDirection: 'row', margin:        16, borderRadius:  8, backgroundColor: '#e0e0e0', overflow:      'hidden',},
+  flex: { flex: 1 },
+
+  // outer ScrollView style
+  container: {
+    flex: 1,
+    backgroundColor: '#F7F3FF',
+  },
+
+  // inner content layout for centering
+  contentContainer: {
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 5,
+  },
+
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  toggleRow: {
+    flexDirection: 'row',
+    margin: 16,
+    borderRadius: 8,
+    backgroundColor: '#e0e0e0',
+    overflow: 'hidden',
+  },
   toggleBtn: {
-    flex:         1,
-    padding:      12,
-    alignItems:   'center',
-    justifyContent:'center',
+    flex: 1,
+    padding: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   toggleBtnActive: {
     backgroundColor: '#6C3FB5',
   },
   toggleText: {
-    color:       '#333',
-    fontWeight:  '600',
+    color: '#333',
+    fontWeight: '600',
   },
   toggleTextActive: {
-    color:       '#fff',
+    color: '#fff',
   },
+
+  // (you can keep your other button/text styles below)
+  title: { fontSize: 40, fontWeight: 'bold', color: '#B76EFF', marginBottom: 4 },
+  subtitle: { fontSize: 16, color: '#555', marginBottom: 40, textAlign: 'center' },
+  icon: { marginBottom: 50 },
+  buttonPrimary: { backgroundColor: '#B76EFF', paddingVertical: 14, paddingHorizontal: 30, borderRadius: 10, marginBottom: 15, width: '100%' },
+  buttonSecondary: { backgroundColor: '#8E44AD', paddingVertical: 14, paddingHorizontal: 30, borderRadius: 10, marginBottom: 25, width: '100%' },
+  buttonText: { color: '#fff', fontSize: 16, textAlign: 'center', fontWeight: '600' },
+  link: { marginTop: 10 },
+  linkText: { color: '#7D3C98', fontSize: 14, textDecorationLine: 'underline' },
 });

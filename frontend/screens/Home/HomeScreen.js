@@ -49,56 +49,13 @@ const HomeScreen = ({ navigation }) => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F7F3FF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 30,
-  },
-  title: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    color: '#B76EFF',
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#555',
-    marginBottom: 40,
-    textAlign: 'center',
-  },
-  icon: {
-    marginBottom: 50,
-  },
-  buttonPrimary: {
-    backgroundColor: '#B76EFF',
-    paddingVertical: 14,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    marginBottom: 15,
-    width: '100%',
-  },
-  buttonSecondary: {
-    backgroundColor: '#8E44AD',
-    paddingVertical: 14,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    marginBottom: 25,
-    width: '100%',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    textAlign: 'center',
-    fontWeight: '600',
-  },
-  link: {
-    marginTop: 10,
-  },
-  linkText: {
-    color: '#7D3C98',
-    fontSize: 14,
-    textDecorationLine: 'underline',
-  },
+  container: { flex: 1, backgroundColor: '#F7F3FF', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 30 },
+  title: { fontSize: 40, fontWeight: 'bold', color: '#B76EFF', marginBottom: 4 },
+  subtitle: { fontSize: 16, color: '#555', marginBottom: 40, textAlign: 'center' },
+  icon: { marginBottom: 50 },
+  buttonPrimary: { backgroundColor: '#B76EFF', paddingVertical: 14, paddingHorizontal: 30, borderRadius: 10, marginBottom: 15, width: '100%' },
+  buttonSecondary: { backgroundColor: '#8E44AD', paddingVertical: 14, paddingHorizontal: 30, borderRadius: 10, marginBottom: 25, width: '100%' },
+  buttonText: { color: '#fff', fontSize: 16, textAlign: 'center', fontWeight: '600' },
+  link: { marginTop: 10 },
+  linkText: { color: '#7D3C98', fontSize: 14, textDecorationLine: 'underline' }
 });

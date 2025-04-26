@@ -104,46 +104,12 @@ const EditProfileType = ({ route, navigation }) => {
 export default EditProfileType;
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 30,
-    flex: 1,
-    backgroundColor: '#f9f9f9',
-  },
-  header: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 25,
-    textAlign: 'center',
-  },
-  option: {
-    padding: 15,
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    marginBottom: 12,
-    borderColor: '#ccc',
-    borderWidth: 1,
-  },
-  selectedOption: {
-    backgroundColor: '#007AFF',
-  },
-  optionText: {
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  selectedText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  saveButton: {
-    marginTop: 30,
-    backgroundColor: '#007AFF',
-    padding: 16,
-    borderRadius: 10,
-  },
-  saveText: {
-    color: '#fff',
-    fontWeight: '600',
-    textAlign: 'center',
-    fontSize: 16,
-  },
+  container: { padding: 30, flex: 1, backgroundColor: '#f9f9f9' },
+  header: { fontSize: 22, fontWeight: 'bold', marginBottom: 25, textAlign: 'center' },
+  option: { padding: 15, borderRadius: 10, backgroundColor: '#fff', marginBottom: 12, borderColor: '#ccc', borderWidth: 1 },
+  selectedOption: { backgroundColor: '#007AFF' },
+  optionText: { fontSize: 16, textAlign: 'center' },
+  selectedText: { color: '#fff', fontWeight: '600' },
+  saveButton: { marginTop: 30, backgroundColor: '#007AFF', padding: 16, borderRadius: 10 },
+  saveText: { color: '#fff', fontWeight: '600', textAlign: 'center', fontSize: 16 }
 });

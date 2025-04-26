@@ -31,6 +31,7 @@ const EmailVerificationScreen = () => {
     }
 
     setLoading(true);
+    console.log('SEND-CODE URL →', `${API_BASE_URL}/send-code`);
     try {
       const response = await fetch(`${API_BASE_URL}/send-code`, {
         method: 'POST',

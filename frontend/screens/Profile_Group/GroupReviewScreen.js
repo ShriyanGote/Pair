@@ -91,49 +91,12 @@ const GroupReviewScreen = ({ route }) => {
 export default GroupReviewScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 30,
-    backgroundColor: '#f9f9f9',
-    flexGrow: 1,
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginTop: 25,
-    marginBottom: 10,
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 15,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    marginBottom: 20,
-  },
-  label: {
-    fontWeight: '600',
-    marginTop: 10,
-  },
-  value: {
-    fontSize: 16,
-    marginTop: 4,
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    padding: 16,
-    borderRadius: 10,
-    marginTop: 10,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-    textAlign: 'center',
-    fontSize: 16,
-  },
+  container: { padding: 30, backgroundColor: '#f9f9f9', flexGrow: 1 },
+  header: { fontSize: 24, fontWeight: '700', marginBottom: 20, textAlign: 'center' },
+  sectionTitle: { fontSize: 20, fontWeight: '600', marginTop: 25, marginBottom: 10 },
+  card: { backgroundColor: '#fff', borderRadius: 8, padding: 15, borderWidth: 1, borderColor: '#ccc', marginBottom: 20 },
+  label: { fontWeight: '600', marginTop: 10 },
+  value: { fontSize: 16, marginTop: 4 },
+  button: { backgroundColor: '#007AFF', padding: 16, borderRadius: 10, marginTop: 10 },
+  buttonText: { color: '#fff', fontWeight: '600', textAlign: 'center', fontSize: 16 }
 });

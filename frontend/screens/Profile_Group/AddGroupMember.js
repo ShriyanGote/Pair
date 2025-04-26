@@ -213,12 +213,12 @@ export default function AddGroupMember() {
 }
 
 const styles = StyleSheet.create({
-  container:           { padding: 20, backgroundColor: '#f7f7f7', flexGrow: 1 },
-  header:              { fontSize: 22, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' },
-  input:               { backgroundColor: '#fff', padding: 12, borderRadius: 6, marginBottom: 16, borderWidth:1, borderColor:'#ccc' },
-  label:               { marginBottom: 6, fontWeight: '600' },
-  dropdown:            { marginBottom: 16, borderRadius: 6, borderColor: '#ccc' },
-  dropdownContainer:   { borderRadius: 6, borderColor: '#ccc' },
-  button:              { backgroundColor: '#007AFF', padding: 14, borderRadius: 6, marginTop: 8 },
-  buttonText:          { color: '#fff', textAlign: 'center', fontWeight: '600', fontSize: 16 },
+  container: { padding: 20, backgroundColor: '#f7f7f7', flexGrow: 1 },
+  header: { fontSize: 22, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' },
+  input: { backgroundColor: '#fff', padding: 12, borderRadius: 6, marginBottom: 16, borderWidth: 1, borderColor: '#ccc' },
+  label: { marginBottom: 6, fontWeight: '600' },
+  dropdown: { marginBottom: 16, borderRadius: 6, borderColor: '#ccc' },
+  dropdownContainer: { borderRadius: 6, borderColor: '#ccc' },
+  button: { backgroundColor: '#007AFF', padding: 14, borderRadius: 6, marginTop: 8 },
+  buttonText: { color: '#fff', textAlign: 'center', fontWeight: '600', fontSize: 16 }
 });
