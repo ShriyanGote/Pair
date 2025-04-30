@@ -69,7 +69,7 @@ export default function RequestScreen({ navigation }) {
     <View style={styles.card}>
       <Image
         source={{
-          uri: item.profile_photo || 'https://placekitten.com/300/300',
+          uri: item.profile_picture || 'https://placekitten.com/300/300',
         }}
         style={styles.photo}
       />

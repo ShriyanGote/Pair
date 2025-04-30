@@ -33,6 +33,7 @@ export const uploadProfilePhoto = (formData, token) =>
   axios.post(`${API_URL}/upload-profile-photo`, formData, {
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' },
   });
+
 export const getUserPhotos = (userId, token) =>
   axios.get(`${API_URL}/users/${userId}/photos`, { headers: { Authorization: `Bearer ${token}` } });
 export const uploadUnoPhoto = (formData, token) =>
@@ -104,7 +105,15 @@ export const deleteDuoMemberPhoto = (memberId, photoId, token) =>
 export const updateDuoMember = (memberId, data, token) =>
   axios.put(`${API_URL}/duo-members/${memberId}`, data, { headers: { Authorization: `Bearer ${token}` } });
 
+export const uploadMulipleProfilePhoto = async (formData, token) =>
+  axios.post(`${API_URL}/upload-multiple-profile-photo`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}` }
+  });
 
+export const uploadUnoProfilePhoto = async (formData, token) =>
+  axios.post(`${API_URL}/upload-uno-profile-photo`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}` }
+  });
 
 
 
@@ -139,5 +148,7 @@ export const getIncomingRequests = (token) =>
   });
 
 
+
+  
 
   

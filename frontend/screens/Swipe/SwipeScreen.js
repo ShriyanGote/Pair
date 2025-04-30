@@ -1,6 +1,6 @@
 // screens/SwipeScreen.js
 
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -25,6 +25,7 @@ import {
   personalityOptions,
 } from '../constants/Dropdowns';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function SwipeScreen({ navigation }) {
   // full vs filtered
@@ -91,32 +92,32 @@ export default function SwipeScreen({ navigation }) {
     setTimeout(() => setFiltersVisible(false), 0);
   };
 
-  const loadRecommendations = async () => {
+  const loadRecommendations = useCallback(async () => {
     setLoading(true);
     try {
       const token = await AsyncStorage.getItem('token');
-      const res = await getPotentialMatches(token, page);
-      const next = page === 0 ? res.data : [...allCards, ...res.data];
-      setAllCards(next);
-      setCards(next);
-      setPage((p) => p + 1);
+      const res = await getPotentialMatches(token, 0); // Reset to page 0
+      setAllCards(res.data);
+      setCards(res.data);
+      setPage(1);
 
-      // build interest options
       const allI = new Set();
-      next.forEach((u) =>
-        Array.isArray(u.interests) && u.interests.forEach((i) => allI.add(i))
-      );
-      setInterestsItems([...allI].map((i) => ({ label: i, value: i })));
+      res.data.forEach(u => Array.isArray(u.interests) && u.interests.forEach(i => allI.add(i)));
+      setInterestsItems([...allI].map(i => ({ label: i, value: i })));
     } catch (err) {
       console.error(err);
-      Alert.alert('Error', 'Could not load matches.');
+      Alert.alert('Error', 'Could not load recommendations');
     } finally {
       setLoading(false);
     }
-  };
-  useEffect(() => {
-    loadRecommendations();
   }, []);
+
+  // Replace the useEffect with useFocusEffect
+  useFocusEffect(
+    useCallback(() => {
+      loadRecommendations();
+    }, [loadRecommendations])
+  );
 
   const handleSwipe = async (idx, dir) => {
     const user = cards[idx];
@@ -299,7 +300,7 @@ const clearFilters = () => {
           <ActivityIndicator size="large" />
           <Text>Loading…</Text>
         </View>
-      ) : cards.length ? (
+      ) : cards.length > 0 ? (
         /* Swiper state */
         <Swiper
           cards={cards}
@@ -321,7 +322,7 @@ const clearFilters = () => {
                   </ScrollView>
                 ) : (
                   <Image
-                    source={{ uri: u.profile_photo || 'https://placekitten.com/300/300' }}
+                    source={{ uri: u.profile_picture || 'https://placekitten.com/300/300' }}
                     style={styles.carouselImage}
                   />
                 )}
@@ -357,12 +358,16 @@ const clearFilters = () => {
           backgroundColor="#fff"
         />
       ) : (
-        /* Empty‑results state */
+        /* Empty state */
         <View style={styles.center}>
-          <Text style={styles.noMore}>No users match your filters 😢</Text>
-          <TouchableOpacity onPress={clearFilters} style={{ marginTop: 8 }}>
-            <Text style={{ color: '#B76EFF' }}>Clear filters</Text>
-          </TouchableOpacity>
+          <Text style={styles.noMore}>
+            {filtersVisible ? 'No users match your filters 😢' : 'No users available right now 😢'}
+          </Text>
+          {filtersVisible && (
+            <TouchableOpacity onPress={clearFilters} style={{ marginTop: 8 }}>
+              <Text style={{ color: '#B76EFF' }}>Clear filters</Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
     </View>

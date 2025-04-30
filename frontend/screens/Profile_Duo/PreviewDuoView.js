@@ -1,5 +1,4 @@
 // screens/PreviewProfileView.js
-
 import React from 'react';
 import {
   View,
@@ -16,7 +15,7 @@ export default function PreviewProfileView({ user }) {
       {/* — Profile Photo & Name — */}
       <View style={styles.photoSection}>
         <Image
-          source={{ uri: user.profile_picture || 'https://placekitten.com/200/200' }}
+          source={{ uri: user.profile_photo || 'https://placekitten.com/200/200' }}
           style={styles.profilePhoto}
         />
         <Text style={styles.name}>
@@ -68,7 +67,7 @@ export default function PreviewProfileView({ user }) {
           {user.members.map(m => (
             <View key={m.id} style={styles.memberRow}>
               <Image
-                source={{ uri: 'https://placekitten.com/100/100' }}
+                source={{ uri: m.profile_photo || 'https://placekitten.com/100/100' }}
                 style={styles.memberAvatar}
               />
               <Text style={styles.memberName}>

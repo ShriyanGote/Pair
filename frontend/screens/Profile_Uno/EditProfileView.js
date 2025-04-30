@@ -22,11 +22,11 @@ import { GOOGLE_API_KEY } from '@env';
 import {
   getCurrentUser,
   updateUser,
-  uploadProfilePhoto,
   uploadUnoPhoto,
   getUserPhotos,
   deleteUserPhoto,
   deleteUserPhotoByUrl,
+  uploadUnoProfilePhoto
 } from '../../utils/api';
 import axios from 'axios';
 import { API_URL } from '../../utils/api';
@@ -73,7 +73,7 @@ const fetchUser = async () => {
   };
 
   // 2) Upload main profile photo
-  const handleImagePick = async () => {
+  const handleProfilePic = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 0.7,
@@ -85,13 +85,14 @@ const fetchUser = async () => {
       formData.append('file', { uri, name: 'profile.jpg', type: 'image/jpeg' });
       try {
         const token = await AsyncStorage.getItem('token');
-        const res = await uploadProfilePhoto(formData, token);
-        setUserInfo((u) => ({ ...u, profile_photo: res.data.photo_url }));
+        const res = await uploadUnoProfilePhoto(formData, token);
+        setUserInfo((u) => ({ ...u, profile_picture: res.profile_picture }));
       } catch {
         Alert.alert('Upload failed', 'Please try again');
       }
     }
   };
+
 
   // 3) Add another UNO photo
   const handleAddPhoto = async () => {
@@ -235,10 +236,10 @@ const fetchUser = async () => {
         {/* — HEADER CARD */}
         <View style={styles.photoCard}>
           <Image
-            source={{ uri: userInfo.profile_photo || 'https://placekitten.com/200/200' }}
+            source={{ uri: userInfo.profile_picture || 'https://placekitten.com/200/200' }}
             style={styles.avatar}
           />
-          <TouchableOpacity style={styles.uploadPill} onPress={handleImagePick}>
+          <TouchableOpacity style={styles.uploadPill} onPress={handleProfilePic}>
             <Text style={styles.uploadText}>Upload New Profile Photo</Text>
           </TouchableOpacity>
           <Text style={styles.profileType}>
@@ -247,6 +248,18 @@ const fetchUser = async () => {
             {userInfo.profile_type === 'group' && '👯 Group'}
           </Text>
         </View>
+
+
+      {/* <View style={styles.photoSection}>
+        <Image
+          source={{ uri: user.profile_picture || 'https://placekitten.com/200/200' }}
+          style={styles.groupPhoto}
+        />
+        <Text style={styles.profileType}>Duo</Text>
+        <TouchableOpacity style={styles.pillButton} onPress={handleAddPhoto}>
+          <Text style={styles.pillText}>Upload New Profile Picture</Text>
+        </TouchableOpacity>
+      </View> */}
 
         {/* — UNO EXTRA PHOTOS */}
         {userInfo.profile_type === 'uno' && (

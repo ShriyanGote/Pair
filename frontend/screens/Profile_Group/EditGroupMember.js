@@ -168,12 +168,15 @@ export default function EditGroupMember({ route, navigation }) {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Edit Group Member</Text>
 
-      {photos.length === 0
+      {/* {photos.length === 0
         ? <Text>No photos yet</Text>
         : <View style={styles.photoContainer}>
-            {photos.map((p) => (
+            {photos.filter(Boolean).map((p, idx) => (
               <View key={p.id} style={styles.photoWrapper}>
-                <Image source={{ uri: p.photo_url }} style={styles.photoImage} />
+                <Image
+                  source={{ uri: p.photo_url ?? p.uri }}   // ← works for both shapes
+                  style={styles.photoImage}
+                />
                 <TouchableOpacity style={styles.deleteBtn} onPress={() => handleDeletePhoto(p.id)}>
                   <Text style={styles.deleteBtnText}>✕</Text>
                 </TouchableOpacity>
@@ -183,7 +186,7 @@ export default function EditGroupMember({ route, navigation }) {
       }
       <TouchableOpacity style={styles.addPhotoBtn} onPress={handleAddPhoto}>
         <Text style={styles.addPhotoText}>Add Photo</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       <TextInput
         style={styles.input}
@@ -239,7 +242,6 @@ export default function EditGroupMember({ route, navigation }) {
         setItems={setPersonalityItems}
         multiple
         mode="BADGE"
-        listMode="MODAL"
         searchable
         style={styles.dropdown}
         dropDownContainerStyle={styles.dropdownContainer}

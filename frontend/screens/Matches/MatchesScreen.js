@@ -139,7 +139,7 @@ const fetchLastMessage = async (me, matchId, token) => {
       <View style={styles.card}>
         <Image
           source={{
-            uri: item.profile_photo || 'https://placekitten.com/200/200',
+            uri: item.profile_picture || 'https://placekitten.com/200/200',
           }}
           style={styles.avatar}
         />

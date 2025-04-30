@@ -25,6 +25,9 @@ export default function EditDuoShared({ route, navigation }) {
   const [interests, setInterests] = useState(
     Array.isArray(user.interests) ? user.interests : (user.interests || '').split(',').filter(Boolean)
   );
+  const [pastActivities, setPastActivities] = useState(
+    Array.isArray(user.past_activities) ? user.past_activities : (user.past_activities || '').split(',').filter(Boolean)
+  );
 
   // For DropDownPicker
   const [open, setOpen] = useState(false);
@@ -50,6 +53,29 @@ export default function EditDuoShared({ route, navigation }) {
     { label: 'Entrepreneurship', value: 'entrepreneurship' },
     { label: 'Collecting', value: 'collecting' },
   ]);
+  const [newItems, setNewItems] = useState([
+    { label: 'Movies & TV', value: 'movies_tv' },
+    { label: 'Gaming', value: 'gaming' },
+    { label: 'Photography', value: 'photography' },
+    { label: 'Fashion', value: 'fashion' },
+    { label: 'Writing', value: 'writing' },
+    { label: 'Nature', value: 'nature' },
+    { label: 'Animals', value: 'animals' },
+    { label: 'Volunteering', value: 'volunteering' },
+    { label: 'History', value: 'history' },
+    { label: 'Science', value: 'science' },
+    { label: 'Cars & Motorcycles', value: 'cars_motorcycles' },
+    { label: 'Podcasts', value: 'podcasts' },
+    { label: 'Crafts & DIY', value: 'crafts_diy' },
+    { label: 'Spirituality', value: 'spirituality' },
+    { label: 'Board Games', value: 'board_games' },
+    { label: 'Languages', value: 'languages' },
+    { label: 'Politics', value: 'politics' },
+    { label: 'Comedy', value: 'comedy' },
+    { label: 'Entrepreneurship', value: 'entrepreneurship' },
+    { label: 'Collecting', value: 'collecting' },
+  ]);
+
 
   const handleSave = async () => {
     try {
@@ -57,7 +83,7 @@ export default function EditDuoShared({ route, navigation }) {
       // send the array of interests
       await axios.put(
         `${API_BASE_URL}/me`,
-        { location, looking_for: lookingFor, interests },
+        { location, looking_for: lookingFor, interests, past_activities: pastActivities },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       Alert.alert('Success', 'Duo profile updated!');
@@ -97,6 +123,23 @@ export default function EditDuoShared({ route, navigation }) {
           mode="BADGE"
           listMode="MODAL"
           placeholder="Choose interests..."
+          style={styles.dropdown}
+          dropDownContainerStyle={styles.dropdownContainer}
+          searchable={true}
+        />
+
+        <Text style={styles.label}>Select Past Activities</Text>
+        <DropDownPicker
+          open={open}
+          value={pastActivities}
+          items={items}
+          setOpen={setOpen}
+          setValue={setPastActivities}
+          setItems={setNewItems}
+          multiple={true}
+          mode="BADGE"
+          listMode="MODAL"
+          placeholder="Choose past activites..."
           style={styles.dropdown}
           dropDownContainerStyle={styles.dropdownContainer}
           searchable={true}

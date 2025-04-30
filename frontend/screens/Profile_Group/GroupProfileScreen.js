@@ -19,6 +19,8 @@ import {
   getGroupMembers,
   getGroupMemberPhotos,
   uploadGroupMemberPhoto,
+  uploadDuoMemberPhoto,
+  uploadMulipleProfilePhoto,
 } from '../../utils/api';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
@@ -70,6 +72,35 @@ export default function GroupProfileScreen() {
     }, [])
   );
 
+
+
+  const handleAddProfilePic = async (memberId) => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 0.7,
+    });
+
+    if (!result.canceled) {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const form = new FormData();
+        form.append('file', {
+          uri: result.assets[0].uri,
+          name: 'photo.jpg',
+          type: 'image/jpeg',
+        });
+
+      const { data } = await uploadMulipleProfilePhoto(form, token);
+      setUser(u => ({ ...u, profile_picture: data.profile_picture }));
+
+      } catch (e) {
+        Alert.alert('Upload failed', 'Could not upload photo.');
+        console.error(e);
+      }
+    }
+  };
+
   const handleAddPhoto = async (memberId) => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -85,7 +116,7 @@ export default function GroupProfileScreen() {
         name: 'photo.jpg',
         type: 'image/jpeg',
       };
-      const res = await uploadGroupMemberPhoto(memberId, file, token);
+      const res = await uploadGroupMemberPhoto(file, memberId, token);
       setPhotosMap(pm => ({
         ...pm,
         [memberId]: [
@@ -148,12 +179,12 @@ export default function GroupProfileScreen() {
       {/* — Group Photo */}
       <View style={styles.photoSection}>
         <Image
-          source={{ uri: user.profile_photo || 'https://placekitten.com/200/200' }}
+          source={{ uri: user.profile_picture || 'https://placekitten.com/200/200' }}
           style={styles.groupPhoto}
         />
         <Text style={styles.profileType}>Group</Text>
-        <TouchableOpacity style={styles.pillButton} onPress={handleAddPhoto}>
-          <Text style={styles.pillText}>Upload New Group Photo</Text>
+        <TouchableOpacity style={styles.pillButton} onPress={handleAddProfilePic}>
+          <Text style={styles.pillText}>Upload New Profile Picture</Text>
         </TouchableOpacity>
       </View>
 
