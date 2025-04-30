@@ -1,7 +1,15 @@
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 from app.db.database import SessionLocal
-from app.models.model import User, UserPhoto, GroupMemberPhoto, GroupMember, DuoMember, DuoMemberPhoto, DuoProfile
+from app.models.model import (
+    User,
+    UserPhoto,
+    UnoProfile,              #  ← NEW
+    GroupProfile,            #  ← NEW+    
+    DuoProfile,
+    GroupMemberPhoto, GroupMember,
+    DuoMemberPhoto, DuoMember
+)
 from app.core.auth import decode_access_token
 import boto3, os, uuid
 
@@ -67,6 +75,11 @@ async def upload_uno_photo(
     db.add(new_photo)
     db.commit()
     db.refresh(new_photo)
+    if current_user.profile_type == "uno":
+        uno = db.query(UnoProfile).filter_by(user_id=current_user.id).first()
+        if uno and not uno.profile_picture:
+            uno.profile_picture = photo_url
+            db.commit()
 
     return {"photo_id": new_photo.id, "photo_url": photo_url}
 
@@ -92,7 +105,7 @@ def get_group_member_photos(member_id: int, db: Session = Depends(get_db), curre
     return [{"id": p.id, "photo_url": p.photo_url} for p in member.photos]
 
 @router.post("/group-members/{member_id}/photos")
-def upload_group_member_photo(member_id: int, file: UploadFile = File(...), db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def upload_group_member_photo(member_id: int, file: UploadFile = File(...), is_primary: bool = False, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     member = db.query(GroupMember).filter_by(id=member_id, group_id=current_user.id).first()
     if not member:
         raise HTTPException(status_code=404, detail="Group member not found")
@@ -125,6 +138,11 @@ def upload_group_member_photo(member_id: int, file: UploadFile = File(...), db: 
     db.add(new_photo)
     db.commit()
     db.refresh(new_photo)
+    if is_primary:
+        gp = db.query(GroupProfile).filter_by(group_id=current_user.id).first()
+        if gp:
+            gp.profile_picture = photo_url
+            db.commit()
 
     return {"photo_id": new_photo.id, "photo_url": photo_url}
 
@@ -194,6 +212,41 @@ def upload_duo_member_photo(member_id: int, file: UploadFile = File(...), db: Se
 
     return {"photo_id": new_photo.id, "photo_url": photo_url}
 
+@router.post("/duo-profile/photo")
+def upload_duo_profile_photo(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+    db: Session      = Depends(get_db)
+):
+    if current_user.profile_type != "duo":
+        raise HTTPException(403, "Only DUO accounts can use this route")
+
+    # --- 1. push to S3 exactly like the others --------------------------
+    s3 = boto3.client(
+        "s3",
+        aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY"),
+        region_name = os.getenv("AWS_S3_REGION"),
+    )
+    ext = file.filename.rsplit(".", 1)[-1]
+    key = f"profile_photos/{uuid.uuid4()}.{ext}"
+    s3.upload_fileobj(
+        file.file, os.getenv("AWS_S3_BUCKET_NAME"), key,
+        ExtraArgs={"ContentType": file.content_type},
+    )
+    url = f"https://{os.getenv('AWS_S3_BUCKET_NAME')}.s3.{os.getenv('AWS_S3_REGION')}.amazonaws.com/{key}"
+
+    # --- 2. save on DuoProfile row --------------------------------------
+    dp = db.query(DuoProfile).filter_by(duo_id=current_user.id).first()
+    if not dp:
+        dp = DuoProfile(duo_id=current_user.id)
+        db.add(dp)
+    dp.profile_picture = url
+    db.commit()
+    return {"profile_picture": url}
+
+
+
 @router.delete("/duo-members/{member_id}/photos/{photo_id}")
 def delete_duo_member_photo(member_id: int, photo_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     member = db.query(DuoMember).join(DuoProfile).filter(
@@ -211,3 +264,115 @@ def delete_duo_member_photo(member_id: int, photo_id: int, db: Session = Depends
     db.delete(photo)
     db.commit()
     return {"message": "Photo deleted"}
+
+
+
+# app/api/photo_routes.py   (same file that already has upload_uno_photo)
+
+@router.post("/upload-multiple-profile-photo")
+async def upload_duo_profile_photo(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if current_user.profile_type not in ("duo", "group"):
+        raise HTTPException(403, "Only DUO and GROUP profiles can call this endpoint")
+
+    # ─── upload to S3 ────────────────────────────────────────────────
+    s3  = boto3.client(
+        "s3",
+        aws_access_key_id     = os.getenv("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY"),
+        region_name           = os.getenv("AWS_S3_REGION"),
+    )
+    ext   = file.filename.split(".")[-1]
+    key   = f"profile_photos/{uuid.uuid4()}.{ext}"
+
+    try:
+        s3.upload_fileobj(
+            file.file,
+            os.getenv("AWS_S3_BUCKET_NAME"),
+            key,
+            ExtraArgs={"ContentType": file.content_type},
+        )
+    except Exception as e:
+        raise HTTPException(500, f"Failed to upload: {e}")
+
+    url = (
+        f"https://{os.getenv('AWS_S3_BUCKET_NAME')}.s3."
+        f"{os.getenv('AWS_S3_REGION')}.amazonaws.com/{key}"
+    )
+
+    # ─── store on the profile row ────────────────────────────────────
+    if current_user.profile_type == "duo":
+        duo = db.query(DuoProfile).filter_by(duo_id=current_user.id).first()
+        if not duo:
+            duo = DuoProfile(duo_id=current_user.id)
+            db.add(duo)
+
+        duo.profile_picture = url
+        db.commit()
+    elif current_user.profile_type == "group":
+        group = db.query(GroupProfile).filter_by(group_id=current_user.id).first()
+        if not group:
+            group = GroupProfile(group_id=current_user.id)
+            db.add(group)
+
+        group.profile_picture = url
+        db.commit()
+
+
+    return {"profile_picture": url}
+
+
+
+
+
+@router.post("/upload-uno-profile-photo")
+async def upload_uno_profile_photo(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if current_user.profile_type != "uno":
+        raise HTTPException(403, "Only UNO profiles can call this endpoint")
+
+    # ─── upload to S3 ────────────────────────────────────────────────
+    s3  = boto3.client(
+        "s3",
+        aws_access_key_id     = os.getenv("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY"),
+        region_name           = os.getenv("AWS_S3_REGION"),
+    )
+    ext   = file.filename.split(".")[-1]
+    key   = f"profile_photos/{uuid.uuid4()}.{ext}"
+
+    try:
+        s3.upload_fileobj(
+            file.file,
+            os.getenv("AWS_S3_BUCKET_NAME"),
+            key,
+            ExtraArgs={"ContentType": file.content_type},
+        )
+    except Exception as e:
+        raise HTTPException(500, f"Failed to upload: {e}")
+
+    url = (
+        f"https://{os.getenv('AWS_S3_BUCKET_NAME')}.s3."
+        f"{os.getenv('AWS_S3_REGION')}.amazonaws.com/{key}"
+    )
+
+    # ─── store on the profile row ────────────────────────────────────
+    uno = db.query(UnoProfile).filter_by(user_id=current_user.id).first()
+    if not uno:
+        uno = UnoProfile(user_id=current_user.id)
+        db.add(uno)
+
+    uno.profile_picture = url
+    db.commit()
+
+    return {"profile_picture": url}
+
+
+
+

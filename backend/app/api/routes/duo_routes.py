@@ -47,6 +47,7 @@ def read_me(
         if dp:
             out["duo_profile"] = {
                 "id": dp.id,
+                "profile_picture": dp.profile_picture,
                 "shared_bio": dp.shared_bio,
                 "location": dp.location,
                 "interests": dp.interests,
@@ -84,6 +85,7 @@ def update_duo_shared_profile(
     duo_profile.interests = data.get("interests", duo_profile.interests)
     duo_profile.looking_for = data.get("looking_for", duo_profile.looking_for)
     duo_profile.past_activities = data.get("past_activities", duo_profile.past_activities)
+    duo_profile.profile_picture = data.get("profile_picture", duo_profile.profile_picture)
 
     db.commit()
     db.refresh(duo_profile)
@@ -91,6 +93,7 @@ def update_duo_shared_profile(
     return {
         "message": "Duo profile updated",
         "profile": {
+            "profile_picture":duo_profile.profile_picture,
             "location": duo_profile.location,
             "interests": duo_profile.interests,
             "looking_for": duo_profile.looking_for,

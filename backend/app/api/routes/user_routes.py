@@ -123,8 +123,10 @@ def read_me(
                     "past_activities": uno.past_activities or [],
                     "social_media_use": uno.social_media_use,
                     "interests": uno.interests or [],
+                    "profile_picture": uno.profile_picture,
                 }
             )
+
 
     # Attach Duo profile fields
     if current_user.profile_type == "duo":
@@ -137,6 +139,7 @@ def read_me(
                     "looking_for": duo.looking_for,
                     "interests": duo.interests or [],
                     "past_activities": duo.past_activities or [],
+                    "profile_picture": duo.profile_picture,
                 }
             )
 
@@ -156,6 +159,7 @@ def read_me(
                     "looking_for": grp.looking_for,
                     "interests": grp.interests or [],
                     "past_activities": grp.past_activities or [],
+                    "profile_picture": grp.profile_picture,
                 }
             )
         resp["members"] = [to_dict(m) for m in members]
@@ -174,7 +178,7 @@ def update_user_profile(
         raise HTTPException(404, "User not found")
 
     # Always allow these
-    for attr in ("name", "email", "profile_photo", "location"):
+    for attr in ("name", "email", "location", "profile_picture"):
         val = getattr(data, attr)
         if val is not None:
             setattr(user, attr, val)
@@ -200,6 +204,8 @@ def update_user_profile(
             val = getattr(data, scalar)
             if val is not None:
                 setattr(uno, scalar, val)
+        if data.profile_picture is not None:
+            uno.profile_picture = data.profile_picture
 
     elif user.profile_type == "duo":
         duo = db.query(DuoProfile).filter_by(duo_id=user.id).first()

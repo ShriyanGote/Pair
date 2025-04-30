@@ -87,7 +87,7 @@ class UserUpdate(BaseModel):
     age: Optional[int] = None
     gender: Optional[str] = None
     location: Optional[str] = None
-    profile_photo: Optional[str] = None
+    profile_picture: Optional[str] = None
     profile_type: Optional[str] = None
     ethnicity: Optional[List[str]] = None
     social_media_use: Optional[int] = None
@@ -119,7 +119,6 @@ class GroupMember(Base):
     group_profile_id = Column(Integer, ForeignKey("group_profiles.id"))
     name = Column(String)
     age = Column(Integer)
-    profile_photo = Column(String, nullable=True)
     gender = Column(String, nullable=True)
     ethnicity = Column(ARRAY(String), nullable=True)
     personality = Column(ARRAY(String), nullable=True)
@@ -153,6 +152,7 @@ class GroupMemberPhoto(Base):
 
 
 class GroupProfileInput(BaseModel):
+    profile_picture: Optional[str] = None
     location: Optional[str] = None
     looking_for: Optional[str] = None
     interests: Optional[List[str]] = None
@@ -160,6 +160,7 @@ class GroupProfileInput(BaseModel):
     members: List[GroupMemberInput]
 
 class DuoProfileInput(BaseModel):
+    profile_picture: Optional[str] = None
     location: Optional[str] = None
     interests: Optional[List[str]] = None
     occupation: Optional[List[str]] = None
@@ -177,6 +178,7 @@ class GroupProfile(Base):
     interests = Column(ARRAY(String), nullable=True)
     looking_for = Column(String, nullable=True)
     past_activities = Column(ARRAY(String), nullable=True)
+    profile_picture = Column(String, nullable=True)
     group = relationship("User", backref="group_profile")
     members = relationship("GroupMember", back_populates="group_profile", cascade="all, delete")
 
@@ -185,19 +187,21 @@ class GroupProfile(Base):
 # uno ----------------------------------------------------------------------------------
 class UnoProfile(Base):
     __tablename__ = "uno_profiles"
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id"), unique=True)
+    id        = Column(Integer, primary_key=True)
+    user_id   = Column(Integer, ForeignKey("users.id"), unique=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    age = Column(Integer)
-    gender = Column(String)
-    bio = Column(String)
-    location = Column(String)
-    occupation = Column(ARRAY(String))
-    ethnicity = Column(ARRAY(String))
-    personality = Column(ARRAY(String))
+    profile_picture = Column(String, nullable=True)
+    age          = Column(Integer)
+    gender       = Column(String)
+    bio          = Column(String)
+    location     = Column(String)
+    occupation   = Column(ARRAY(String))
+    ethnicity    = Column(ARRAY(String))
+    personality  = Column(ARRAY(String))
     past_activities = Column(ARRAY(String))
     social_media_use = Column(Integer)
-    interests = Column(ARRAY(String))
+    interests    = Column(ARRAY(String))
+
     user = relationship("User", back_populates="uno_profile")
 
 
@@ -206,15 +210,17 @@ class UnoProfile(Base):
 # duo ----------------------------------------------------------------------------------
 class DuoProfile(Base):
     __tablename__ = "duo_profiles"
-    id = Column(Integer, primary_key=True)
-    duo_id = Column(Integer, ForeignKey("users.id"))
+    id      = Column(Integer, primary_key=True)
+    duo_id  = Column(Integer, ForeignKey("users.id"))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    shared_bio = Column(String)
-    location = Column(String)
-    looking_for = Column(String)
-    interests = Column(ARRAY(String))
+    profile_picture = Column(String, nullable=True)
+    shared_bio      = Column(String)
+    location        = Column(String)
+    looking_for     = Column(String)
+    interests       = Column(ARRAY(String))
     past_activities = Column(ARRAY(String))
-    members = relationship("DuoMember", back_populates="duo", cascade="all, delete")
+    members = relationship("DuoMember", back_populates="duo",
+                           cascade="all, delete")
 
 class DuoMember(Base):
     __tablename__ = "duo_members"

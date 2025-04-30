@@ -44,6 +44,7 @@ def create_or_update_uno_profile(
     personality: Optional[List[str]] = Body(None),
     past_activities: Optional[List[str]] = Body(None),
     social_media_use: Optional[int] = Body(None),
+    profile_picture: Optional[str] = Body(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -62,6 +63,8 @@ def create_or_update_uno_profile(
         profile.personality = personality
         profile.past_activities = past_activities
         profile.social_media_use = social_media_use
+        if profile_picture is not None:
+            profile.profile_picture = profile_picture
     else:
         profile = UnoProfile(
             user_id=current_user.id,
@@ -73,7 +76,8 @@ def create_or_update_uno_profile(
             personality=personality,
             past_activities=past_activities,
             social_media_use=social_media_use,
-            location=location
+            location=location,
+            profile_picture = profile_picture
         )
         db.add(profile)
 
@@ -92,7 +96,8 @@ def create_or_update_uno_profile(
             "ethnicity": profile.ethnicity or [],
             "personality": profile.personality or [],
             "past_activities": profile.past_activities or [],
-            "social_media_use": profile.social_media_use
+            "social_media_use": profile.social_media_use,
+            "profile_picture":profile.profile_picture
         }
     }
 

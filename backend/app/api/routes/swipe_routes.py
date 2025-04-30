@@ -108,7 +108,6 @@ def swipe(
 
     return {"message": "Swipe recorded"}
 
-# ─────────────────────── recommendations ────────────────────
 @router.get("/recommendations")
 def get_recommendations(
     current_user: User = Depends(get_current_user),
@@ -161,9 +160,9 @@ def get_recommendations(
         photos = [p.photo_url for p in u.user_photos] if u.user_photos else []
         base = {
             "id":            u.id,
-            "name":          u.name,
-            "profile_type":  u.profile_type,
-            "profile_photo": first_photo(u),
+            "name":          u.name or "No Name",
+            "profile_type":  u.profile_type or "No Profile Type",
+            "profile_picture": first_photo(u),
             "photos":        photos,
             "location":      None,
             "gender":        None,
@@ -180,9 +179,10 @@ def get_recommendations(
             if duo:
                 base.update(
                     {
-                        "location":    duo.location,
-                        "looking_for": duo.looking_for,
+                        "location":    duo.location or "No Location",
+                        "looking_for": duo.looking_for or "Not Specified",
                         "interests":   duo.interests or [],
+                        "profile_picture": duo.profile_picture or "",
                     }
                 )
                 members = db.query(DuoMember).filter_by(duo_id=duo.id).all()
@@ -199,8 +199,8 @@ def get_recommendations(
                 base["members"] = [
                     {
                         "id": m.id,
-                        "name": m.name,
-                        "age": m.age,
+                        "name": m.name or "No Name",
+                        "age": m.age or "No Age",
                         "photos": duo_member_photos.get(m.id, []),
                     }
                     for m in members
@@ -211,8 +211,8 @@ def get_recommendations(
             if grp:
                 base.update(
                     {
-                        "location":    grp.location,
-                        "looking_for": grp.looking_for,
+                        "location":    grp.location or "No Location",
+                        "looking_for": grp.looking_for or "Not Specified",
                         "interests":   grp.interests or [],
                     }
                 )
@@ -224,8 +224,8 @@ def get_recommendations(
                 base["members"] = [
                     {
                         "id":    m.id,
-                        "name":  m.name,
-                        "age":   m.age,
+                        "name":  m.name or "No Name",
+                        "age":   m.age or "No Age",
                         "photos": photo_map.get(m.id, []),
                     }
                     for m in members
@@ -236,10 +236,10 @@ def get_recommendations(
             if uno:
                 base.update(
                     {
-                        "bio":       uno.bio,
-                        "age":       uno.age,
-                        "gender":    uno.gender,
-                        "location":  uno.location,
+                        "bio":       uno.bio or "No Bio",
+                        "age":       uno.age or "No Age",
+                        "gender":    uno.gender or "No Gender",
+                        "location":  uno.location or "No Location",
                         "ethnicity": uno.ethnicity or [],
                         "interests": uno.interests or [],
                     }
@@ -248,6 +248,7 @@ def get_recommendations(
         results.append(base)
 
     return results
+
 
 # ───────────────────────── matches ──────────────────────────
 @router.get("/matches")
@@ -270,7 +271,7 @@ def get_matches(
             "id":            u.id,
             "name":          u.name,
             "profile_type":  u.profile_type,
-            "profile_photo": first_photo(u),
+            "profile_picture": first_photo(u),
         }
 
         if u.profile_type == "uno":
@@ -320,7 +321,7 @@ def get_matches(
                             "id":            m.id,
                             "name":          m.name,
                             "age":           m.age,
-                            "profile_photo": getattr(m, "profile_photo", None),
+                            "profile_picture": getattr(m, "profile_picture", None),
                         }
                         for m in members
                     ],
@@ -385,7 +386,7 @@ def get_incoming_requests(
             "id":            u.id,
             "name":          u.name,
             "profile_type":  u.profile_type,
-            "profile_photo": first_photo(u),
+            "profile_picture": first_photo(u),
         }
         for u in users
     ]
