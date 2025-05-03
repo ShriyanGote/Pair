@@ -1,340 +1,170 @@
-// screens/Profile_Group/GroupProfileScreen.js
-
-import React, { useState, useCallback } from 'react';
+// screens/ProfileScreen.js
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
-  ScrollView,
-  Image,
-  ActivityIndicator,
   TouchableOpacity,
-  Alert,
   StyleSheet,
+  ActivityIndicator,
+  ScrollView,
 } from 'react-native';
+import GestureRecognizer from 'react-native-swipe-gestures';
+import EditGroupView from './EditGroupView';
+import PreviewGroupView from './PreviewGroupView';
+import { getCurrentUser } from '../../utils/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  deleteGroupMember,
-  deleteGroupMemberPhoto,
-  getCurrentUser,
-  getGroupMembers,
-  getGroupMemberPhotos,
-  uploadGroupMemberPhoto,
-  uploadDuoMemberPhoto,
-  uploadMulipleProfilePhoto,
-} from '../../utils/api';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import * as ImagePicker from 'expo-image-picker';
-import { Ionicons } from '@expo/vector-icons';
 
 export default function GroupProfileScreen() {
+  const [mode, setMode] = useState('edit');
   const [user, setUser] = useState(null);
-  const [members, setMembers] = useState([]);
-  const [photosMap, setPhotosMap] = useState({});
   const [loading, setLoading] = useState(true);
-  const navigation = useNavigation();
 
-  useFocusEffect(
-    useCallback(() => {
-      let isActive = true;
-      (async () => {
-        setLoading(true);
-        const token = await AsyncStorage.getItem('token');
-        if (!token) return setLoading(false);
-
-        try {
-          const { data: me } = await getCurrentUser(token);
-          if (!isActive) return;
-          setUser(me);
-
-          if (me.profile_type === 'group') {
-            const { data: list } = await getGroupMembers(token);
-            if (!isActive) return;
-            setMembers(list);
-
-            const map = {};
-            for (const m of list) {
-              try {
-                const { data: pics } = await getGroupMemberPhotos(m.id, token);
-                map[m.id] = pics;
-              } catch {
-                map[m.id] = [];
-              }
-            }
-            if (isActive) setPhotosMap(map);
-          }
-        } catch (err) {
-          console.error(err);
-        } finally {
-          if (isActive) setLoading(false);
-        }
-      })();
-      return () => { isActive = false; };
-    }, [])
-  );
-
-
-
-  const handleAddProfilePic = async (memberId) => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 0.7,
-    });
-
-    if (!result.canceled) {
-      try {
-        const token = await AsyncStorage.getItem('token');
-        const form = new FormData();
-        form.append('file', {
-          uri: result.assets[0].uri,
-          name: 'photo.jpg',
-          type: 'image/jpeg',
-        });
-
-      const { data } = await uploadMulipleProfilePhoto(form, token);
-      setUser(u => ({ ...u, profile_picture: data.profile_picture }));
-
-      } catch (e) {
-        Alert.alert('Upload failed', 'Could not upload photo.');
-        console.error(e);
-      }
-    }
-  };
-
-  const handleAddPhoto = async (memberId) => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 0.7,
-    });
-    if (result.canceled) return;
-
+  const load = useCallback(async () => {
+    setLoading(true);
+    const token = await AsyncStorage.getItem('token');
+    if (!token) return setLoading(false);
     try {
-      const token = await AsyncStorage.getItem('token');
-      const file = {
-        uri: result.assets[0].uri,
-        name: 'photo.jpg',
-        type: 'image/jpeg',
-      };
-      const res = await uploadGroupMemberPhoto(file, memberId, token);
-      setPhotosMap(pm => ({
-        ...pm,
-        [memberId]: [
-          ...(pm[memberId] || []),
-          { id: res.photo_id,   photo_url: res.photo_url   }
-        ]
-      }))
-    } catch {
-      Alert.alert('Error', 'Failed to upload photo');
+      const { data } = await getCurrentUser(token);
+      setUser(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
 
-  const handleDelete = (id) => {
-    Alert.alert(
-      'Remove Member?',
-      'Are you sure you want to remove this group member?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Remove',
-          style: 'destructive',
-          onPress: async () => {
-            const token = await AsyncStorage.getItem('token');
-            await deleteGroupMember(id, token);
-            setMembers(ms => ms.filter(m => m.id !== id));
-            setPhotosMap(pm => {
-              const { [id]:_, ...rest } = pm;
-              return rest;
-            });
-          }
-        }
-      ]
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#6C3FB5"/>
+      </View>
     );
-  };
+  }
 
-  if (loading) return (
-    <View style={styles.center}>
-      <ActivityIndicator size="large" />
-    </View>
-  );
-  if (!user) return (
-    <View style={styles.center}>
-      <Text>Unable to load profile.</Text>
-    </View>
-  );
+  if (!user) {
+    return (
+      <View style={styles.center}>
+        <Text>Unable to load profile.</Text>
+      </View>
+    );
+  }
 
   return (
-    <ScrollView style={styles.container}>
-      {/* — Top Actions */}
-      <View style={styles.topActionsRow}>
-        <TouchableOpacity style={styles.actionBtn} onPress={() => {/* TODO */}}>
-          <Ionicons name="settings-outline" size={24} color="#6C3FB5" />
-          <Text style={styles.actionText}>Settings</Text>
+    <GestureRecognizer
+      onSwipeLeft={() => setMode('edit')}
+      onSwipeRight={() => setMode('preview')}
+      style={styles.flex}
+      config={{ velocityThreshold: 0.3, directionalOffsetThreshold: 80 }}
+    >
+      {/* ——— Mode Toggle ——— */}
+      <View style={styles.toggleRow}>
+        <TouchableOpacity
+          style={[
+            styles.toggleBtn,
+            mode === 'edit'    && styles.toggleBtnActive
+          ]}
+          onPress={() => setMode('edit')}
+        >
+          <Text
+            style={[
+              styles.toggleText,
+              mode === 'edit' && styles.toggleTextActive
+            ]}
+          >
+            ✏️ Edit
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionBtn} onPress={() => navigation.push('EditProfileType', { currentType: user.profile_type })}>
-          <Ionicons name="swap-horizontal-outline" size={24} color="#6C3FB5" />
-          <Text style={styles.actionText}>Change Type</Text>
+        <TouchableOpacity
+          style={[
+            styles.toggleBtn,
+            mode === 'preview' && styles.toggleBtnActive
+          ]}
+          onPress={() => setMode('preview')}
+        >
+          <Text
+            style={[
+              styles.toggleText,
+              mode === 'preview' && styles.toggleTextActive
+            ]}
+          >
+            👀 Preview
+          </Text>
         </TouchableOpacity>
-      </View>
-      {/* — Group Photo */}
-      <View style={styles.photoSection}>
-        <Image
-          source={{ uri: user.profile_picture || 'https://placekitten.com/200/200' }}
-          style={styles.groupPhoto}
-        />
-        <Text style={styles.profileType}>Group</Text>
-        <TouchableOpacity style={styles.pillButton} onPress={handleAddProfilePic}>
-          <Text style={styles.pillText}>Upload New Profile Picture</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* — Shared Info Card */}
-      <View style={styles.card}>
-        <View style={styles.rowHeader}>
-          <Text style={styles.cardTitle}>Group Information</Text>
-          <TouchableOpacity onPress={() => navigation.push('EditGroupShared', { user })}>
-            <Ionicons name="pencil-outline" size={20} color="#6C3FB5" />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.infoRow}>
-          <Ionicons name="location-outline" size={18} color="#6C3FB5" style={styles.infoIcon} />
-          <Text style={styles.infoLabel}>Location</Text>
-          <Text style={styles.infoValue}>{user.location || '—'}</Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Ionicons name="search-outline" size={18} color="#6C3FB5" style={styles.infoIcon} />
-          <Text style={styles.infoLabel}>Looking For</Text>
-          <Text style={styles.infoValue}>{user.looking_for || '—'}</Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Ionicons name="star-outline" size={18} color="#6C3FB5" style={styles.infoIcon} />
-          <Text style={styles.infoLabel}>Past Activites</Text>
-          <Text style={styles.infoValue}>{(user.past_activities||[]).join(', ') || '—'}</Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Ionicons name="albums-outline" size={18} color="#6C3FB5" style={styles.infoIcon} />
-          <Text style={styles.infoLabel}>Interests</Text>
-          <Text style={styles.infoValue}>{(user.interests||[]).join(', ') || '—'}</Text>
-        </View>
       </View>
 
-      {/* — Members List */}
-      <Text style={styles.subHeader}>Members</Text>
-      <TouchableOpacity
-        style={styles.pillButton}
-        onPress={() => navigation.push('AddGroupMember', { step: members.length+1, sharedData: { location: user.location, interests: user.interests, looking_for: user.looking_for }, members })}
+      {/* ——— Content ——— */}
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.contentContainer}
       >
-        <Ionicons name="person-add-outline" size={16} color="#6C3FB5" style={{marginRight:4}} />
-        <Text style={styles.pillText}>Add Member</Text>
-      </TouchableOpacity>
-      {members.length === 0 && <Text style={styles.noMembers}>No members added yet.</Text>}
-      {members.map(m => (
-        <View key={m.id} style={styles.card}>
-          <View style={styles.memberRow}>
-            <Image source={{ uri: m.profile_photo||'https://placekitten.com/100' }} style={styles.memberAvatar} />
-            <View style={{ flex: 1 }}>
-              <Text style={styles.memberName}>{m.name}</Text>
-              <Text>Age: {m.age}</Text>
-              <Text>Gender: {m.gender}</Text>
-            </View>
-            <TouchableOpacity onPress={() => navigation.push('EditGroupMember', { member: m })}>
-              <Text style={styles.editSmall}>Edit</Text>
-            </TouchableOpacity>
-            {members.length >= 4 && <TouchableOpacity onPress={() => handleDelete(m.id)}>
-              <Ionicons name="trash-outline" size={20} color="red" />
-            </TouchableOpacity>}
-          </View>
-          {photosMap[m.id]?.length > 0 && (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>
-              {(photosMap[m.id] || []).map(p => (
-                <View key={p.id} style={{ position: 'relative', marginRight: 10 }}>
-                  <Image key={p.id} source={{ uri: p.photo_url }} style={styles.carouselPhoto} />
-                  <TouchableOpacity
-                    style={styles.deleteButton}
-                    onPress={() => {
-                      Alert.alert(
-                        'Delete Photo?',
-                        '',
-                        [
-                          { text: 'Cancel', style: 'cancel' },
-                          {
-                            text: 'Delete',
-                            style: 'destructive',
-                            onPress: async () => {
-                              const token = await AsyncStorage.getItem('token');
-                              await deleteGroupMemberPhoto(m.id, p.id, token);
-                              setPhotosMap(pm => ({
-                                ...pm,
-                                [m.id]: pm[m.id].filter(x => x.id !== p.id),
-                              }));
-                            }
-                          }
-                        ]
-                      );
-                    }}
-                  >
-                    <Text style={styles.deleteX}>✕</Text>
-                  </TouchableOpacity>
-                </View>
-              ))}
-            </ScrollView>
-          )}
-          <TouchableOpacity onPress={() => handleAddPhoto(m.id)} style={{ marginTop: 6 }}>
-            <Text style={styles.editText}>Add Photo</Text>
-          </TouchableOpacity>
-        </View>
-      ))}
-
-      {/* — Logout */}
-      <TouchableOpacity
-        style={styles.logoutButton}
-        onPress={async () => {
-          await AsyncStorage.removeItem('token');
-          navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
-        }}
-      >
-        <Ionicons name="log-out-outline" size={24} color="red" />
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        {mode === 'edit' ? (
+          <EditGroupView user={user} onRefresh={load} />
+        ) : (
+          <PreviewGroupView user={user} />
+        )}
+      </ScrollView>
+    </GestureRecognizer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F7F7F7' },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  topActionsRow: { flexDirection: 'row', justifyContent: 'space-between', marginHorizontal: 16, marginVertical: 10 },
-  actionBtn: { alignItems: 'center' },
-  actionText: { fontSize: 12, color: '#6C3FB5', marginTop: 4 },
-  photoSection: { backgroundColor: '#fff', alignItems: 'center', paddingVertical: 24, marginBottom: 12, shadowColor: '#000', shadowOpacity: 0.05, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4, elevation: 2 },
-  card: { backgroundColor: '#fff', marginHorizontal: 16, borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOpacity: 0.05, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4, elevation: 2 },
-  rowHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  cardTitle: { fontSize: 16, fontWeight: '600', color: '#333' },
-  infoRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
-  infoLabel: { color: '#555', fontWeight: '600' },
-  infoValue: { color: '#333', maxWidth: '65%', textAlign: 'right' },
-  subHeader: { fontSize: 20, fontWeight: '600', marginHorizontal: 16, marginTop: 16, marginBottom: 8 },
-  pillButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F0F0F5', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 20, alignSelf: 'center', marginBottom: 12 },
-  pillText: { color: '#6C3FB5', fontWeight: '600', fontSize: 14 },
-  noMembers: { textAlign: 'center', color: 'gray', fontStyle: 'italic' },
-  memberRow: {
-    flexDirection:'row',
-    alignItems:   'center',
-    marginBottom: 12,
+  flex: { flex: 1 },
+
+  // outer ScrollView style
+  container: {
+    flex: 1,
+    backgroundColor: '#F7F3FF',
   },
-  memberAvatar:    { width:40, height:40, borderRadius:20, marginRight:12 },
-  memberName:      { fontSize:15, fontWeight:'600', flex:1 },
-  editSmall:       { color:'#6C3FB5', marginRight:12 },
-  groupPhoto:      { width: 100, height: 100, borderRadius: 50, marginBottom: 12 },
-  carouselPhoto:   { width:80, height:80, borderRadius:10, borderWidth:1, borderColor:'#ddd' },
-  deleteButton:    { position:'absolute', top:0, right:0, backgroundColor:'rgba(0,0,0,0.6)', borderRadius:12, padding:2 },
-  deleteX:         { color:'#fff', fontSize:12 },
-  profileType:     { fontSize: 20, fontWeight: '600', color: '#333', marginBottom: 8 },
-  editText:        { color:'#007AFF', fontSize:14, marginTop:6 },
-  deleteText:      { color:'red', fontSize:14 },
-  logoutButton:    { alignItems:'center', marginTop:20, marginBottom:30 },
-  logoutText:      { color:'red', fontSize:12, marginTop:4 },
-  infoIcon: {
-    marginRight: 8,
+
+  // inner content layout for centering
+  contentContainer: {
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
   },
+
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  toggleRow: {
+    flexDirection: 'row',
+    margin: 16,
+    borderRadius: 8,
+    backgroundColor: '#e0e0e0',
+    overflow: 'hidden',
+  },
+  toggleBtn: {
+    flex: 1,
+    padding: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  toggleBtnActive: {
+    backgroundColor: '#6C3FB5',
+  },
+  toggleText: {
+    color: '#333',
+    fontWeight: '600',
+  },
+  toggleTextActive: {
+    color: '#fff',
+  },
+
+  // (you can keep your other button/text styles below)
+  title: { fontSize: 40, fontWeight: 'bold', color: '#B76EFF', marginBottom: 4 },
+  subtitle: { fontSize: 16, color: '#555', marginBottom: 40, textAlign: 'center' },
+  icon: { marginBottom: 50 },
+  buttonPrimary: { backgroundColor: '#B76EFF', paddingVertical: 14, paddingHorizontal: 30, borderRadius: 10, marginBottom: 15, width: '100%' },
+  buttonSecondary: { backgroundColor: '#8E44AD', paddingVertical: 14, paddingHorizontal: 30, borderRadius: 10, marginBottom: 25, width: '100%' },
+  buttonText: { color: '#fff', fontSize: 16, textAlign: 'center', fontWeight: '600' },
+  link: { marginTop: 10 },
+  linkText: { color: '#7D3C98', fontSize: 14, textDecorationLine: 'underline' },
 });
