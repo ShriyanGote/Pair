@@ -317,24 +317,15 @@ const fetchUser = async () => {
             style={styles.input}
             dropDownContainerStyle={[styles.input, { zIndex: 1000 }]}
           />
-          {editing ? (
-            <GooglePlacesAutocomplete
-              placeholder="Location"
-              fetchDetails
-              onPress={(_, details) =>
-                setUserInfo(u => ({ ...u, location: details.formatted_address }))
-              }
-              query={{ key: GOOGLE_API_KEY, language: 'en' }}
-              styles={{ textInput: styles.input }}
-            />
-          ) : (
-            <TextInput
-              style={styles.input}
-              placeholder="Location"
-              value={userInfo.location}
-              editable={false}
-            />
-          )}
+          <TextInput
+            style={styles.input}
+            placeholder="Location (City, State)"
+            value={userInfo.location}
+            onChangeText={text =>
+              setUserInfo(u => ({ ...u, location: text }))
+            }
+            editable={editing}
+          />
           <TextInput
             style={[styles.input, { height: 80 }]}
             placeholder="Bio"

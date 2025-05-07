@@ -4,11 +4,15 @@
     "slug": "pair",
     "scheme": "pair",
     "version": "1.0.0",
-    "sdkVersion": "52.0.0",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
-    "web": { "bundler": "metro" },
+    "web": {
+      "bundler": "metro"
+    },
     "splash": {
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
@@ -16,12 +20,15 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.shriyan.pair"
     },
     "android": {
       "package": "com.shriyan.pair"
-    }  }
+    }
+  }
 }

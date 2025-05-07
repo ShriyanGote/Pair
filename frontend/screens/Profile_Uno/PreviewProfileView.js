@@ -1,6 +1,6 @@
 // screens/PreviewProfileView.js
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -9,8 +9,38 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  getCurrentUser,
 
-export default function PreviewProfileView({ user }) {
+  getUserPhotos,
+
+} from '../../utils/api';
+
+
+export default function PreviewProfileView({ user: navUser}) {
+  const [user, setUserInfo]     = useState(navUser);
+  const [photos, setPhotos] = useState([]);
+
+  const fetchUser = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const response = await getCurrentUser(token);
+      setUserInfo(response.data);
+  
+      if (response.data.profile_type === 'uno') {
+        const userPhotos = await getUserPhotos(response.data.id, token);
+        setPhotos(userPhotos.data);
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Failed to load user info');
+    }
+  };
+  
+  useEffect(() => {
+    fetchUser();
+  }, []);
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* — Profile Photo & Name — */}

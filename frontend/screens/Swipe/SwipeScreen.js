@@ -15,7 +15,6 @@ import {
   Platform,
   InteractionManager,
 } from 'react-native';
-import Swiper from 'react-native-deck-swiper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { getPotentialMatches, sendSwipe, getMatches } from '../../utils/api';
@@ -301,62 +300,81 @@ const clearFilters = () => {
           <Text>Loading…</Text>
         </View>
       ) : cards.length > 0 ? (
-        /* Swiper state */
-        <Swiper
-          cards={cards}
-          renderCard={(u) => {
-            if (!u) return <View style={styles.card} />;     // <- early bail-out
-          
-            const allPhotos =
-              Array.isArray(u.photos) && u.photos.length
-                ? u.photos
-                : u.members?.flatMap((m) => m.photos || []) || [];
-          
-            return (
-              <View style={styles.card}>
-                {allPhotos.length ? (
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.carousel}>
-                    {allPhotos.map((url, i) => (
-                      <Image key={i} source={{ uri: url }} style={styles.carouselImage} />
-                    ))}
-                  </ScrollView>
-                ) : (
-                  <Image
-                    source={{ uri: u.profile_picture || 'https://placekitten.com/300/300' }}
-                    style={styles.carouselImage}
-                  />
-                )}
-          
-                {/* Name + rest */}
-                <Text style={styles.name}>
-                  {u.name}
-                  {u.age ? `, ${u.age}` : ''}
-                </Text>
-          
-                <View style={styles.infoRow}><Text style={styles.meta}>📍 {u.location || 'Unknown'}</Text></View>
-                <View style={styles.infoRow}><Text style={styles.meta}>🧠 {u.bio || u.shared_bio || 'No bio yet'}</Text></View>
-                <View style={styles.infoRow}><Text style={styles.meta}>🎯 {u.looking_for || 'Not specified'}</Text></View>
-                <View style={styles.infoRow}><Text style={styles.meta}>🎨 {(u.interests || []).join(', ') || 'No interests yet'}</Text></View>
-          
-                {/* Optional: keep member names below */}
-                {u.members && u.members.length > 0 && (
-                  <View style={{ width: '100%', marginTop: 10 }}>
-                    <Text style={styles.memberHeader}>👥 Members</Text>
-                    {u.members.map((m) => (
-                      <Text key={m.id} style={styles.meta}>
-                        • {m.name}{m.age ? `, ${m.age}` : ''}
-                      </Text>
-                    ))}
-                  </View>
-                )}
+        (() => {
+          // visibleUser and allPhotos logic
+          const visibleUser = visibleCards[0];
+          if (!visibleUser) return null;
+          const allPhotos =
+            Array.isArray(visibleUser.photos) && visibleUser.photos.length
+              ? visibleUser.photos
+              : visibleUser.members?.flatMap((m) => m.photos || []) || [];
+          return (
+            <View style={styles.card}>
+              {allPhotos.length ? (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.carousel}>
+                  {allPhotos.map((url, i) => (
+                    <Image key={i} source={{ uri: url }} style={styles.carouselImage} />
+                  ))}
+                </ScrollView>
+              ) : (
+                <Image
+                  source={{ uri: visibleUser.profile_picture || 'https://placekitten.com/300/300' }}
+                  style={styles.carouselImage}
+                />
+              )}
+
+              <Text style={styles.name}>
+                {visibleUser.name}
+                {visibleUser.age ? `, ${visibleUser.age}` : ''}
+              </Text>
+
+              <View style={styles.infoRow}>
+                <View style={styles.iconBubble}>
+                  <Ionicons name="location-outline" size={18} color="#6c2bb9" />
+                </View>
+                <Text style={styles.meta}> {visibleUser.location || 'Unknown'}</Text>
               </View>
-            );
-          }}
-          onSwipedLeft={(i) => handleSwipe(i, 'left')}
-          onSwipedRight={(i) => handleSwipe(i, 'right')}
-          stackSize={3}
-          backgroundColor="#fff"
-        />
+              <View style={styles.infoRow}>
+                <View style={styles.iconBubble}>
+                  <Ionicons name="medkit-outline" size={18} color="#6c2bb9" />
+                </View>
+                <Text style={styles.meta}> {visibleUser.bio || visibleUser.shared_bio || 'No bio yet'}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <View style={styles.iconBubble}>
+                  <Ionicons name="target-outline" size={18} color="#6c2bb9" />
+                </View>
+                <Text style={styles.meta}> {visibleUser.looking_for || 'Not specified'}</Text>
+              </View>
+              <View style={styles.infoRow}>
+                <View style={styles.iconBubble}>
+                  <Ionicons name="color-palette-outline" size={18} color="#6c2bb9" />
+                </View>
+                <Text style={styles.meta}> {(visibleUser.interests || []).join(', ') || 'No interests yet'}</Text>
+              </View>
+
+              {visibleUser.members && visibleUser.members.length > 0 && (
+                <View style={{ width: '100%', marginTop: 10 }}>
+                  <Text style={styles.memberHeader}>👥 Members</Text>
+                  {visibleUser.members.map((m) => (
+                    <Text key={m.id} style={styles.meta}>
+                      • {m.name}{m.age ? `, ${m.age}` : ''}
+                    </Text>
+                  ))}
+                </View>
+              )}
+
+              <View style={{ flexDirection: 'row', marginTop: 20, width: '80%', justifyContent: 'space-between' }}>
+                <TouchableOpacity onPress={() => handleSwipe(cards.indexOf(visibleUser), 'left')}>
+                  <Text style={{ fontSize: 40 }}>❌</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleSwipe(cards.indexOf(visibleUser), 'right')}>
+                  <Text style={{ fontSize: 40 }}>✅</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          );
+        })()
       ) : (
         /* Empty state */
         <View style={styles.center}>
@@ -391,11 +409,33 @@ const styles = StyleSheet.create({
   clearText: { color: 'red' },
   applyBtn: { backgroundColor: '#B76EFF', padding: 10, borderRadius: 6 },
   applyText: { color: '#fff' },
-  card: { flex: 0.75, backgroundColor: '#fdf9ff', borderRadius: 20, padding: 20, alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.1, shadowOffset: { width: 0, height: 4 }, shadowRadius: 6, elevation: 4 },
+  card: {
+    flex: 1,
+    backgroundColor: '#fdf9ff',
+    borderRadius: 20,
+    padding: 20,
+    margin: 10,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 6,
+    elevation: 4,
+  },
   carousel: { width: '100%', marginBottom: 20 },
   carouselImage: { width: 260, height: 260, marginRight: 12, borderRadius: 16, borderColor: '#ddd', borderWidth: 1, flexShrink: 0, },
   name: { fontSize: 22, fontWeight: '600', color: '#333', marginBottom: 10 },
   infoRow: { width: '100%', marginBottom: 6 },
   meta: { fontSize: 15, color: '#555', textAlign: 'left' },
+  iconBubble: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#f2e6ff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+  },
   memberHeader: { fontSize: 16, fontWeight: '600', color: '#6c2bb9', marginTop: 10, marginBottom: 4 },
 });
