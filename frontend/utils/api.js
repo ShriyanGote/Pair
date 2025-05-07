@@ -50,24 +50,28 @@ export const deleteUserPhotoByUrl = (userId, photoUrl, token) =>
   });
 
 
-export const uploadGroupMemberPhoto = async (memberId, file, token) => {
-  const formData = new FormData();
-  formData.append('file', {
-    uri: file.uri,
-    name: file.name || 'photo.jpg',
-    type: file.type || 'image/jpeg',
-  });
+  export const uploadGroupMemberPhoto = async (memberId, file, token) => {
+    if (typeof memberId !== 'number') {
+      throw new Error(`memberId must be a number, got ${memberId}`);
+    }
 
-  const res = await fetch(`${API_URL}/group-members/${memberId}/photos`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  });
+    const formData = new FormData();
+    formData.append('file', {
+      uri: file.uri,
+      name: file.name || 'photo.jpg',
+      type: file.type || 'image/jpeg',
+    });
+  
+    return await fetch(`${API_URL}/group-members/${memberId}/photos`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    }).then(res => res.json());
+  };
 
-  return await res.json();
-};
+
 
 //--------------------- Duo Member endpoints ---------------------
 export const getDuoMembers = (token) =>

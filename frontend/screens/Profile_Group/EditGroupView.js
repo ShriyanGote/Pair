@@ -103,31 +103,41 @@ export default function EditGroupView() {
 
   const handleAddPhoto = async (memberId) => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes   : ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      quality: 0.7,
+      quality      : 0.7,
     });
     if (result.canceled) return;
-
+  
+    // build plain file object (the helper wraps it in FormData)
+    const file = {
+      uri : result.assets[0].uri,
+      name: 'photo.jpg',
+      type: 'image/jpeg',
+    };
+  
     try {
       const token = await AsyncStorage.getItem('token');
-      const file = {
-        uri: result.assets[0].uri,
-        name: 'photo.jpg',
-        type: 'image/jpeg',
+  
+      // helper returns { photo_id, photo_url }
+      const res = await uploadGroupMemberPhoto(memberId, file, token);
+      const payload = res.data ?? res;          // axios / fetch difference
+  
+      const newPhoto = {
+        id       : payload.photo_id ?? payload.id,
+        photo_url: payload.photo_url ?? payload.photoUrl,
       };
-      const res = await uploadGroupMemberPhoto(file, memberId, token);
+  
       setPhotosMap(pm => ({
         ...pm,
-        [memberId]: [
-          ...(pm[memberId] || []),
-          { id: res.photo_id,   photo_url: res.photo_url   }
-        ]
-      }))
-    } catch {
-      Alert.alert('Error', 'Failed to upload photo');
+        [memberId]: [...(pm[memberId] || []), newPhoto],
+      }));
+    } catch (err) {
+      console.error(err);
+      Alert.alert('Upload failed', err.message || 'Network / server error');
     }
   };
+  
 
   const handleDelete = (id) => {
     Alert.alert(

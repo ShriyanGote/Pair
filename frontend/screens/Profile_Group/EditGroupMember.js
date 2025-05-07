@@ -119,15 +119,24 @@ export default function EditGroupMember({ route, navigation }) {
 
     const uri = result.assets[0].uri;
     const formData = new FormData();
-    formData.append('file', { uri, name: 'photo.jpg', type: 'image/jpeg' });
+    const ext  = uri.split('.').pop()?.toLowerCase() || 'jpg';
+    const file = { uri, name: `photo.${ext}`, type: `image/${ext}` };
 
     try {
       const token = await AsyncStorage.getItem('token');
-      const res = await uploadGroupMemberPhoto(member.id, formData, token);
-      setPhotos((p) => [...p, res.data]);
+      const res = await uploadGroupMemberPhoto(member.id, file, token);
+      setPhotos((p) => [...p, res]);
     } catch (err) {
-      console.error(err);
-      Alert.alert('Error', 'Upload failed');
+      if (axios.isAxiosError(err) && err.response) {
+        console.log('❌ Axios status :', err.response.status);
+        console.log('❌ Axios data   :', err.response.data);
+        Alert.alert('Upload failed',
+                    err.response.data?.detail ||
+                    `Server replied ${err.response.status}`);
+      } else {
+        console.log('❌ JS/Network err:', err.message || err);
+        Alert.alert('Upload failed', err.message || 'Unknown error');
+      }
     }
   };
 
